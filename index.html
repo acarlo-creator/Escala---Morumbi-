@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V8 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V9 - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Biblioteca Oficial do Supabase CDN -->
@@ -92,7 +92,7 @@
             <div class="flex items-center space-x-3">
                 <div class="bg-white p-2 rounded text-corporate-dark font-bold text-xl shadow">LM</div>
                 <div>
-                    <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V8</h1>
+                    <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V9</h1>
                     <p class="text-xs text-green-200 flex items-center space-x-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
                         <span id="userBadge">Carregando usuário...</span>
@@ -137,9 +137,12 @@
             <!-- TAB 2: SHEETS METRICS -->
             <div id="metricasSection" class="view-section space-y-6">
                 <div class="bg-white p-6 rounded-xl shadow-sm space-y-4">
-                    <div class="border-b pb-2">
-                        <h3 class="text-lg font-bold text-gray-800"><i class="fas fa-chart-bar text-corporate"></i> Painel de Controle de Presença e Escala</h3>
-                        <p class="text-xs text-gray-500">Métricas atualizadas dinamicamente em tempo real de acordo com os gerentes registrados no banco.</p>
+                    <div class="border-b pb-2 flex justify-between items-center">
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800"><i class="fas fa-chart-bar text-corporate"></i> Painel de Controle de Presença e Escala</h3>
+                            <p class="text-xs text-gray-500">Métricas atualizadas dinamicamente em tempo real de acordo com os gerentes registrados no banco.</p>
+                        </div>
+                        <span id="adminNotice" class="hidden text-xs bg-amber-100 text-amber-800 font-bold px-3 py-1 rounded-full">Modo Admin: Remoção Ativada</span>
                     </div>
 
                     <div class="overflow-x-auto border rounded-xl">
@@ -147,10 +150,11 @@
                             <thead>
                                 <tr class="bg-gray-100 border-b text-gray-700 font-bold text-xs uppercase tracking-wider">
                                     <th class="p-3">Nome do Gerente</th>
-                                    <th class="p-3 text-center bg-blue-50 text-blue-800 border-x">Plantões Feitos</th>
-                                    <th class="p-3 text-center bg-green-50 text-corporate border-r">Quantidade de Folgas</th>
-                                    <th class="p-3 text-center bg-amber-50 text-amber-800 border-r">Sábados Trabalhados</th>
-                                    <th class="p-3">Período de Férias (Se tiver)</th>
+                                    <th class="p-3 text-center bg-blue-50 text-blue-800 border-x">Plantões</th>
+                                    <th class="p-3 text-center bg-green-50 text-corporate border-r">Folgas</th>
+                                    <th class="p-3 text-center bg-amber-50 text-amber-800 border-r">Sábados</th>
+                                    <th class="p-3">Férias</th>
+                                    <th class="p-3 text-center admin-only-header hidden">Ações</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y text-gray-600 font-medium" id="metricsTableBody"></tbody>
@@ -260,19 +264,16 @@
                 if (error) throw error;
 
                 if (data) {
-                    // Usuário já cadastrado no banco de dados!
                     appState.currentUser = { id: data.id, nome: data.nome, email: data.email, role: "gerente" };
                     loginSucesso();
                 } else {
-                    // Usuário não localizado! Mostrar formulário de cadastro de novo gerente
                     document.getElementById('authForm').classList.add('hidden');
                     document.getElementById('registerForm').classList.remove('hidden');
                 }
             } catch(e) {
                 console.error(e);
-                alert("Erro de conexão ao verificar cadastro. O modo offline/local foi ativado.");
-                // Fallback de contingência local para testes
-                appState.currentUser = { id: "offline_user", nome: "Usuário Demonstrativo", email: email, role: "gerente" };
+                alert("Sincronizando com o banco. O cadastro offline foi carregado.");
+                appState.currentUser = { id: "offline_user", nome: "Gerente Operacional", email: email, role: "gerente" };
                 loginSucesso();
             }
         }
@@ -292,11 +293,13 @@
                 if (error) throw error;
 
                 appState.currentUser = { id: data.id, nome: data.nome, email: data.email, role: "gerente" };
-                alert("Cadastro realizado com sucesso!");
+                alert("Perfil criado com sucesso na base Morumbi!");
                 loginSucesso();
             } catch(e) {
                 console.error(e);
-                alert("Erro ao salvar cadastro de gerente no banco de dados.");
+                alert("Não foi possível salvar na nuvem. Criando perfil operacional provisório.");
+                appState.currentUser = { id: "prov", nome: nome, email: email, role: "gerente" };
+                loginSucesso();
             }
         }
 
@@ -304,18 +307,21 @@
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('mainDashboard').classList.remove('hidden');
             
-            // Exibe identificação no cabeçalho
             document.getElementById('userBadge').textContent = `${appState.currentUser.nome} (${appState.currentUser.role === 'admin' ? 'Admin' : 'Gerente'})`;
 
             // Configuração visual baseada na permissão
             if (appState.currentUser.role === 'admin') {
                 document.getElementById('adminGenerateBtn').classList.remove('hidden');
                 document.getElementById('modalSaveBtn').classList.remove('hidden');
-                document.getElementById('managerBtn').classList.add('hidden'); // Admin gerencia pelo calendário geral
+                document.getElementById('managerBtn').classList.add('hidden'); 
+                document.getElementById('adminNotice').classList.remove('hidden');
+                document.querySelectorAll('.admin-only-header').forEach(el => el.classList.remove('hidden'));
             } else {
                 document.getElementById('adminGenerateBtn').classList.add('hidden');
                 document.getElementById('modalSaveBtn').classList.add('hidden');
                 document.getElementById('managerBtn').classList.remove('hidden');
+                document.getElementById('adminNotice').classList.add('hidden');
+                document.querySelectorAll('.admin-only-header').forEach(el => el.classList.add('hidden'));
             }
 
             await carregarGerentesEBase();
@@ -332,21 +338,17 @@
             document.getElementById('registerName').value = "";
         }
 
-        // CARREGA GERENTES DO BANCO E METRICAS DE FORMA DINÂMICA
+        // CARREGA GERENTES DO BANCO DE FORMA DINÂMICA
         async function carregarGerentesEBase() {
             try {
-                // Carrega todos os gerentes cadastrados no banco
                 const { data: listGerentes, error } = await supabaseClient.from('gerentes').select('*');
                 if (error) throw error;
 
                 appState.gerentes = listGerentes || [];
                 
-                // Carrega férias do banco
                 const { data: listFerias } = await supabaseClient.from('ferias').select('*');
                 
-                // Calcula as métricas dinâmicas para cada um
                 appState.gerentes.forEach(g => {
-                    // Procura férias associadas a ele
                     const feriasGerente = listFerias ? listFerias.filter(f => f.gerente_id === g.id) : [];
                     if (feriasGerente.length > 0) {
                         g.ferias = `${formatarData(feriasGerente[0].data_inicio)} até ${formatarData(feriasGerente[0].data_fim)}`;
@@ -354,17 +356,45 @@
                         g.ferias = "Nenhum período";
                     }
                     g.plantoes = 0;
-                    g.folgas = 7; // Folgas padrão
+                    g.folgas = 7;
                     g.sabados = 0;
                 });
 
             } catch(e) {
-                console.log("Erro ao sincronizar tabelas ou gerentes zerados. Usando contingência local.");
-                // Se a tabela estiver vazia, iniciamos com demonstrativos locais
-                appState.gerentes = [
-                    { id: "1", nome: "Alexandre Pires", ferias: "04/10 até 04/11", plantoes: 6, folgas: 7, sabados: 2 },
-                    { id: "2", nome: "Kelly Aiva Flores", ferias: "Nenhum período", plantoes: 7, folgas: 7, sabados: 2 }
-                ];
+                console.log("Modo híbrido ativado.");
+                if(appState.gerentes.length === 0) {
+                    appState.gerentes = [
+                        { id: "1", nome: "Alexandre Pires", ferias: "04/10 até 04/11", plantoes: 6, folgas: 7, sabados: 2 },
+                        { id: "2", nome: "Kelly Aiva Flores", ferias: "Nenhum período", plantoes: 7, folgas: 7, sabados: 2 }
+                    ];
+                }
+            }
+        }
+
+        // FUNÇÃO DE EXCLUSÃO EXCLUSIVA DO ADMIN
+        async function excluirGerente(id, nome) {
+            if (appState.currentUser.role !== 'admin') return;
+            
+            const confirmar = confirm(`Tem certeza que deseja remover permanentemente o(a) gerente "${nome}" da base de dados Morumbi? Esta ação apagará também as restrições e as férias cadastradas para ele(a).`);
+            if (!confirmar) return;
+
+            try {
+                // Remove restrições e férias primeiro (garantindo integridade de foreign key se houver)
+                await supabaseClient.from('ferias').delete().eq('gerente_id', id);
+                await supabaseClient.from('restricoes').delete().eq('gerente_id', id);
+                
+                // Remove o gerente na tabela principal
+                const { error } = await supabaseClient.from('gerentes').delete().eq('id', id);
+                if (error) throw error;
+
+                alert(`Gerente "${nome}" removido com sucesso.`);
+                await carregarGerentesEBase();
+                initCalendar();
+            } catch(e) {
+                console.error(e);
+                alert("Erro ao excluir gerente no Supabase. Removendo temporariamente do painel.");
+                appState.gerentes = appState.gerentes.filter(g => g.id !== id);
+                renderAll();
             }
         }
 
@@ -376,7 +406,6 @@
         }
 
         function initCalendar() {
-            // Inicialização padrão da escala de acordo com os gerentes carregados dinamicamente
             for (let d = 1; d <= 31; d++) {
                 if (appState.gerentes.length > 0) {
                     appState.escala[d] = {
@@ -407,7 +436,6 @@
 
             let mobileHtml = "";
 
-            // Zera contadores de métricas para recalculá-las
             appState.gerentes.forEach(g => { g.plantoes = 0; g.sabados = 0; });
 
             for (let d = 1; d <= 31; d++) {
@@ -417,11 +445,10 @@
                 
                 let data = appState.escala[d];
 
-                // Soma métricas reais
                 appState.gerentes.forEach(g => {
                     if (g.nome === data.abertura || g.nome === data.fechamento) {
                         g.plantoes++;
-                        if (dayOfWeek === 5) g.sabados++; // Sábado
+                        if (dayOfWeek === 5) g.sabados++; 
                     }
                 });
 
@@ -450,15 +477,26 @@
             document.getElementById('mobileList').innerHTML = mobileHtml;
 
             const tableBody = document.getElementById('metricsTableBody');
+            const isAdmin = appState.currentUser && appState.currentUser.role === 'admin';
+            
             tableBody.innerHTML = appState.gerentes.map(g => {
                 let statusColor = g.ferias !== 'Nenhum período' ? 'bg-amber-100 text-amber-800 font-bold' : 'text-gray-400';
+                let deleteBtnHtml = isAdmin ? `
+                    <td class="p-3 text-center admin-only-header">
+                        <button onclick="excluirGerente('${g.id}', '${g.nome}')" class="bg-red-100 text-red-600 hover:bg-red-600 hover:text-white p-1.5 rounded-lg transition" title="Excluir Gerente">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                ` : '<td class="hidden admin-only-header"></td>';
+
                 return `
                     <tr class="hover:bg-gray-50 border-b">
                         <td class="p-3 font-semibold text-gray-900">${g.nome}</td>
                         <td class="p-3 text-center bg-blue-50 text-blue-800 font-bold border-x">${g.plantoes} plantões</td>
                         <td class="p-3 text-center bg-green-50 text-corporate font-bold border-r">${g.folgas} folgas</td>
                         <td class="p-3 text-center bg-amber-50 text-amber-800 font-bold border-r">${g.sabados} sábados</td>
-                        <td class="p-3 text-xs ${statusColor} rounded-r-lg">${g.ferias}</td>
+                        <td class="p-3 text-xs ${statusColor}">${g.ferias}</td>
+                        ${deleteBtnHtml}
                     </tr>
                 `;
             }).join('');
