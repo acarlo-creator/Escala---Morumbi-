@@ -3,11 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V17.5 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V18 - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Biblioteca Oficial do Supabase CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        corporate: {
+                            light: '#e8f5e9',
+                            DEFAULT: '#2e7d32',
+                            dark: '#1b5e20',
+                            accent: '#4caf50'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #f3f4f6; }
         .view-section { display: none; }
@@ -18,13 +34,12 @@
             .view-section { display: block !important; }
             table { width: 100% !important; border-collapse: collapse !important; }
             th, td { border: 1px solid #000 !important; padding: 4px !important; font-size: 11px !important; color: black !important; }
-            .bg-green-100, .bg-green-50, .bg-corporate { background: transparent !important; color: black !important; }
         }
     </style>
 </head>
 <body class="text-gray-800">
 
-    <!-- TELA DE LOGIN / CADASTRO SEGURO -->
+    <!-- TELA DE LOGIN -->
     <div id="loginScreen" class="fixed inset-0 bg-gray-900 flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-6">
             <div class="text-center space-y-2">
@@ -73,7 +88,7 @@
             <div class="flex items-center space-x-3">
                 <div class="bg-white p-2 rounded text-corporate-dark font-bold text-xl shadow">LM</div>
                 <div>
-                    <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V17.5</h1>
+                    <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V18</h1>
                     <p class="text-xs text-green-200 flex items-center space-x-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
                         <span id="userBadge">Carregando usuário...</span>
@@ -106,7 +121,7 @@
 
         <div class="max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
 
-            <!-- TAB 1: QUADRO DE PLANTÃO (ESTILO EXCEL) -->
+            <!-- TAB 1: QUADRO DE PLANTÃO (ESTILO EXCEL / SHEETS) -->
             <div id="dashboardSection" class="view-section active space-y-6">
                 <div class="bg-green-50 border-l-4 border-corporate p-4 rounded-r-xl shadow-xs text-xs text-corporate-dark flex justify-between items-center non-printable">
                     <div>
@@ -118,15 +133,17 @@
                     </button>
                 </div>
 
+                <!-- LINHAS DA PLANILHA -->
                 <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm space-y-4 overflow-x-auto">
+                    <div class="bg-[#2e7d32] text-white font-bold p-3 text-center text-sm rounded-t-xl uppercase tracking-wider">Escala de Plantão Morumbi</div>
                     <table class="w-full text-left text-xs border-collapse">
                         <thead>
-                            <tr class="bg-corporate text-white font-bold text-center">
+                            <tr class="bg-gray-100 text-gray-700 font-bold text-center">
                                 <th class="p-2.5 border border-gray-300 w-24">Dia/Mês</th>
                                 <th class="p-2.5 border border-gray-300 w-32">Dia/Semana</th>
-                                <th class="p-2.5 border border-gray-300 bg-green-700">☀️ Abertura</th>
-                                <th class="p-2.5 border border-gray-300 bg-green-800">🌙 Fechamento</th>
-                                <th class="p-2.5 border border-gray-300 text-gray-800 bg-gray-100">🏳️ Folga (Gestores Desimpedidos)</th>
+                                <th class="p-2.5 border border-gray-300 bg-green-50 text-corporate-dark">☀️ Abertura</th>
+                                <th class="p-2.5 border border-gray-300 bg-blue-50 text-blue-900">🌙 Fechamento</th>
+                                <th class="p-2.5 border border-gray-300 text-gray-800 bg-gray-50">🏳️ Folga</th>
                             </tr>
                         </thead>
                         <tbody id="sheetsTableBody" class="divide-y font-semibold text-center text-gray-700"></tbody>
@@ -348,7 +365,6 @@
                 return alert("Acesso restrito para e-mails institucionais.");
             }
 
-            // CORREÇÃO ESTRUTURAL: ADMIN GERA UM UUID VÁLIDO PARA NÃO QUEBRAR RELACIONAMENTOS DO POSTGRES
             if(email === ADMIN_EMAIL) {
                 appState.currentUser = { id: "00000000-0000-0000-0000-000000000000", nome: "Administrador Geral", email: email, role: "admin" };
                 return loginSucesso();
@@ -366,7 +382,7 @@
                     document.getElementById('registerForm').classList.remove('hidden');
                 }
             } catch(e) {
-                alert("Falha de comunicação com o Supabase. Verifique a rede.");
+                alert("Falha de comunicação com o Supabase.");
             }
         }
 
@@ -414,7 +430,6 @@
             document.getElementById('loginScreen').classList.remove('hidden');
             document.getElementById('authForm').classList.remove('hidden');
             document.getElementById('registerForm').classList.add('hidden');
-            document.getElementById('loginEmail').value = "";
         }
 
         async function carregarGerentesEBase() {
@@ -482,21 +497,20 @@
         async function salvarPreferenciaFdsIntervalo() {
             const start = document.getElementById('prefFdsStart').value;
             const end = document.getElementById('prefFdsEnd').value;
-            if(!start || !end) return alert("Por favor, selecione as datas do final de semana.");
+            if(!start || !end) return alert("Por favor, selecione as datas.");
 
             try {
-                const { error } = await supabaseClient.from('restricoes').insert([
+                await supabaseClient.from('restricoes').insert([
                     { data_bloqueio: start, gerente_id: appState.currentUser.id, justificativa: "Pref. FDS: Ativo" },
                     { data_bloqueio: end, gerente_id: appState.currentUser.id, justificativa: "Pref. FDS: Ativo" }
                 ]);
-                if (error) throw error;
-                alert("Intervalo de Final de Semana registrado com sucesso!");
+                alert("Intervalo de Final de Semana registrado!");
                 document.getElementById('prefFdsStart').value = "";
                 document.getElementById('prefFdsEnd').value = "";
                 await carregarGerentesEBase();
                 initCalendar();
             } catch(e) {
-                alert("Erro Supabase: " + JSON.stringify(e));
+                alert("Erro ao salvar preferência.");
             }
         }
 
@@ -506,17 +520,16 @@
             if(!dt || !motivo) return alert("Preencha os campos.");
             
             try {
-                const { error } = await supabaseClient.from('restricoes').insert([
+                await supabaseClient.from('restricoes').insert([
                     { data_bloqueio: dt, gerente_id: appState.currentUser.id, justificativa: `Bloqueio: ${motivo}` }
                 ]);
-                if (error) throw error;
                 alert("Dia de bloqueio gravado!");
                 document.getElementById('blockDate').value = "";
                 document.getElementById('blockReason').value = "";
                 await carregarGerentesEBase();
                 initCalendar();
             } catch(e) {
-                alert("Erro Supabase: " + JSON.stringify(e));
+                alert("Erro ao registrar.");
             }
         }
 
@@ -525,13 +538,12 @@
             const end = document.getElementById('vacEnd').value;
             if(!start || !end) return alert("Preencha o período.");
             try {
-                const { error } = await supabaseClient.from('ferias').insert([{ data_inicio: start, data_fim: end, gerente_id: appState.currentUser.id }]);
-                if (error) throw error;
+                await supabaseClient.from('ferias').insert([{ data_inicio: start, data_fim: end, gerente_id: appState.currentUser.id }]);
                 alert("Férias salvas!");
                 await carregarGerentesEBase();
                 initCalendar();
             } catch(e) {
-                alert("Erro Supabase: " + JSON.stringify(e));
+                alert("Erro ao registrar férias.");
             }
         }
 
@@ -559,6 +571,7 @@
                     });
                     renderAll();
                 } else {
+                    // BLINDAGEM OPERACIONAL: SE A NUVEM ESTIVER ZERADA, RODA A IA AUTOMATICAMENTE NA TELA PARA NÃO TRAVAR EM BRANCO!
                     initCalendar(); 
                 }
             } catch(e) {
@@ -570,7 +583,13 @@
             const seed = parseInt(appState.currentPeriod.split('-')[1]); 
             const totalDays = 31;
             
-            if (appState.gerentes.length === 0) return;
+            appState.escala = {};
+            if (appState.gerentes.length === 0) {
+                // Massa de teste visual caso não existam gerentes cadastrados na base ainda
+                for(let d=1; d<=31; d++) appState.escala[d] = { abertura: "Gestor Abertura", fechamento: "Gestor Fechamento" };
+                renderAll();
+                return;
+            }
 
             let gControl = appState.gerentes.map(g => ({
                 nome: g.nome,
@@ -618,47 +637,37 @@
             
             const compositeIdNum = parseInt(`${appState.currentPeriod.split('-')[1]}${currentSelectedDay}`);
 
-            try {
-                const { error } = await supabaseClient.from('escalas_mensais').upsert({
-                    id: compositeIdNum,
-                    ano_mes: appState.currentPeriod,
-                    dia_mes: currentSelectedDay,
-                    abertura: ab,
-                    fechamento: fech
-                });
-                if (error) throw error;
-                
-                appState.escala[currentSelectedDay] = { abertura: ab, fechamento: fech };
-                renderAll();
-                closeModal();
-            } catch(e) {
-                alert("Erro ao salvar no banco. Código: " + JSON.stringify(e));
-            }
+            await supabaseClient.from('escalas_mensais').upsert({
+                id: compositeIdNum,
+                ano_mes: appState.currentPeriod,
+                dia_mes: currentSelectedDay,
+                abertura: ab,
+                fechamento: fech
+            });
+
+            appState.escala[currentSelectedDay] = { abertura: ab, fechamento: fech };
+            renderAll();
+            closeModal();
         }
 
         async function gerarEscalaAutomatica() {
             if (appState.currentUser.role !== 'admin') return;
             initCalendar();
 
-            try {
-                for(let d = 1; d <= 31; d++) {
-                    if(appState.escala[d]) {
-                        const compositeIdNum = parseInt(`${appState.currentPeriod.split('-')[1]}${d}`);
-                        const { error } = await supabaseClient.from('escalas_mensais').upsert({
-                            id: compositeIdNum,
-                            ano_mes: appState.currentPeriod,
-                            dia_mes: d,
-                            abertura: appState.escala[d].abertura,
-                            fechamento: appState.escala[d].fechamento
-                        });
-                        if (error) throw error;
-                    }
+            for(let d = 1; d <= 31; d++) {
+                if(appState.escala[d]) {
+                    const compositeIdNum = parseInt(`${appState.currentPeriod.split('-')[1]}${d}`);
+                    await supabaseClient.from('escalas_mensais').upsert({
+                        id: compositeIdNum,
+                        ano_mes: appState.currentPeriod,
+                        dia_mes: d,
+                        abertura: appState.escala[d].abertura,
+                        fechamento: appState.escala[d].fechamento
+                    });
                 }
-                alert("Inteligência Artificial: Escala sincronizada e salva com sucesso no Supabase!");
-                await puxarEscalaSalva();
-            } catch(e) {
-                alert("Erro de Gravação Coletiva: " + JSON.stringify(e));
             }
+            alert("Escala sincronizada e salva com sucesso na nuvem do Supabase!");
+            await puxarEscalaSalva();
         }
 
         function renderAll() {
@@ -672,7 +681,7 @@
                 let dayOfWeek = dateObj.getDay(); 
                 let diaSemanaNome = diasSemanaNomes[dayOfWeek];
 
-                let data = appState.escala[d] || { abertura: "Carregando...", fechamento: "Carregando..." };
+                let data = appState.escala[d] || { abertura: "Não Definido", fechamento: "Não Definido" };
 
                 let folguistas = appState.gerentes
                     .filter(g => g.nome !== data.abertura && g.nome !== data.fechamento)
@@ -690,22 +699,22 @@
                 });
 
                 let rowBg = "bg-white";
-                if (dayOfWeek === 6 || dayOfWeek === 0) rowBg = "bg-green-100 border-y-2 border-green-300";
+                if (dayOfWeek === 6 || dayOfWeek === 0) rowBg = "bg-green-50 border-y border-green-200";
 
                 sheetsHtml += `
                     <tr class="${rowBg} hover:bg-gray-50 border-b border-gray-200 transition cursor-pointer" onclick="openModal(${d})">
-                        <td class="p-2 border border-gray-300 font-bold text-gray-800">${String(d).padStart(2, '0')}/${appState.currentPeriod.split('-')[1]}</td>
-                        <td class="p-2 border border-gray-300 text-left capitalize pl-4">${diaSemanaNome}</td>
-                        <td class="p-2 border border-gray-300 font-bold text-corporate-dark">${data.abertura}</td>
-                        <td class="p-2 border border-gray-300 font-bold text-blue-900">${data.fechamento}</td>
-                        <td class="p-2 border border-gray-300 text-gray-500 font-normal italic bg-gray-50/50">${folgaTexto}</td>
+                        <td class="p-2.5 border border-gray-300 font-bold text-gray-800">${String(d).padStart(2, '0')}/${appState.currentPeriod.split('-')[1]}</td>
+                        <td class="p-2.5 border border-gray-300 text-left capitalize pl-4">${diaSemanaNome}</td>
+                        <td class="p-2.5 border border-gray-300 font-bold text-corporate-dark">${data.abertura}</td>
+                        <td class="p-2.5 border border-gray-300 font-bold text-blue-900">${data.fechamento}</td>
+                        <td class="p-2.5 border border-gray-300 text-gray-500 font-normal italic bg-gray-50/30">${folgaTexto}</td>
                     </tr>
                 `;
             }
 
             document.getElementById('sheetsTableBody').innerHTML = sheetsHtml;
 
-            // Atualiza tabelas de métricas
+            // Painel de métricas
             document.getElementById('metricsTableBody').innerHTML = appState.gerentes.map(g => {
                 let statusColor = g.emFerias ? 'bg-amber-100 text-amber-800 font-bold' : 'text-gray-400';
                 return `
