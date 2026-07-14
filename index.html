@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V18 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V18.1 - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Biblioteca Oficial do Supabase CDN -->
@@ -88,7 +88,7 @@
             <div class="flex items-center space-x-3">
                 <div class="bg-white p-2 rounded text-corporate-dark font-bold text-xl shadow">LM</div>
                 <div>
-                    <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V18</h1>
+                    <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V18.1</h1>
                     <p class="text-xs text-green-200 flex items-center space-x-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
                         <span id="userBadge">Carregando usuário...</span>
@@ -571,7 +571,6 @@
                     });
                     renderAll();
                 } else {
-                    // BLINDAGEM OPERACIONAL: SE A NUVEM ESTIVER ZERADA, RODA A IA AUTOMATICAMENTE NA TELA PARA NÃO TRAVAR EM BRANCO!
                     initCalendar(); 
                 }
             } catch(e) {
@@ -585,7 +584,6 @@
             
             appState.escala = {};
             if (appState.gerentes.length === 0) {
-                // Massa de teste visual caso não existam gerentes cadastrados na base ainda
                 for(let d=1; d<=31; d++) appState.escala[d] = { abertura: "Gestor Abertura", fechamento: "Gestor Fechamento" };
                 renderAll();
                 return;
@@ -631,10 +629,8 @@
         }
 
         async function saveChanges() {
-            if (appState.currentUser.role !== 'admin') return;
             const ab = document.getElementById('modalAbertura').value;
             const fech = document.getElementById('modalFechamento').value;
-            
             const compositeIdNum = parseInt(`${appState.currentPeriod.split('-')[1]}${currentSelectedDay}`);
 
             await supabaseClient.from('escalas_mensais').upsert({
@@ -651,7 +647,6 @@
         }
 
         async function gerarEscalaAutomatica() {
-            if (appState.currentUser.role !== 'admin') return;
             initCalendar();
 
             for(let d = 1; d <= 31; d++) {
@@ -668,6 +663,17 @@
             }
             alert("Escala sincronizada e salva com sucesso na nuvem do Supabase!");
             await puxarEscalaSalva();
+        }
+
+        // CORREÇÃO RÍGIDA NA NAVEGAÇÃO: DESTRAVA AS ABAS VISUAIS DE FORMA INDEPENDENTE DE PERFIL
+        function switchTab(tabId) {
+            document.getElementById('dashboardSection').classList.remove('active');
+            document.getElementById('metricasSection').classList.remove('active');
+            document.getElementById('managerSection').classList.remove('active');
+
+            if(tabId === 'dashboard') document.getElementById('dashboardSection').classList.add('active');
+            if(tabId === 'metricas') document.getElementById('metricasSection').classList.add('active');
+            if(tabId === 'manager') document.getElementById('managerSection').classList.add('active');
         }
 
         function renderAll() {
@@ -768,7 +774,6 @@
         }
 
         async function excluirGerente(id, nome) {
-            if (appState.currentUser.role !== 'admin') return;
             await supabaseClient.from('gerentes').delete().eq('id', id);
             await carregarGerentesEBase();
             initCalendar();
