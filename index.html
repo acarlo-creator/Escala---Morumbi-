@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V17.2 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V17.3 - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Biblioteca Oficial do Supabase CDN -->
@@ -89,7 +89,7 @@
             <div class="flex items-center space-x-3">
                 <div class="bg-white p-2 rounded text-corporate-dark font-bold text-xl shadow">LM</div>
                 <div>
-                    <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V17.2</h1>
+                    <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V17.3</h1>
                     <p class="text-xs text-green-200 flex items-center space-x-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
                         <span id="userBadge">Carregando usuário...</span>
@@ -632,7 +632,11 @@
             
             appState.escala[currentSelectedDay] = { abertura: ab, fechamento: fech };
             
+            // Correção de id único composto para Upsert funcionar sem barreira no Supabase
+            const compositeId = btoa(`${appState.currentPeriod}-${currentSelectedDay}`);
+
             await supabaseClient.from('escalas_mensais').upsert({
+                id: compositeId,
                 ano_mes: appState.currentPeriod,
                 dia_mes: currentSelectedDay,
                 abertura: ab,
@@ -649,7 +653,9 @@
 
             for(let d = 1; d <= 31; d++) {
                 if(appState.escala[d]) {
+                    const compositeId = btoa(`${appState.currentPeriod}-${d}`);
                     await supabaseClient.from('escalas_mensais').upsert({
+                        id: compositeId,
                         ano_mes: appState.currentPeriod,
                         dia_mes: d,
                         abertura: appState.escala[d].abertura,
