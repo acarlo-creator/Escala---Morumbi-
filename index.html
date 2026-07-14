@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V17.4 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V17.5 - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Biblioteca Oficial do Supabase CDN -->
@@ -73,7 +73,7 @@
             <div class="flex items-center space-x-3">
                 <div class="bg-white p-2 rounded text-corporate-dark font-bold text-xl shadow">LM</div>
                 <div>
-                    <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V17.4</h1>
+                    <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V17.5</h1>
                     <p class="text-xs text-green-200 flex items-center space-x-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
                         <span id="userBadge">Carregando usuário...</span>
@@ -166,7 +166,7 @@
                             <thead>
                                 <tr class="bg-gray-50 border-b text-gray-700 font-bold">
                                     <th class="p-3">Nome do Gerente</th>
-                                    <th class="p-3 text-center bg-blue-50 text-blue-800">Soma Total de Plantões Realizados</th>
+                                    <th class="p-3 text-center bg-blue-50 text-blue-900">Soma Total de Plantões Realizados</th>
                                     <th class="p-3 text-center bg-amber-50 text-amber-800">Total Sábados Trabalhados</th>
                                 </tr>
                             </thead>
@@ -348,8 +348,8 @@
                 return alert("Acesso restrito para e-mails institucionais.");
             }
 
+            // CORREÇÃO ESTRUTURAL: ADMIN GERA UM UUID VÁLIDO PARA NÃO QUEBRAR RELACIONAMENTOS DO POSTGRES
             if(email === ADMIN_EMAIL) {
-                // Força um formato UUID artificial válido aceito pelo banco PostgreSQL
                 appState.currentUser = { id: "00000000-0000-0000-0000-000000000000", nome: "Administrador Geral", email: email, role: "admin" };
                 return loginSucesso();
             }
@@ -366,7 +366,7 @@
                     document.getElementById('registerForm').classList.remove('hidden');
                 }
             } catch(e) {
-                alert("Falha de comunicação com o Supabase.");
+                alert("Falha de comunicação com o Supabase. Verifique a rede.");
             }
         }
 
@@ -485,17 +485,18 @@
             if(!start || !end) return alert("Por favor, selecione as datas do final de semana.");
 
             try {
-                await supabaseClient.from('restricoes').insert([
+                const { error } = await supabaseClient.from('restricoes').insert([
                     { data_bloqueio: start, gerente_id: appState.currentUser.id, justificativa: "Pref. FDS: Ativo" },
                     { data_bloqueio: end, gerente_id: appState.currentUser.id, justificativa: "Pref. FDS: Ativo" }
                 ]);
+                if (error) throw error;
                 alert("Intervalo de Final de Semana registrado com sucesso!");
                 document.getElementById('prefFdsStart').value = "";
                 document.getElementById('prefFdsEnd').value = "";
                 await carregarGerentesEBase();
                 initCalendar();
             } catch(e) {
-                alert("Erro ao salvar preferência.");
+                alert("Erro Supabase: " + JSON.stringify(e));
             }
         }
 
@@ -505,16 +506,17 @@
             if(!dt || !motivo) return alert("Preencha os campos.");
             
             try {
-                await supabaseClient.from('restricoes').insert([
+                const { error } = await supabaseClient.from('restricoes').insert([
                     { data_bloqueio: dt, gerente_id: appState.currentUser.id, justificativa: `Bloqueio: ${motivo}` }
                 ]);
+                if (error) throw error;
                 alert("Dia de bloqueio gravado!");
                 document.getElementById('blockDate').value = "";
                 document.getElementById('blockReason').value = "";
                 await carregarGerentesEBase();
                 initCalendar();
             } catch(e) {
-                alert("Erro ao registrar no Supabase.");
+                alert("Erro Supabase: " + JSON.stringify(e));
             }
         }
 
@@ -523,12 +525,13 @@
             const end = document.getElementById('vacEnd').value;
             if(!start || !end) return alert("Preencha o período.");
             try {
-                await supabaseClient.from('ferias').insert([{ data_inicio: start, data_fim: end, gerente_id: appState.currentUser.id }]);
+                const { error } = await supabaseClient.from('ferias').insert([{ data_inicio: start, data_fim: end, gerente_id: appState.currentUser.id }]);
+                if (error) throw error;
                 alert("Férias salvas!");
                 await carregarGerentesEBase();
                 initCalendar();
             } catch(e) {
-                alert("Erro ao registrar férias.");
+                alert("Erro Supabase: " + JSON.stringify(e));
             }
         }
 
@@ -613,40 +616,49 @@
             const ab = document.getElementById('modalAbertura').value;
             const fech = document.getElementById('modalFechamento').value;
             
-            appState.escala[currentSelectedDay] = { abertura: ab, fechamento: fech };
-            
-            // Força ID numérico compatível puro de 32 bits para evitar quebras
             const compositeIdNum = parseInt(`${appState.currentPeriod.split('-')[1]}${currentSelectedDay}`);
 
-            await supabaseClient.from('escalas_mensais').upsert({
-                id: compositeIdNum,
-                ano_mes: appState.currentPeriod,
-                dia_mes: currentSelectedDay,
-                abertura: ab,
-                fechamento: fech
-            });
-
-            renderAll();
-            closeModal();
+            try {
+                const { error } = await supabaseClient.from('escalas_mensais').upsert({
+                    id: compositeIdNum,
+                    ano_mes: appState.currentPeriod,
+                    dia_mes: currentSelectedDay,
+                    abertura: ab,
+                    fechamento: fech
+                });
+                if (error) throw error;
+                
+                appState.escala[currentSelectedDay] = { abertura: ab, fechamento: fech };
+                renderAll();
+                closeModal();
+            } catch(e) {
+                alert("Erro ao salvar no banco. Código: " + JSON.stringify(e));
+            }
         }
 
-        async function generarEscalaAutomatica() {
+        async function gerarEscalaAutomatica() {
             if (appState.currentUser.role !== 'admin') return;
             initCalendar();
 
-            for(let d = 1; d <= 31; d++) {
-                if(appState.escala[d]) {
-                    const compositeIdNum = parseInt(`${appState.currentPeriod.split('-')[1]}${d}`);
-                    await supabaseClient.from('escalas_mensais').upsert({
-                        id: compositeIdNum,
-                        ano_mes: appState.currentPeriod,
-                        dia_mes: d,
-                        abertura: appState.escala[d].abertura,
-                        fechamento: appState.escala[d].fechamento
-                    });
+            try {
+                for(let d = 1; d <= 31; d++) {
+                    if(appState.escala[d]) {
+                        const compositeIdNum = parseInt(`${appState.currentPeriod.split('-')[1]}${d}`);
+                        const { error } = await supabaseClient.from('escalas_mensais').upsert({
+                            id: compositeIdNum,
+                            ano_mes: appState.currentPeriod,
+                            dia_mes: d,
+                            abertura: appState.escala[d].abertura,
+                            fechamento: appState.escala[d].fechamento
+                        });
+                        if (error) throw error;
+                    }
                 }
+                alert("Inteligência Artificial: Escala sincronizada e salva com sucesso no Supabase!");
+                await puxarEscalaSalva();
+            } catch(e) {
+                alert("Erro de Gravação Coletiva: " + JSON.stringify(e));
             }
-            alert("Inteligência Artificial: Escala sincronizada e salva com sucesso no Supabase!");
         }
 
         function renderAll() {
