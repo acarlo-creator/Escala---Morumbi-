@@ -3,27 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V17.3 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V17.4 - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Biblioteca Oficial do Supabase CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        corporate: {
-                            light: '#e8f5e9',
-                            DEFAULT: '#2e7d32',
-                            dark: '#1b5e20',
-                            accent: '#4caf50'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #f3f4f6; }
         .view-section { display: none; }
@@ -89,7 +73,7 @@
             <div class="flex items-center space-x-3">
                 <div class="bg-white p-2 rounded text-corporate-dark font-bold text-xl shadow">LM</div>
                 <div>
-                    <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V17.3</h1>
+                    <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V17.4</h1>
                     <p class="text-xs text-green-200 flex items-center space-x-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
                         <span id="userBadge">Carregando usuário...</span>
@@ -365,7 +349,8 @@
             }
 
             if(email === ADMIN_EMAIL) {
-                appState.currentUser = { id: "admin", nome: "Administrador Geral", email: email, role: "admin" };
+                // Força um formato UUID artificial válido aceito pelo banco PostgreSQL
+                appState.currentUser = { id: "00000000-0000-0000-0000-000000000000", nome: "Administrador Geral", email: email, role: "admin" };
                 return loginSucesso();
             }
 
@@ -381,7 +366,7 @@
                     document.getElementById('registerForm').classList.remove('hidden');
                 }
             } catch(e) {
-                alert("Falha de comunicação com o Supabase. Verifique a rede.");
+                alert("Falha de comunicação com o Supabase.");
             }
         }
 
@@ -412,13 +397,11 @@
                 document.getElementById('adminManageBtn').classList.remove('hidden');
                 document.getElementById('modalSaveBtn').classList.remove('hidden');
                 document.getElementById('managerBtn').classList.add('hidden'); 
-                document.getElementById('adminNotice').classList.remove('hidden');
             } else {
                 document.getElementById('adminGenerateBtn').classList.add('hidden');
                 document.getElementById('adminManageBtn').classList.add('hidden');
                 document.getElementById('modalSaveBtn').classList.add('hidden');
                 document.getElementById('managerBtn').classList.remove('hidden');
-                document.getElementById('adminNotice').classList.add('hidden');
             }
 
             await carregarGerentesEBase();
@@ -632,11 +615,11 @@
             
             appState.escala[currentSelectedDay] = { abertura: ab, fechamento: fech };
             
-            // Correção de id único composto para Upsert funcionar sem barreira no Supabase
-            const compositeId = btoa(`${appState.currentPeriod}-${currentSelectedDay}`);
+            // Força ID numérico compatível puro de 32 bits para evitar quebras
+            const compositeIdNum = parseInt(`${appState.currentPeriod.split('-')[1]}${currentSelectedDay}`);
 
             await supabaseClient.from('escalas_mensais').upsert({
-                id: compositeId,
+                id: compositeIdNum,
                 ano_mes: appState.currentPeriod,
                 dia_mes: currentSelectedDay,
                 abertura: ab,
@@ -647,15 +630,15 @@
             closeModal();
         }
 
-        async function gerarEscalaAutomatica() {
+        async function generarEscalaAutomatica() {
             if (appState.currentUser.role !== 'admin') return;
             initCalendar();
 
             for(let d = 1; d <= 31; d++) {
                 if(appState.escala[d]) {
-                    const compositeId = btoa(`${appState.currentPeriod}-${d}`);
+                    const compositeIdNum = parseInt(`${appState.currentPeriod.split('-')[1]}${d}`);
                     await supabaseClient.from('escalas_mensais').upsert({
-                        id: compositeId,
+                        id: compositeIdNum,
                         ano_mes: appState.currentPeriod,
                         dia_mes: d,
                         abertura: appState.escala[d].abertura,
