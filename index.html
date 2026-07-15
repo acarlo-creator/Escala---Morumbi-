@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V18.1 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V19 - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Biblioteca Oficial do Supabase CDN -->
@@ -88,7 +88,7 @@
             <div class="flex items-center space-x-3">
                 <div class="bg-white p-2 rounded text-corporate-dark font-bold text-xl shadow">LM</div>
                 <div>
-                    <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V18.1</h1>
+                    <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V19</h1>
                     <p class="text-xs text-green-200 flex items-center space-x-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
                         <span id="userBadge">Carregando usuário...</span>
@@ -121,7 +121,7 @@
 
         <div class="max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
 
-            <!-- TAB 1: QUADRO DE PLANTÃO (ESTILO EXCEL / SHEETS) -->
+            <!-- TAB 1: QUADRO DE PLANTÃO -->
             <div id="dashboardSection" class="view-section active space-y-6">
                 <div class="bg-green-50 border-l-4 border-corporate p-4 rounded-r-xl shadow-xs text-xs text-corporate-dark flex justify-between items-center non-printable">
                     <div>
@@ -133,7 +133,6 @@
                     </button>
                 </div>
 
-                <!-- LINHAS DA PLANILHA -->
                 <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm space-y-4 overflow-x-auto">
                     <div class="bg-[#2e7d32] text-white font-bold p-3 text-center text-sm rounded-t-xl uppercase tracking-wider">Escala de Plantão Morumbi</div>
                     <table class="w-full text-left text-xs border-collapse">
@@ -500,17 +499,18 @@
             if(!start || !end) return alert("Por favor, selecione as datas.");
 
             try {
-                await supabaseClient.from('restricoes').insert([
+                const { error } = await supabaseClient.from('restricoes').insert([
                     { data_bloqueio: start, gerente_id: appState.currentUser.id, justificativa: "Pref. FDS: Ativo" },
                     { data_bloqueio: end, gerente_id: appState.currentUser.id, justificativa: "Pref. FDS: Ativo" }
                 ]);
+                if (error) throw error;
                 alert("Intervalo de Final de Semana registrado!");
                 document.getElementById('prefFdsStart').value = "";
                 document.getElementById('prefFdsEnd').value = "";
                 await carregarGerentesEBase();
                 initCalendar();
             } catch(e) {
-                alert("Erro ao salvar preferência.");
+                alert("Erro Supabase Detalhado: " + JSON.stringify(e));
             }
         }
 
@@ -520,16 +520,17 @@
             if(!dt || !motivo) return alert("Preencha os campos.");
             
             try {
-                await supabaseClient.from('restricoes').insert([
+                const { error } = await supabaseClient.from('restricoes').insert([
                     { data_bloqueio: dt, gerente_id: appState.currentUser.id, justificativa: `Bloqueio: ${motivo}` }
                 ]);
+                if (error) throw error;
                 alert("Dia de bloqueio gravado!");
                 document.getElementById('blockDate').value = "";
                 document.getElementById('blockReason').value = "";
                 await carregarGerentesEBase();
                 initCalendar();
             } catch(e) {
-                alert("Erro ao registrar.");
+                alert("Erro Supabase Detalhado: " + JSON.stringify(e));
             }
         }
 
@@ -538,12 +539,13 @@
             const end = document.getElementById('vacEnd').value;
             if(!start || !end) return alert("Preencha o período.");
             try {
-                await supabaseClient.from('ferias').insert([{ data_inicio: start, data_fim: end, gerente_id: appState.currentUser.id }]);
+                const { error } = await supabaseClient.from('ferias').insert([{ data_inicio: start, data_fim: end, gerente_id: appState.currentUser.id }]);
+                if (error) throw error;
                 alert("Férias salvas!");
                 await carregarGerentesEBase();
                 initCalendar();
             } catch(e) {
-                alert("Erro ao registrar férias.");
+                alert("Erro Supabase Detalhado: " + JSON.stringify(e));
             }
         }
 
@@ -665,7 +667,6 @@
             await puxarEscalaSalva();
         }
 
-        // CORREÇÃO RÍGIDA NA NAVEGAÇÃO: DESTRAVA AS ABAS VISUAIS DE FORMA INDEPENDENTE DE PERFIL
         function switchTab(tabId) {
             document.getElementById('dashboardSection').classList.remove('active');
             document.getElementById('metricasSection').classList.remove('active');
