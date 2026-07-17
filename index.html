@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V19 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V19.1 - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Biblioteca Oficial do Supabase CDN -->
@@ -88,7 +88,7 @@
             <div class="flex items-center space-x-3">
                 <div class="bg-white p-2 rounded text-corporate-dark font-bold text-xl shadow">LM</div>
                 <div>
-                    <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V19</h1>
+                    <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V19.1</h1>
                     <p class="text-xs text-green-200 flex items-center space-x-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
                         <span id="userBadge">Carregando usuário...</span>
@@ -126,13 +126,14 @@
                 <div class="bg-green-50 border-l-4 border-corporate p-4 rounded-r-xl shadow-xs text-xs text-corporate-dark flex justify-between items-center non-printable">
                     <div>
                         <p class="font-bold text-sm"><i class="fas fa-info-circle"></i> Diretriz Homologada (Estilo Excel):</p>
-                        <p class="mt-1">Distribuição em linhas com listagem automática de folgas. Alvo: 6-7 plantões (5 para quem está de férias no mês).</p>
+                        <p class="mt-1">Distribuição em linhas com listagem automática de folgas. Alvo: 6-7 plantões. **Clique em qualquer dia para alterar manualmente.**</p>
                     </div>
                     <button id="adminGenerateBtn" onclick="gerarEscalaAutomatica()" class="hidden bg-corporate text-white px-4 py-2 rounded-lg text-xs font-bold shadow hover:bg-corporate-dark transition">
                         <i class="fas fa-magic"></i> Balancear e Salvar Escala na Nuvem
                     </button>
                 </div>
 
+                <!-- LINHAS DA PLANILHA -->
                 <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm space-y-4 overflow-x-auto">
                     <div class="bg-[#2e7d32] text-white font-bold p-3 text-center text-sm rounded-t-xl uppercase tracking-wider">Escala de Plantão Morumbi</div>
                     <table class="w-full text-left text-xs border-collapse">
@@ -335,7 +336,7 @@
             </div>
             <div class="flex justify-end space-x-2 pt-1 text-xs" id="modalActions">
                 <button onclick="closeModal()" class="px-3 py-1.5 bg-gray-200 rounded-lg">Fechar</button>
-                <button id="modalSaveBtn" onclick="saveChanges()" class="hidden px-3 py-1.5 bg-corporate text-white font-semibold rounded-lg shadow">Salvar Escala</button>
+                <button id="modalSaveBtn" onclick="saveChanges()" class="px-3 py-1.5 bg-corporate text-white font-semibold rounded-lg shadow">Salvar Escala</button>
             </div>
         </div>
     </div>
@@ -499,18 +500,17 @@
             if(!start || !end) return alert("Por favor, selecione as datas.");
 
             try {
-                const { error } = await supabaseClient.from('restricoes').insert([
+                await supabaseClient.from('restricoes').insert([
                     { data_bloqueio: start, gerente_id: appState.currentUser.id, justificativa: "Pref. FDS: Ativo" },
                     { data_bloqueio: end, gerente_id: appState.currentUser.id, justificativa: "Pref. FDS: Ativo" }
                 ]);
-                if (error) throw error;
                 alert("Intervalo de Final de Semana registrado!");
                 document.getElementById('prefFdsStart').value = "";
                 document.getElementById('prefFdsEnd').value = "";
                 await carregarGerentesEBase();
                 initCalendar();
             } catch(e) {
-                alert("Erro Supabase Detalhado: " + JSON.stringify(e));
+                alert("Erro ao salvar preferência.");
             }
         }
 
@@ -520,17 +520,16 @@
             if(!dt || !motivo) return alert("Preencha os campos.");
             
             try {
-                const { error } = await supabaseClient.from('restricoes').insert([
+                await supabaseClient.from('restricoes').insert([
                     { data_bloqueio: dt, gerente_id: appState.currentUser.id, justificativa: `Bloqueio: ${motivo}` }
                 ]);
-                if (error) throw error;
                 alert("Dia de bloqueio gravado!");
                 document.getElementById('blockDate').value = "";
                 document.getElementById('blockReason').value = "";
                 await carregarGerentesEBase();
                 initCalendar();
             } catch(e) {
-                alert("Erro Supabase Detalhado: " + JSON.stringify(e));
+                alert("Erro ao registrar.");
             }
         }
 
@@ -539,13 +538,12 @@
             const end = document.getElementById('vacEnd').value;
             if(!start || !end) return alert("Preencha o período.");
             try {
-                const { error } = await supabaseClient.from('ferias').insert([{ data_inicio: start, data_fim: end, gerente_id: appState.currentUser.id }]);
-                if (error) throw error;
+                await supabaseClient.from('ferias').insert([{ data_inicio: start, data_fim: end, gerente_id: appState.currentUser.id }]);
                 alert("Férias salvas!");
                 await carregarGerentesEBase();
                 initCalendar();
             } catch(e) {
-                alert("Erro Supabase Detalhado: " + JSON.stringify(e));
+                alert("Erro ao registrar férias.");
             }
         }
 
@@ -744,6 +742,29 @@
             `).join('');
         }
 
+        // FUNÇÃO DE SUPREMACIA DO ADM: ABRE O SELETOR DE SELEÇÃO AO CLICAR NA LINHA
+        function openModal(day) {
+            if (appState.currentUser.role !== 'admin') return; // Apenas o administrador altera emergências
+            
+            currentSelectedDay = day;
+            document.getElementById('modalTitle').textContent = `Alteração Manual — Dia ${day}`;
+            const abSel = document.getElementById('modalAbertura');
+            const fechSel = document.getElementById('modalFechamento');
+            
+            if(appState.gerentes.length === 0) return;
+
+            // Preenche dinamicamente as caixas com a lista real de gerentes ativos
+            abSel.innerHTML = appState.gerentes.map(g => `<option value="${g.nome}">${g.nome}</option>`).join('');
+            fechSel.innerHTML = appState.gerentes.map(g => `<option value="${g.nome}">${g.nome}</option>`).join('');
+            
+            abSel.value = appState.escala[day]?.abertura || "";
+            fechSel.value = appState.escala[day]?.fechamento || "";
+            
+            document.getElementById('dayModal').classList.remove('hidden');
+        }
+
+        function closeModal() { document.getElementById('dayModal').classList.add('hidden'); }
+
         function openAdminManagerModal() {
             renderAdminManagerList();
             renderRestrictionsOnModal();
@@ -778,6 +799,13 @@
             await supabaseClient.from('gerentes').delete().eq('id', id);
             await carregarGerentesEBase();
             initCalendar();
+        }
+
+        function formatarData(dtStr) {
+            if(!dtStr) return "";
+            const partes = dtStr.split('-');
+            if(partes.length === 3) return `${partes[2]}/${partes[1]}`;
+            return dtStr;
         }
     </script>
 </body>
