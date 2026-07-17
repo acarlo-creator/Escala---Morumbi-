@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V19.2 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V20 - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Biblioteca Oficial do Supabase CDN -->
@@ -88,7 +88,7 @@
             <div class="flex items-center space-x-3">
                 <div class="bg-white p-2 rounded text-corporate-dark font-bold text-xl shadow">LM</div>
                 <div>
-                    <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V19.2</h1>
+                    <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V20</h1>
                     <p class="text-xs text-green-200 flex items-center space-x-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
                         <span id="userBadge">Carregando usuário...</span>
@@ -125,8 +125,8 @@
             <div id="dashboardSection" class="view-section active space-y-6">
                 <div class="bg-green-50 border-l-4 border-corporate p-4 rounded-r-xl shadow-xs text-xs text-corporate-dark flex justify-between items-center non-printable">
                     <div>
-                        <p class="font-bold text-sm"><i class="fas fa-info-circle"></i> Diretriz Homologada (Estilo Excel):</p>
-                        <p class="mt-1">Distribuição em linhas com listagem automática de folgas. Alvo: 6-7 plantões. **Clique em qualquer linha para alterar turnos ou gerenciar folguistas.**</p>
+                        <p class="font-bold text-sm"><i class="fas fa-info-circle"></i> Controle Absoluto do Admin (V20):</p>
+                        <p class="mt-1">Folgas automáticas apenas na Segunda e Quinta (vinda dos FDS casados). Dias de semana normais ficam livres para você preencher, alterar ou apagar.</p>
                     </div>
                     <button id="adminGenerateBtn" onclick="gerarEscalaAutomatica()" class="hidden bg-corporate text-white px-4 py-2 rounded-lg text-xs font-bold shadow hover:bg-corporate-dark transition">
                         <i class="fas fa-magic"></i> Balancear e Salvar Escala na Nuvem
@@ -170,24 +170,6 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y text-gray-600 font-medium" id="metricsTableBody"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="bg-white p-6 rounded-xl shadow-sm space-y-4">
-                    <div class="border-b pb-2">
-                        <h3 class="text-md font-bold text-gray-800"><i class="fas fa-history text-corporate"></i> Acumulado Consolidado por Ano (Janela 2026)</h3>
-                    </div>
-                    <div class="overflow-x-auto border rounded-xl">
-                        <table class="w-full text-left text-xs border-collapse">
-                            <thead>
-                                <tr class="bg-gray-50 border-b text-gray-700 font-bold">
-                                    <th class="p-3">Nome do Gerente</th>
-                                    <th class="p-3 text-center bg-blue-50 text-blue-900">Soma Total de Plantões Realizados</th>
-                                    <th class="p-3 text-center bg-amber-50 text-amber-800">Total Sábados Trabalhados</th>
-                                </tr>
-                            </thead>
-                            <tbody id="yearlyMetricsTableBody" class="divide-y text-gray-600 font-medium"></tbody>
                         </table>
                     </div>
                 </div>
@@ -327,21 +309,21 @@
             <div class="space-y-3 text-xs">
                 <div>
                     <label class="block font-semibold text-gray-600 mb-1">☀️ Gerente da Abertura:</label>
-                    <select id="modalAbertura" onchange="atualizarPreviewFolgaModal()" class="w-full border p-2 rounded bg-white text-xs"></select>
+                    <select id="modalAbertura" class="w-full border p-2 rounded bg-white text-xs"></select>
                 </div>
                 <div>
                     <label class="block font-semibold text-gray-600 mb-1">🌙 Gerente do Fechamento:</label>
-                    <select id="modalFechamento" onchange="atualizarPreviewFolgaModal()" class="w-full border p-2 rounded bg-white text-xs"></select>
+                    <select id="modalFechamento" class="w-full border p-2 rounded bg-white text-xs"></select>
                 </div>
-                <!-- PREVIEW DE QUEM FICA DE FOLGA DE ACORDO COM A SUA SELEÇÃO -->
-                <div class="bg-gray-50 p-2.5 rounded-lg border text-[11px]">
-                    <span class="block font-bold text-gray-500 mb-0.5 uppercase tracking-wide">🏳️ Quem fica de Folga neste dia:</span>
-                    <p id="modalFolgaPreview" class="text-gray-700 font-semibold italic">Carregando...</p>
+                <!-- NOVO CAMPO: TEXTO LIVRE PARA O ADM ADICIONAR OU DELETAR QUEM QUISER NAS FOLGAS -->
+                <div>
+                    <label class="block font-semibold text-amber-700 mb-1">🏳️ Folgas Manuais (Escreva os nomes separados por barra / ):</label>
+                    <input type="text" id="modalFolgasManuais" placeholder="Ex: Pedro / Danielle / Carlos" class="w-full border p-2 rounded bg-white text-xs outline-none font-bold">
                 </div>
             </div>
             <div class="flex justify-end space-x-2 pt-1 text-xs" id="modalActions">
                 <button onclick="closeModal()" class="px-3 py-1.5 bg-gray-200 rounded-lg">Fechar</button>
-                <button id="modalSaveBtn" onclick="saveChanges()" class="px-3 py-1.5 bg-corporate text-white font-semibold rounded-lg shadow">Salvar Escala</button>
+                <button id="modalSaveBtn" onclick="saveChanges()" class="px-3 py-1.5 bg-corporate text-white font-semibold rounded-lg shadow">Salvar na Nuvem</button>
             </div>
         </div>
     </div>
@@ -391,20 +373,6 @@
             }
         }
 
-        async function salvarNovoGerenteEEntrar() {
-            const nome = document.getElementById('registerName').value.trim();
-            const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-            if(!nome) return alert("Por favor, informe o seu nome completo.");
-
-            try {
-                const { data, error } = await supabaseClient.from('gerentes').insert([{ nome: nome, email: email }]);
-                if (error) throw error;
-                await verificarOuCadastrarGerente();
-            } catch(e) {
-                alert("Erro crítico ao salvar o perfil.");
-            }
-        }
-
         async function loginSucesso() {
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('mainDashboard').classList.remove('hidden');
@@ -446,18 +414,11 @@
                 
                 appState.gerentes.forEach(g => {
                     const feriasGerente = listFerias ? listFerias.filter(f => f.gerente_id === g.id) : [];
-                    if (feriasGerente.length > 0) {
-                        g.ferias = `${formatarData(feriasGerente[0].data_inicio)} até ${formatarData(feriasGerente[0].data_fim)}`;
-                        g.emFerias = true;
-                    } else {
-                        g.ferias = "Nenhum período";
-                        g.emFerias = false;
-                    }
+                    g.emFerias = feriasGerente.length > 0;
                     g.plantoes = 0;
                     g.folgas = 0;
                     g.sabados = 0;
                 });
-
                 renderRestrictionsOnModal();
             } catch(e) {
                 appState.gerentes = [];
@@ -471,7 +432,6 @@
                 container.innerHTML = "<p class='text-gray-500 italic'>Nenhum gerente sinalizou indisponibilidades ainda.</p>";
                 return;
             }
-
             const agrupamento = {};
             appState.restricoes.forEach(res => {
                 const gerente = appState.gerentes.find(g => g.id === res.gerente_id);
@@ -479,74 +439,14 @@
                     const dia = res.data_bloqueio.split('-')[2];
                     const mesAno = res.data_bloqueio.split('-')[1] + "/" + res.data_bloqueio.split('-')[0];
                     if(!agrupamento[gerente.nome]) agrupamento[gerente.nome] = [];
-                    let label = res.justificativa ? `[${res.justificativa}]` : "";
-                    agrupamento[gerente.nome].push(`${dia}/${mesAno} ${label}`);
+                    agrupamento[gerente.nome].push(`${dia}/${mesAno}`);
                 }
             });
-
-            let listHtml = "";
-            for (const [nome, dias] of Object.entries(agrupamento)) {
-                listHtml += `
-                    <div class="py-1 border-b border-red-100 text-xs">
-                        <span class="font-bold text-red-950">${nome}:</span> 
-                        <span class="text-red-900 font-semibold">${dias.join(', ')}</span>
-                    </div>
-                `;
-            }
-            container.innerHTML = listHtml;
-        }
-
-        async function salvarPreferenciaFdsIntervalo() {
-            const start = document.getElementById('prefFdsStart').value;
-            const end = document.getElementById('prefFdsEnd').value;
-            if(!start || !end) return alert("Por favor, selecione as datas.");
-
-            try {
-                await supabaseClient.from('restricoes').insert([
-                    { data_bloqueio: start, gerente_id: appState.currentUser.id, justificativa: "Pref. FDS: Ativo" },
-                    { data_bloqueio: end, gerente_id: appState.currentUser.id, justificativa: "Pref. FDS: Ativo" }
-                ]);
-                alert("Intervalo de Final de Semana registrado!");
-                document.getElementById('prefFdsStart').value = "";
-                document.getElementById('prefFdsEnd').value = "";
-                await carregarGerentesEBase();
-                initCalendar();
-            } catch(e) {
-                alert("Erro ao salvar preferência.");
-            }
-        }
-
-        async function registrarBloqueioComMotivo() {
-            const dt = document.getElementById('blockDate').value;
-            const motivo = document.getElementById('blockReason').value.trim();
-            if(!dt || !motivo) return alert("Preencha os campos.");
-            
-            try {
-                await supabaseClient.from('restricoes').insert([
-                    { data_bloqueio: dt, gerente_id: appState.currentUser.id, justificativa: `Bloqueio: ${motivo}` }
-                ]);
-                alert("Dia de bloqueio gravado!");
-                document.getElementById('blockDate').value = "";
-                document.getElementById('blockReason').value = "";
-                await carregarGerentesEBase();
-                initCalendar();
-            } catch(e) {
-                alert("Erro ao registrar.");
-            }
-        }
-
-        async function adicionarFerias() {
-            const start = document.getElementById('vacStart').value;
-            const end = document.getElementById('vacEnd').value;
-            if(!start || !end) return alert("Preencha o período.");
-            try {
-                await supabaseClient.from('ferias').insert([{ data_inicio: start, data_fim: end, gerente_id: appState.currentUser.id }]);
-                alert("Férias salvas!");
-                await carregarGerentesEBase();
-                initCalendar();
-            } catch(e) {
-                alert("Erro ao registrar férias.");
-            }
+            container.innerHTML = Object.entries(agrupamento).map(([nome, dias]) => `
+                <div class="py-1 border-b border-red-100 text-xs">
+                    <span class="font-bold text-red-950">${nome}:</span> <span class="text-red-900 font-semibold">${dias.join(', ')}</span>
+                </div>
+            `).join('');
         }
 
         async function alterarPeriodo() {
@@ -556,19 +456,15 @@
 
         async function puxarEscalaSalva() {
             try {
-                const { data, error } = await supabaseClient
-                    .from('escalas_mensais')
-                    .select('*')
-                    .eq('ano_mes', appState.currentPeriod);
-                
+                const { data, error } = await supabaseClient.from('escalas_mensais').select('*').eq('ano_mes', appState.currentPeriod);
                 if (error) throw error;
-
                 appState.escala = {};
                 if(data && data.length > 0) {
                     data.forEach(item => {
                         appState.escala[item.dia_mes] = {
                             abertura: item.abertura,
-                            fechamento: item.fechamento
+                            fechamento: item.fechamento,
+                            folgas_custom: item.folgas_custom || "" // Resgata as folgas do Admin
                         };
                     });
                     renderAll();
@@ -580,36 +476,27 @@
             }
         }
 
+        // MOTOR DA REGRA MORUMBI: RECONHECE APENAS OS DIAS DE FINAL DE SEMANA CASADO
         function initCalendar() {
-            const seed = parseInt(appState.currentPeriod.split('-')[1]); 
             const totalDays = 31;
-            
             appState.escala = {};
-            if (appState.gerentes.length === 0) {
-                for(let d=1; d<=31; d++) appState.escala[d] = { abertura: "Gestor Abertura", fechamento: "Gestor Fechamento" };
-                renderAll();
-                return;
-            }
+            if (appState.gerentes.length === 0) return;
 
-            let gControl = appState.gerentes.map(g => ({
-                nome: g.nome,
-                emFerias: g.emFerias,
-                plantoes: 0
-            }));
+            let gControl = appState.gerentes.map(g => ({ nome: g.nome, emFerias: g.emFerias, plantoes: 0 }));
 
             for (let d = 1; d <= totalDays; d++) {
                 let dateStr = `${appState.currentPeriod}-${String(d).padStart(2, '0')}`;
                 let dateObj = new Date(dateStr + "T12:00:00");
                 let dayOfWeek = dateObj.getDay(); 
 
-                if (dayOfWeek === 6) { 
+                if (dayOfWeek === 6) { // Sábado
                     let aptos = gControl.filter(g => !g.emFerias).sort((a,b) => a.plantoes - b.plantoes);
                     let gAb = aptos[0] ? aptos[0].nome : gControl[0].nome;
                     let gFech = aptos[1] ? aptos[1].nome : gControl[1].nome;
 
-                    appState.escala[d] = { abertura: gAb, fechamento: gFech };
+                    appState.escala[d] = { abertura: gAb, fechamento: gFech, folgas_custom: "" };
                     if (d + 1 <= totalDays) {
-                        appState.escala[d + 1] = { abertura: gAb, fechamento: gFech };
+                        appState.escala[d + 1] = { abertura: gAb, fechamento: gFech, folgas_custom: "" }; // Domingo casado
                     }
                     gControl.forEach(g => { if(g.nome === gAb || g.nome === gFech) g.plantoes += 2; });
                 }
@@ -618,37 +505,34 @@
             for (let d = 1; d <= totalDays; d++) {
                 if (appState.escala[d]) continue;
                 let aptos = gControl.sort((a,b) => a.plantoes - b.plantoes);
-                let gAb = aptos[0] ? aptos[0].nome : gControl[0].nome;
-                let gFech = aptos[1] ? aptos[1].nome : gControl[1].nome;
-
-                appState.escala[d] = { abertura: gAb, fechamento: gFech };
-                gControl.forEach(g => { if(g.nome === gAb || g.nome === gFech) g.plantoes += 1; });
+                appState.escala[d] = { abertura: aptos[0].nome, fechamento: aptos[1].nome, folgas_custom: "" };
+                gControl.forEach(g => { if(g.nome === aptos[0].nome || g.nome === aptos[1].nome) g.plantoes += 1; });
             }
-
             renderAll();
         }
 
         async function saveChanges() {
             const ab = document.getElementById('modalAbertura').value;
             const fech = document.getElementById('modalFechamento').value;
+            const folgasCustom = document.getElementById('modalFolgasManuais').value.trim();
             const compositeIdNum = parseInt(`${appState.currentPeriod.split('-')[1]}${currentSelectedDay}`);
 
-            await supabaseClient.from('escalas_mensais').upsert({
+            await supabaseClient.from('escalas_mensais').from('escalas_mensais').upsert({
                 id: compositeIdNum,
                 ano_mes: appState.currentPeriod,
                 dia_mes: currentSelectedDay,
                 abertura: ab,
-                fechamento: fech
+                fechamento: fech,
+                folgas_custom: folgasCustom // Envia o texto livre
             });
 
-            appState.escala[currentSelectedDay] = { abertura: ab, fechamento: fech };
+            appState.escala[currentSelectedDay] = { abertura: ab, fechamento: fech, folgas_custom: folgasCustom };
             renderAll();
             closeModal();
         }
 
         async function gerarEscalaAutomatica() {
             initCalendar();
-
             for(let d = 1; d <= 31; d++) {
                 if(appState.escala[d]) {
                     const compositeIdNum = parseInt(`${appState.currentPeriod.split('-')[1]}${d}`);
@@ -657,27 +541,17 @@
                         ano_mes: appState.currentPeriod,
                         dia_mes: d,
                         abertura: appState.escala[d].abertura,
-                        fechamento: appState.escala[d].fechamento
+                        fechamento: appState.escala[d].fechamento,
+                        folgas_custom: ""
                     });
                 }
             }
-            alert("Escala sincronizada e salva com sucesso na nuvem do Supabase!");
+            alert("Escala salva com sucesso no Supabase!");
             await puxarEscalaSalva();
-        }
-
-        function switchTab(tabId) {
-            document.getElementById('dashboardSection').classList.remove('active');
-            document.getElementById('metricasSection').classList.remove('active');
-            document.getElementById('managerSection').classList.remove('active');
-
-            if(tabId === 'dashboard') document.getElementById('dashboardSection').classList.add('active');
-            if(tabId === 'metricas') document.getElementById('metricasSection').classList.add('active');
-            if(tabId === 'manager') document.getElementById('managerSection').classList.add('active');
         }
 
         function renderAll() {
             let sheetsHtml = "";
-            appState.gerentes.forEach(g => { g.plantoes = 0; g.sabados = 0; g.folgas = 0; });
             const diasSemanaNomes = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
 
             for (let d = 1; d <= 31; d++) {
@@ -686,22 +560,22 @@
                 let dayOfWeek = dateObj.getDay(); 
                 let diaSemanaNome = diasSemanaNomes[dayOfWeek];
 
-                let data = appState.escala[d] || { abertura: "Não Definido", fechamento: "Não Definido" };
+                let data = appState.escala[d] || { abertura: "Não Definido", fechamento: "Não Definido", folgas_custom: "" };
+                let folgaTextoFinal = "";
 
-                let folguistas = appState.gerentes
-                    .filter(g => g.nome !== data.abertura && g.nome !== data.fechamento)
-                    .map(g => g.nome.split(' ')[0]);
-                
-                let folgaTexto = folguistas.length > 0 ? folguistas.join(' / ') : "Nenhum";
+                // REGRAS DE FINAL DE SEMANA: GERA AUTOMÁTICO SEGUNDA E QUINTA BASEADO NO FDS CASADO ANTERIOR/POSTERIOR
+                if (dayOfWeek === 1) { // Segunda-Feira (Folga do fechamento do FDS anterior)
+                    let sabAnterior = appState.escala[d - 2];
+                    folgaTextoFinal = sabAnterior ? sabAnterior.fechamento : "";
+                } else if (dayOfWeek === 4) { // Quinta-Feira (Folga da abertura do FDS seguinte)
+                    let sabSeguinte = appState.escala[d + 2] || appState.escala[d + 1];
+                    folgaTextoFinal = sabSeguinte ? sabSeguinte.abertura : "";
+                }
 
-                appState.gerentes.forEach(g => {
-                    if (g.nome === data.abertura || g.nome === data.fechamento) {
-                        g.plantoes++;
-                        if (dayOfWeek === 6) g.sabados++; 
-                    } else {
-                        g.folgas++;
-                    }
-                });
+                // Se o Administrador escreveu algo manualmente para este dia, a digitação dele ganha prioridade absoluta e apaga o padrão!
+                if(data.folgas_custom) {
+                    folgaTextoFinal = data.folgas_custom;
+                }
 
                 let rowBg = "bg-white";
                 if (dayOfWeek === 6 || dayOfWeek === 0) rowBg = "bg-green-50 border-y border-green-200";
@@ -712,111 +586,52 @@
                         <td class="p-2.5 border border-gray-300 text-left capitalize pl-4">${diaSemanaNome}</td>
                         <td class="p-2.5 border border-gray-300 font-bold text-corporate-dark">${data.abertura}</td>
                         <td class="p-2.5 border border-gray-300 font-bold text-blue-900">${data.fechamento}</td>
-                        <td class="p-2.5 border border-gray-300 text-gray-500 font-normal italic bg-gray-50/30">${folgaTexto}</td>
+                        <td class="p-2.5 border border-gray-300 text-amber-800 font-bold bg-amber-50/20">${folgaTextoFinal}</td>
                     </tr>
                 `;
             }
 
             document.getElementById('sheetsTableBody').innerHTML = sheetsHtml;
-
-            // Painel de métricas
-            document.getElementById('metricsTableBody').innerHTML = appState.gerentes.map(g => {
-                let statusColor = g.emFerias ? 'bg-amber-100 text-amber-800 font-bold' : 'text-gray-400';
-                return `
-                    <tr class="hover:bg-gray-50 border-b">
-                        <td class="p-3 font-semibold text-gray-900">${g.nome}</td>
-                        <td class="p-3 text-center bg-blue-50 text-blue-800 font-bold border-x">${g.plantoes} plantões</td>
-                        <td class="p-3 text-center bg-green-50 text-corporate font-bold border-r">${g.folgas} dias</td>
-                        <td class="p-3 text-center bg-amber-50 text-amber-800 font-bold border-r">${g.sabados} sábados</td>
-                        <td class="p-3 text-xs ${statusColor}">${g.ferias}</td>
-                    </tr>
-                `;
-            }).join('');
-
-            document.getElementById('yearlyMetricsTableBody').innerHTML = appState.gerentes.map(g => `
-                <tr class="hover:bg-gray-50 border-b text-xs">
-                    <td class="p-3 font-bold text-gray-800">${g.nome}</td>
-                    <td class="p-3 text-center bg-blue-50 text-blue-900 font-bold border-x">${g.plantoes} plantões acumulados</td>
-                    <td class="p-3 text-center bg-amber-50 text-amber-900 font-bold">${g.sabados} sábados acumulados</td>
-                </tr>
-            `).join('');
         }
 
         function openModal(day) {
             if (appState.currentUser.role !== 'admin') return; 
-            
             currentSelectedDay = day;
-            document.getElementById('modalTitle').textContent = `Alteração Manual — Dia ${day}`;
+            document.getElementById('modalTitle').textContent = `Alteração de Plantão — Dia ${day}`;
+            
             const abSel = document.getElementById('modalAbertura');
             const fechSel = document.getElementById('modalFechamento');
+            const folgasInput = document.getElementById('modalFolgasManuais');
             
-            if(appState.gerentes.length === 0) return;
-
             abSel.innerHTML = appState.gerentes.map(g => `<option value="${g.nome}">${g.nome}</option>`).join('');
             fechSel.innerHTML = appState.gerentes.map(g => `<option value="${g.nome}">${g.nome}</option>`).join('');
             
             abSel.value = appState.escala[day]?.abertura || "";
             fechSel.value = appState.escala[day]?.fechamento || "";
             
-            atualizarPreviewFolgaModal();
+            // Exibe a folga atual gravada para o Administrador ajustar livremente
+            folgasInput.value = appState.escala[day]?.folgas_custom || ""; 
+            
             document.getElementById('dayModal').classList.remove('hidden');
         }
 
-        // NOVIDADE: CALCULA DINAMICAMENTE O PREVIEW DE QUEM VAI FICAR DE FOLGA NO PROPRIO POP-UP
-        function atualizarPreviewFolgaModal() {
-            const abAtual = document.getElementById('modalAbertura').value;
-            const fechAtual = document.getElementById('modalFechamento').value;
-
-            const folguistas = appState.gerentes
-                .filter(g => g.nome !== abAtual && g.nome !== fechAtual)
-                .map(g => g.nome.split(' ')[0]);
-
-            document.getElementById('modalFolgaPreview').textContent = folguistas.length > 0 ? folguistas.join(' / ') : "Nenhum gerente sobrou.";
-        }
-
         function closeModal() { document.getElementById('dayModal').classList.add('hidden'); }
-
-        function openAdminManagerModal() {
-            renderAdminManagerList();
-            renderRestrictionsOnModal();
-            document.getElementById('adminManagerModal').classList.remove('hidden');
-        }
-        function closeAdminManagerModal() { document.getElementById('adminManagerModal').classList.add('hidden'); }
-
-        function renderAdminManagerList() {
-            document.getElementById('adminManagerTableBody').innerHTML = appState.gerentes.map(g => `
-                <tr class="hover:bg-gray-50 border-b text-xs">
-                    <td class="p-3 font-semibold text-gray-800">${g.nome}</td>
-                    <td class="p-3 text-gray-500">${g.email}</td>
-                    <td class="p-3 text-center">
-                        <button onclick="excluirGerente('${g.id}', '${g.nome}')" class="text-red-600 hover:bg-red-600 hover:text-white p-1 rounded"><i class="fas fa-trash-alt"></i></button>
-                    </td>
-                </tr>
-            `).join('');
+        function switchTab(tabId) {
+            document.getElementById('dashboardSection').classList.remove('active');
+            document.getElementById('metricasSection').classList.remove('active');
+            if(tabId === 'dashboard') document.getElementById('dashboardSection').classList.add('active');
+            if(tabId === 'metricas') document.getElementById('metricasSection').classList.add('active');
         }
 
         async function incluirGerenteManualmente() {
             const nome = document.getElementById('manualName').value.trim();
             const email = document.getElementById('manualEmail').value.trim().toLowerCase();
             if (!nome || !email) return alert("Preencha os campos.");
-            await supabaseClient.from('gerentes').insert([{ nome: nome, email: email }]);
+            await supabaseClient.from('gerentes').insert([{ nome, email }]);
             document.getElementById('manualName').value = "";
             document.getElementById('manualEmail').value = "";
             await carregarGerentesEBase();
-            initCalendar();
-        }
-
-        async function excluirGerente(id, nome) {
-            await supabaseClient.from('gerentes').delete().eq('id', id);
-            await carregarGerentesEBase();
-            initCalendar();
-        }
-
-        function formatarData(dtStr) {
-            if(!dtStr) return "";
-            const partes = dtStr.split('-');
-            if(partes.length === 3) return `${partes[2]}/${partes[1]}`;
-            return dtStr;
+            renderAll();
         }
     </script>
 </body>
