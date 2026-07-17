@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V19.1 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V19.2 - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Biblioteca Oficial do Supabase CDN -->
@@ -88,7 +88,7 @@
             <div class="flex items-center space-x-3">
                 <div class="bg-white p-2 rounded text-corporate-dark font-bold text-xl shadow">LM</div>
                 <div>
-                    <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V19.1</h1>
+                    <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V19.2</h1>
                     <p class="text-xs text-green-200 flex items-center space-x-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
                         <span id="userBadge">Carregando usuário...</span>
@@ -126,7 +126,7 @@
                 <div class="bg-green-50 border-l-4 border-corporate p-4 rounded-r-xl shadow-xs text-xs text-corporate-dark flex justify-between items-center non-printable">
                     <div>
                         <p class="font-bold text-sm"><i class="fas fa-info-circle"></i> Diretriz Homologada (Estilo Excel):</p>
-                        <p class="mt-1">Distribuição em linhas com listagem automática de folgas. Alvo: 6-7 plantões. **Clique em qualquer dia para alterar manualmente.**</p>
+                        <p class="mt-1">Distribuição em linhas com listagem automática de folgas. Alvo: 6-7 plantões. **Clique em qualquer linha para alterar turnos ou gerenciar folguistas.**</p>
                     </div>
                     <button id="adminGenerateBtn" onclick="gerarEscalaAutomatica()" class="hidden bg-corporate text-white px-4 py-2 rounded-lg text-xs font-bold shadow hover:bg-corporate-dark transition">
                         <i class="fas fa-magic"></i> Balancear e Salvar Escala na Nuvem
@@ -320,18 +320,23 @@
         </div>
     </div>
 
-    <!-- MODAL POPUP FOR DETAILS -->
+    <!-- MODAL POPUP DE DETALHES E AJUSTES DE FOLGA -->
     <div id="dayModal" class="fixed inset-0 bg-black bg-opacity-40 hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-xl shadow-xl max-w-sm w-full p-5 space-y-4">
             <h3 class="font-bold text-gray-800 text-sm border-b pb-2" id="modalTitle">Detalhamento do Dia</h3>
             <div class="space-y-3 text-xs">
                 <div>
                     <label class="block font-semibold text-gray-600 mb-1">☀️ Gerente da Abertura:</label>
-                    <select id="modalAbertura" class="w-full border p-2 rounded bg-white text-xs"></select>
+                    <select id="modalAbertura" onchange="atualizarPreviewFolgaModal()" class="w-full border p-2 rounded bg-white text-xs"></select>
                 </div>
                 <div>
                     <label class="block font-semibold text-gray-600 mb-1">🌙 Gerente do Fechamento:</label>
-                    <select id="modalFechamento" class="w-full border p-2 rounded bg-white text-xs"></select>
+                    <select id="modalFechamento" onchange="atualizarPreviewFolgaModal()" class="w-full border p-2 rounded bg-white text-xs"></select>
+                </div>
+                <!-- PREVIEW DE QUEM FICA DE FOLGA DE ACORDO COM A SUA SELEÇÃO -->
+                <div class="bg-gray-50 p-2.5 rounded-lg border text-[11px]">
+                    <span class="block font-bold text-gray-500 mb-0.5 uppercase tracking-wide">🏳️ Quem fica de Folga neste dia:</span>
+                    <p id="modalFolgaPreview" class="text-gray-700 font-semibold italic">Carregando...</p>
                 </div>
             </div>
             <div class="flex justify-end space-x-2 pt-1 text-xs" id="modalActions">
@@ -392,12 +397,9 @@
             if(!nome) return alert("Por favor, informe o seu nome completo.");
 
             try {
-                const { data, error } = await supabaseClient.from('gerentes').insert([{ nome: nome, email: email }]).select().single();
+                const { data, error } = await supabaseClient.from('gerentes').insert([{ nome: nome, email: email }]);
                 if (error) throw error;
-
-                appState.currentUser = { id: data.id, nome: data.nome, email: data.email, role: "gerente" };
-                alert("Perfil criado com sucesso!");
-                loginSucesso();
+                await verificarOuCadastrarGerente();
             } catch(e) {
                 alert("Erro crítico ao salvar o perfil.");
             }
@@ -595,7 +597,6 @@
                 plantoes: 0
             }));
 
-            // Passada FDS Casado estruturado
             for (let d = 1; d <= totalDays; d++) {
                 let dateStr = `${appState.currentPeriod}-${String(d).padStart(2, '0')}`;
                 let dateObj = new Date(dateStr + "T12:00:00");
@@ -614,7 +615,6 @@
                 }
             }
 
-            // Passada Dias de Semana normais
             for (let d = 1; d <= totalDays; d++) {
                 if (appState.escala[d]) continue;
                 let aptos = gControl.sort((a,b) => a.plantoes - b.plantoes);
@@ -742,9 +742,8 @@
             `).join('');
         }
 
-        // FUNÇÃO DE SUPREMACIA DO ADM: ABRE O SELETOR DE SELEÇÃO AO CLICAR NA LINHA
         function openModal(day) {
-            if (appState.currentUser.role !== 'admin') return; // Apenas o administrador altera emergências
+            if (appState.currentUser.role !== 'admin') return; 
             
             currentSelectedDay = day;
             document.getElementById('modalTitle').textContent = `Alteração Manual — Dia ${day}`;
@@ -753,14 +752,26 @@
             
             if(appState.gerentes.length === 0) return;
 
-            // Preenche dinamicamente as caixas com a lista real de gerentes ativos
             abSel.innerHTML = appState.gerentes.map(g => `<option value="${g.nome}">${g.nome}</option>`).join('');
             fechSel.innerHTML = appState.gerentes.map(g => `<option value="${g.nome}">${g.nome}</option>`).join('');
             
             abSel.value = appState.escala[day]?.abertura || "";
             fechSel.value = appState.escala[day]?.fechamento || "";
             
+            atualizarPreviewFolgaModal();
             document.getElementById('dayModal').classList.remove('hidden');
+        }
+
+        // NOVIDADE: CALCULA DINAMICAMENTE O PREVIEW DE QUEM VAI FICAR DE FOLGA NO PROPRIO POP-UP
+        function atualizarPreviewFolgaModal() {
+            const abAtual = document.getElementById('modalAbertura').value;
+            const fechAtual = document.getElementById('modalFechamento').value;
+
+            const folguistas = appState.gerentes
+                .filter(g => g.nome !== abAtual && g.nome !== fechAtual)
+                .map(g => g.nome.split(' ')[0]);
+
+            document.getElementById('modalFolgaPreview').textContent = folguistas.length > 0 ? folguistas.join(' / ') : "Nenhum gerente sobrou.";
         }
 
         function closeModal() { document.getElementById('dayModal').classList.add('hidden'); }
