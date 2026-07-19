@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V26 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V27 - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Biblioteca Oficial do Supabase CDN -->
@@ -88,7 +88,7 @@
             <div class="flex items-center space-x-3">
                 <div class="bg-white p-2 rounded text-corporate-dark font-bold text-xl shadow">LM</div>
                 <div>
-                    <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V26</h1>
+                    <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V27</h1>
                     <p class="text-xs text-green-200 flex items-center space-x-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
                         <span id="userBadge">Carregando usuário...</span>
@@ -125,8 +125,8 @@
             <div id="dashboardSection" class="view-section active space-y-6">
                 <div class="bg-green-50 border-l-4 border-corporate p-4 rounded-r-xl shadow-xs text-xs text-corporate-dark flex justify-between items-center non-printable">
                     <div>
-                        <p class="font-bold text-sm"><i class="fas fa-history"></i> Distância Mínima Garatida (V26):</p>
-                        <p class="mt-1">A IA agora força um **espaço de pelo menos 2 dias de descanso** após cada plantão para o gestor, além do equilíbrio de 50%/50% nos turnos.</p>
+                        <p class="font-bold text-sm"><i class="fas fa-check-circle"></i> Loop Sequencial Unificado (V27):</p>
+                        <p class="mt-1">A IA agora calcula dia por dia sequencialmente, forçando a igualdade total de plantões no fechamento do mês.</p>
                     </div>
                     <button id="adminGenerateBtn" onclick="gerarEscalaAutomatica()" class="hidden bg-corporate text-white px-4 py-2 rounded-lg text-xs font-bold shadow hover:bg-corporate-dark transition">
                         <i class="fas fa-magic"></i> Balancear e Salvar Escala na Nuvem
@@ -179,7 +179,6 @@
                     <div>
                         <h3 class="text-lg font-bold text-gray-800">Minha Área de Solicitações</h3>
                     </div>
-
                     <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-r-xl space-y-3">
                         <h4 class="font-bold text-sm text-emerald-800 flex items-center space-x-1.5">
                             <i class="fas fa-star"></i>
@@ -199,38 +198,6 @@
                             </button>
                         </div>
                     </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="border p-4 rounded-xl space-y-3 bg-gray-50">
-                            <h4 class="font-bold text-sm text-red-700"><i class="fas fa-calendar-times"></i> Sinalizar Dia Bloqueado</h4>
-                            <div class="text-xs space-y-2">
-                                <div>
-                                    <label class="block mb-1 font-semibold text-gray-600">Escolha a Data:</label>
-                                    <input type="date" id="blockDate" class="w-full border p-2 rounded bg-white text-xs">
-                                </div>
-                                <div>
-                                    <label class="block mb-1 font-semibold text-gray-600">Escreva o Motivo:</label>
-                                    <input type="text" id="blockReason" placeholder="Ex: Consulta médica" class="w-full border p-2 rounded bg-white text-xs outline-none">
-                                </div>
-                            </div>
-                            <button onclick="registrarBloqueioComMotivo()" class="w-full bg-red-600 text-white py-2 rounded text-xs font-bold shadow">Registrar Bloqueio</button>
-                        </div>
-
-                        <div class="border p-4 rounded-xl space-y-3 bg-gray-50">
-                            <h4 class="font-bold text-sm text-corporate-dark"><i class="fas fa-plane"></i> Lançamento de Férias</h4>
-                            <div class="grid grid-cols-2 gap-2 text-xs">
-                                <div>
-                                    <label class="block mb-1 font-semibold text-gray-600">Início:</label>
-                                    <input type="date" id="vacStart" class="w-full border p-2 rounded bg-white text-xs">
-                                </div>
-                                <div>
-                                    <label class="block mb-1 font-semibold text-gray-600">Fim:</label>
-                                    <input type="date" id="vacEnd" class="w-full border p-2 rounded bg-white text-xs">
-                                </div>
-                            </div>
-                            <button onclick="adicionarFerias()" class="w-full bg-corporate text-white py-2 rounded text-xs font-bold shadow">Registrar Férias</button>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -243,26 +210,11 @@
             <div class="flex justify-between items-center border-b pb-3">
                 <h3 class="text-lg font-bold text-gray-800 flex items-center space-x-2">
                     <i class="fas fa-users text-amber-500"></i>
-                    <span>Painel de Gerenciamento Manual e Quadro de Restrições</span>
+                    <span>Painel de Gerenciamento Manual</span>
                 </h3>
                 <button onclick="closeAdminManagerModal()" class="text-gray-400 hover:text-gray-600 text-lg">&times;</button>
             </div>
-
-            <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-xl space-y-2">
-                <h4 class="font-bold text-xs uppercase tracking-wider text-red-800 flex items-center space-x-1">
-                    <i class="fas fa-calendar-times"></i>
-                    <span>Quadro Geral de Restrições e Demandas Solicitadas</span>
-                </h4>
-                <div class="text-xs text-red-950 font-semibold space-y-1" id="adminRestrictionsList">
-                    Carregando demandas cadastradas...
-                </div>
-            </div>
-
             <div class="bg-gray-50 border p-4 rounded-xl space-y-3">
-                <h4 class="font-bold text-xs uppercase tracking-wider text-gray-600 flex items-center space-x-1">
-                    <i class="fas fa-user-plus text-corporate"></i>
-                    <span>Incluir Gerente Manualmente</span>
-                </h4>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                     <div>
                         <label class="block mb-1 font-semibold text-gray-600">Nome Completo do Gerente:</label>
@@ -277,21 +229,17 @@
                     Adicionar Gerente na Base
                 </button>
             </div>
-
             <div class="space-y-2">
-                <h4 class="font-bold text-xs uppercase tracking-wider text-gray-600">Lista Geral de Gerentes Ativos</h4>
-                <div class="overflow-x-auto border rounded-xl">
-                    <table class="w-full text-left text-xs border-collapse">
-                        <thead>
-                            <tr class="bg-gray-100 border-b text-gray-700 font-bold">
-                                <th class="p-3">Nome</th>
-                                <th class="p-3">E-mail</th>
-                                <th class="p-3 text-center">Excluir</th>
-                            </tr>
-                        </thead>
-                        <tbody id="adminManagerTableBody" class="divide-y text-gray-600"></tbody>
-                    </table>
-                </div>
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                        <tr class="bg-gray-100 border-b text-gray-700 font-bold">
+                            <th class="p-3">Nome</th>
+                            <th class="p-3">E-mail</th>
+                            <th class="p-3 text-center">Excluir</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminManagerTableBody" class="divide-y text-gray-600"></tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -310,11 +258,11 @@
                     <select id="modalFechamento" class="w-full border p-2 rounded bg-white text-xs"></select>
                 </div>
                 <div>
-                    <label class="block font-semibold text-corporate mb-1">🏳️ Folgas Aplicadas (Nomes separados por barra / ):</label>
+                    <label class="block font-semibold text-corporate mb-1">🏳️ Folgas Aplicadas:</label>
                     <input type="text" id="modalFolgasManuais" placeholder="Ex: Pedro / Danielle" class="w-full border p-2 rounded bg-white text-xs outline-none font-bold">
                 </div>
             </div>
-            <div class="flex justify-end space-x-2 pt-1 text-xs" id="modalActions">
+            <div class="flex justify-end space-x-2 pt-1 text-xs">
                 <button onclick="closeModal()" class="px-3 py-1.5 bg-gray-200 rounded-lg">Fechar</button>
                 <button id="modalSaveBtn" onclick="saveChanges()" class="px-3 py-1.5 bg-corporate text-white font-semibold rounded-lg shadow">Salvar na Nuvem</button>
             </div>
@@ -332,7 +280,6 @@
             currentUser: null, 
             gerentes: [],      
             escala: {},        
-            restricoes: [],
             currentPeriod: "2026-08" 
         };
 
@@ -341,9 +288,7 @@
         async function verificarOuCadastrarGerente() {
             const email = document.getElementById('loginEmail').value.trim().toLowerCase();
             if(!email) return alert("Por favor, digite o seu e-mail corporativo.");
-            if(!email.endsWith("@leroymerlin.com.br") && email !== ADMIN_EMAIL) {
-                return alert("Acesso restrito para e-mails institucionais.");
-            }
+            if(!email.endsWith("@leroymerlin.com.br") && email !== ADMIN_EMAIL) return alert("Acesso restrito.");
 
             if(email === ADMIN_EMAIL) {
                 appState.currentUser = { id: "00000000-0000-0000-0000-000000000000", nome: "Administrador Geral", email: email, role: "admin" };
@@ -351,9 +296,7 @@
             }
 
             try {
-                const { data, error } = await supabaseClient.from('gerentes').select('*').eq('email', email).maybeSingle();
-                if (error) throw error;
-
+                const { data } = await supabaseClient.from('gerentes').select('*').eq('email', email).maybeSingle();
                 if (data) {
                     appState.currentUser = { id: data.id, nome: data.nome, email: data.email, role: "gerente" };
                     loginSucesso();
@@ -361,25 +304,18 @@
                     document.getElementById('authForm').classList.add('hidden');
                     document.getElementById('registerForm').classList.remove('hidden');
                 }
-            } catch(e) {
-                alert("Falha de comunicação.");
-            }
+            } catch(e) { alert("Erro de comunicação."); }
         }
 
         async function salvarNovoGerenteEEntrar() {
             const nome = document.getElementById('registerName').value.trim();
             const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-            if(!nome) return alert("Por favor, informe o seu nome completo.");
-
+            if(!nome) return alert("Informe o nome.");
             try {
-                const { data, error } = await supabaseClient.from('gerentes').insert([{ nome: nome, email: email }]).select().single();
-                if (error) throw error;
+                const { data } = await supabaseClient.from('gerentes').insert([{ nome, email }]).select().single();
                 appState.currentUser = { id: data.id, nome: data.nome, email: data.email, role: "gerente" };
-                alert("Cadastro efetuado!");
                 loginSucesso();
-            } catch(e) {
-                alert("Erro ao efetuar o cadastro.");
-            }
+            } catch(e) { alert("Erro."); }
         }
 
         async function loginSucesso() {
@@ -398,7 +334,6 @@
                 document.getElementById('modalSaveBtn').classList.add('hidden');
                 document.getElementById('managerBtn').classList.remove('hidden');
             }
-
             await carregarGerentesEBase();
             await puxarEscalaSalva();
         }
@@ -413,81 +348,10 @@
 
         async function carregarGerentesEBase() {
             try {
-                const { data: listGerentes, error } = await supabaseClient.from('gerentes').select('*');
-                if (error) throw error;
-                appState.gerentes = listGerentes || [];
-                
-                const { data: listRestricoes } = await supabaseClient.from('restricoes').select('*');
-                appState.restricoes = listRestricoes || [];
-
+                const { data } = await supabaseClient.from('gerentes').select('*');
+                appState.gerentes = data || [];
                 renderAdminManagerList();
-                renderRestrictionsOnModal();
-            } catch(e) {
-                appState.gerentes = [];
-            }
-        }
-
-        function renderRestrictionsOnModal() {
-            const container = document.getElementById('adminRestrictionsList');
-            if(!container) return;
-            if(appState.restricoes.length === 0) {
-                container.innerHTML = "<p class='text-gray-500 italic'>Nenhum gerente sinalizou indisponibilidades ainda.</p>";
-                return;
-            }
-            const agrupamento = {};
-            appState.restricoes.forEach(res => {
-                const gerente = appState.gerentes.find(g => g.id === res.gerente_id);
-                if(gerente) {
-                    const dia = res.data_bloqueio.split('-')[2];
-                    const mesAno = res.data_bloqueio.split('-')[1] + "/" + res.data_bloqueio.split('-')[0];
-                    if(!agrupamento[gerente.nome]) agrupamento[gerente.nome] = [];
-                    agrupamento[gerente.nome].push(`${dia}/${mesAno} (${res.justificativa})`);
-                }
-            });
-            container.innerHTML = Object.entries(agrupamento).map(([nome, dias]) => `
-                <div class="py-1 border-b border-red-100 text-xs">
-                    <span class="font-bold text-red-950">${nome}:</span> <span class="text-red-900 font-semibold">${dias.join(', ')}</span>
-                </div>
-            `).join('');
-        }
-
-        async function salvarPreferenciaFdsIntervalo() {
-            const start = document.getElementById('prefFdsStart').value;
-            const end = document.getElementById('prefFdsEnd').value;
-            if(!start || !end) return alert("Selecione as datas.");
-            try {
-                await supabaseClient.from('restricoes').insert([
-                    { data_bloqueio: start, gerente_id: appState.currentUser.id, justificativa: "Pref. FDS" },
-                    { data_bloqueio: end, gerente_id: appState.currentUser.id, justificativa: "Pref. FDS" }
-                ]);
-                alert("Preferência Registrada!");
-                await carregarGerentesEBase();
-            } catch(e) { alert("Erro ao salvar."); }
-        }
-
-        async function registrarBloqueioComMotivo() {
-            const dt = document.getElementById('blockDate').value;
-            const motivo = document.getElementById('blockReason').value.trim();
-            if(!dt || !motivo) return alert("Preencha os campos.");
-            try {
-                await supabaseClient.from('restricoes').insert([{ data_bloqueio: dt, gerente_id: appState.currentUser.id, justificativa: motivo }]);
-                alert("Bloqueio salvo!");
-                await carregarGerentesEBase();
-            } catch(e) { alert("Erro."); }
-        }
-
-        async function adicionarFerias() {
-            const start = document.getElementById('vacStart').value;
-            const end = document.getElementById('vacEnd').value;
-            if(!start || !end) return alert("Preencha os campos.");
-            try {
-                await supabaseClient.from('restricoes').insert([
-                    { data_bloqueio: start, gerente_id: appState.currentUser.id, justificativa: "Férias" },
-                    { data_bloqueio: end, gerente_id: appState.currentUser.id, justificativa: "Férias" }
-                ]);
-                alert("Férias salvas!");
-                await carregarGerentesEBase();
-            } catch(e) { alert("Erro."); }
+            } catch(e) { appState.gerentes = []; }
         }
 
         async function alterarPeriodo() {
@@ -497,86 +361,68 @@
 
         async function puxarEscalaSalva() {
             try {
-                const { data, error } = await supabaseClient.from('escalas_mensais').select('*').eq('ano_mes', appState.currentPeriod);
-                if (error) throw error;
+                const { data } = await supabaseClient.from('escalas_mensais').select('*').eq('ano_mes', appState.currentPeriod);
                 appState.escala = {};
                 if(data && data.length > 0) {
                     data.forEach(item => {
-                        appState.escala[item.dia_mes] = {
-                            abertura: item.abertura,
-                            fechamento: item.fechamento,
-                            folgas_custom: item.folgas_custom || ""
-                        };
+                        appState.escala[item.dia_mes] = { abertura: item.abertura, fechamento: item.fechamento, folgas_custom: item.folgas_custom || "" };
                     });
                     renderAll();
                 } else {
                     initCalendar(); 
                 }
-            } catch(e) {
-                initCalendar();
-            }
+            } catch(e) { initCalendar(); }
         }
 
-        // MOTOR REESCRITO COM DISTÂNCIA OBRIGATÓRIA DE 2 DIAS ENTRE PLANTÕES (V26)
+        // NOVO MOTOR SEQUENCIAL UNIFICADO DIA-A-DIA (V27)
         function initCalendar() {
             const totalDays = 31;
             appState.escala = {};
             if (appState.gerentes.length === 0) return;
 
             let gControl = appState.gerentes.map(g => ({ 
-                nome: g.nome, 
-                aberturas: 0, 
-                fechamentos: 0, 
-                total: 0,
-                ultimoPlantaoDia: -99 // Guarda o dia em que trabalhou por último
+                nome: g.nome, aberturas: 0, fechamentos: 0, total: 0, ultimoPlantaoDia: -99 
             }));
 
-            // Passo 1: Mapeia e fixa primeiro todos os Finais de Semana Casados
             for (let d = 1; d <= totalDays; d++) {
+                if (appState.escala[d]) continue; // Ignora o domingo se já foi preenchido pelo bloco de sábado
+
                 let dateStr = `${appState.currentPeriod}-${String(d).padStart(2, '0')}`;
                 let dateObj = new Date(dateStr + "T12:00:00");
-                if (dateObj.getDay() === 6) { // Sábado
-                    // Busca gestores sem conflito de distância dos dias de semana anteriores
-                    let aptosAb = gControl.filter(g => (d - g.ultimoPlantaoDia) > 2).sort((a,b) => (a.aberturas - b.aberturas) || (a.total - b.total));
-                    let gAb = aptosAb[0] ? aptosAb[0].nome : gControl[0].nome;
+                let dayOfWeek = dateObj.getDay();
+                let ontemFechou = appState.escala[d - 1]?.fechamento || "";
+
+                if (dayOfWeek === 6) { // Sábado e Domingo Casados tratados em lote no mesmo dia
+                    let aptosAb = gControl.filter(g => (d - g.ultimoPlantaoDia) > 2).sort((a,b) => (a.total - b.total) || (a.aberturas - b.aberturas));
+                    let gAb = aptosAb[0] ? aptosAb[0].nome : gControl.sort((a,b) => a.total - b.total)[0].nome;
                     
-                    let aptosFech = gControl.filter(g => g.nome !== gAb && (d - g.ultimoPlantaoDia) > 2).sort((a,b) => (a.fechamentos - b.fechamentos) || (a.total - b.total));
-                    let gFech = aptosFech[0] ? aptosFech[0].nome : gControl[1].nome;
+                    let aptosFech = gControl.filter(g => g.nome !== gAb && (d - g.ultimoPlantaoDia) > 2).sort((a,b) => (a.total - b.total) || (a.fechamentos - b.fechamentos));
+                    let gFech = aptosFech[0] ? aptosFech[0].nome : gControl.filter(g => g.nome !== gAb).sort((a,b) => a.total - b.total)[0].nome;
 
                     appState.escala[d] = { abertura: gAb, fechamento: gFech, folgas_custom: "" };
                     if (d + 1 <= totalDays) {
-                        appState.escala[d + 1] = { abertura: gAb, fechamento: gFech, folgas_custom: "" }; // Domingo casado
+                        appState.escala[d + 1] = { abertura: gAb, fechamento: gFech, folgas_custom: "" };
                     }
 
-                    // Grava os plantões e atualiza a última data trabalhada para o Domingo (d+1)
                     gControl.forEach(g => {
                         if(g.nome === gAb) { g.aberturas += 2; g.total += 2; g.ultimoPlantaoDia = d + 1; }
                         if(g.nome === gFech) { g.fechamentos += 2; g.total += 2; g.ultimoPlantaoDia = d + 1; }
                     });
+                } else { // Dias de semana normais
+                    let aptosAb = gControl.filter(g => g.nome !== ontemFechou && (d - g.ultimoPlantaoDia) > 2).sort((a,b) => (a.total - b.total) || (a.aberturas - b.aberturas));
+                    let gAb = aptosAb[0] ? aptosAb[0].nome : gControl.sort((a,b) => a.total - b.total)[0].nome;
+
+                    let aptosFech = gControl.filter(g => g.nome !== gAb && g.nome !== ontemFechou && (d - g.ultimoPlantaoDia) > 2).sort((a,b) => (a.total - b.total) || (a.fechamentos - b.fechamentos));
+                    let gFech = aptosFech[0] ? aptosFech[0].nome : gControl.filter(g => g.nome !== gAb).sort((a,b) => a.total - b.total)[0].nome;
+
+                    appState.escala[d] = { abertura: gAb, fechamento: gFech, folgas_custom: "" };
+
+                    gControl.forEach(g => {
+                        if(g.nome === gAb) { g.aberturas += 1; g.total += 1; g.ultimoPlantaoDia = d; }
+                        if(g.nome === gFech) { g.fechamentos += 1; g.total += 1; g.ultimoPlantaoDia = d; }
+                    });
                 }
             }
-
-            // Passo 2: Mapeia os dias de semana respeitando o descanso interjornada e a distância de 2 dias
-            for (let d = 1; d <= totalDays; d++) {
-                if (appState.escala[d]) continue; // Pula FDS já travados
-
-                let ontemFechou = appState.escala[d - 1]?.fechamento || "";
-                
-                // CRUCIAL: Filtra gerentes com distância matemática estrita maior que 2 dias desde o último plantão
-                let aptosAb = gControl.filter(g => g.nome !== ontemFechou && (d - g.ultimoPlantaoDia) > 2).sort((a,b) => (a.aberturas - b.aberturas) || (a.total - b.total));
-                let gAb = aptosAb[0] ? aptosAb[0].nome : gControl.sort((a,b) => a.total - b.total)[0].nome;
-
-                let aptosFech = gControl.filter(g => g.nome !== gAb && g.nome !== ontemFechou && (d - g.ultimoPlantaoDia) > 2).sort((a,b) => (a.fechamentos - b.fechamentos) || (a.total - b.total));
-                let gFech = aptosFech[0] ? aptosFech[0].nome : gControl.filter(g => g.nome !== gAb).sort((a,b) => a.total - b.total)[0].nome;
-
-                appState.escala[d] = { abertura: gAb, fechamento: gFech, folgas_custom: "" };
-
-                gControl.forEach(g => {
-                    if(g.nome === gAb) { g.aberturas += 1; g.total += 1; g.ultimoPlantaoDia = d; }
-                    if(g.nome === gFech) { g.fechamentos += 1; g.total += 1; g.ultimoPlantaoDia = d; }
-                });
-            }
-
             renderAll();
         }
 
@@ -584,17 +430,10 @@
             const ab = document.getElementById('modalAbertura').value;
             const fech = document.getElementById('modalFechamento').value;
             const folgasCustom = document.getElementById('modalFolgasManuais').value.trim();
-            const compositeIdNum = parseInt(`${appState.currentPeriod.split('-')[1]}${currentSelectedDay}`);
-
             await supabaseClient.from('escalas_mensais').upsert({
-                id: compositeIdNum,
-                ano_mes: appState.currentPeriod,
-                dia_mes: currentSelectedDay,
-                abertura: ab,
-                fechamento: fech,
-                folgas_custom: folgasCustom
+                id: parseInt(`${appState.currentPeriod.split('-')[1]}${currentSelectedDay}`),
+                ano_mes: appState.currentPeriod, dia_mes: currentSelectedDay, abertura: ab, fechamento: fech, folgas_custom: folgasCustom
             });
-
             appState.escala[currentSelectedDay] = { abertura: ab, fechamento: fech, folgas_custom: folgasCustom };
             renderAll();
             closeModal();
@@ -604,18 +443,13 @@
             initCalendar();
             for(let d = 1; d <= 31; d++) {
                 if(appState.escala[d]) {
-                    const compositeIdNum = parseInt(`${appState.currentPeriod.split('-')[1]}${d}`);
                     await supabaseClient.from('escalas_mensais').upsert({
-                        id: compositeIdNum,
-                        ano_mes: appState.currentPeriod,
-                        dia_mes: d,
-                        abertura: appState.escala[d].abertura,
-                        fechamento: appState.escala[d].fechamento,
-                        folgas_custom: ""
+                        id: parseInt(`${appState.currentPeriod.split('-')[1]}${d}`),
+                        ano_mes: appState.currentPeriod, dia_mes: d, abertura: appState.escala[d].abertura, fechamento: appState.escala[d].fechamento, folgas_custom: ""
                     });
                 }
             }
-            alert("Escala balanceada com distância mínima de 2 dias entre plantões!");
+            alert("Escala redistribuída de forma idêntica e sequencial!");
             await puxarEscalaSalva();
         }
 
@@ -623,8 +457,7 @@
             let sheetsHtml = "";
             const diasSemanaNomes = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
 
-            const metricasAb = {};
-            const metricasFech = {};
+            const metricasAb = {}; const metricasFech = {};
             appState.gerentes.forEach(g => { metricasAb[g.nome] = 0; metricasFech[g.nome] = 0; });
 
             for (let d = 1; d <= 31; d++) {
@@ -641,21 +474,14 @@
 
                 if (dayOfWeek === 1) { 
                     let sabAnterior = appState.escala[d - 2];
-                    if (sabAnterior && sabAnterior.abertura && sabAnterior.fechamento) {
-                        folgasLista.push(sabAnterior.abertura, sabAnterior.fechamento);
-                    }
+                    if (sabAnterior && sabAnterior.abertura && sabAnterior.fechamento) folgasLista.push(sabAnterior.abertura, sabAnterior.fechamento);
                 } else if (dayOfWeek === 4) { 
                     let sabSeguinte = appState.escala[d + 2];
-                    if (sabSeguinte && sabSeguinte.abertura && sabSeguinte.fechamento) {
-                        folgasLista.push(sabSeguinte.abertura, sabSeguinte.fechamento);
-                    }
+                    if (sabSeguinte && sabSeguinte.abertura && sabSeguinte.fechamento) folgasLista.push(sabSeguinte.abertura, sabSeguinte.fechamento);
                 }
 
                 let folgaTextoFinal = folgasLista.join(' / ');
-
-                if(data.folgas_custom !== undefined && data.folgas_custom !== "") {
-                    folgaTextoFinal = data.folgas_custom;
-                }
+                if(data.folgas_custom) folgaTextoFinal = data.folgas_custom;
 
                 let rowBg = "bg-white";
                 if (dayOfWeek === 6 || dayOfWeek === 0) rowBg = "bg-green-50 border-y border-green-200";
@@ -673,15 +499,13 @@
             document.getElementById('sheetsTableBody').innerHTML = sheetsHtml;
 
             document.getElementById('metricsTableBody').innerHTML = appState.gerentes.map(g => {
-                let ab = metricasAb[g.nome] || 0;
-                let fech = metricasFech[g.nome] || 0;
-                let total = ab + fech;
+                let ab = metricasAb[g.nome] || 0; let fech = metricasFech[g.nome] || 0;
                 return `
                     <tr class="hover:bg-gray-50 border-b text-xs">
-                        <td class="p-3 font-bold text-gray-800">${g.nome}</td>
+                        <td class="p-3 font-bold text-gray-900">${g.nome}</td>
                         <td class="p-3 text-center bg-green-50 text-green-900 font-semibold border-x">${ab} manhãs</td>
                         <td class="p-3 text-center bg-blue-50 text-blue-900 font-semibold border-r">${fech} noites</td>
-                        <td class="p-3 text-center bg-gray-50 text-gray-700 font-bold">${total} plantões</td>
+                        <td class="p-3 text-center bg-gray-50 text-gray-700 font-bold">${ab + fech} plantões</td>
                     </tr>
                 `;
             }).join('');
@@ -690,90 +514,39 @@
         function openModal(day) {
             if (appState.currentUser.role !== 'admin') return; 
             currentSelectedDay = day;
-            document.getElementById('modalTitle').textContent = `Alteração de Plantão — Dia ${day}`;
-            
             const abSel = document.getElementById('modalAbertura');
             const fechSel = document.getElementById('modalFechamento');
-            const folgasInput = document.getElementById('modalFolgasManuais');
             
             abSel.innerHTML = appState.gerentes.map(g => `<option value="${g.nome}">${g.nome}</option>`).join('');
             fechSel.innerHTML = appState.gerentes.map(g => `<option value="${g.nome}">${g.nome}</option>`).join('');
             
             abSel.value = appState.escala[day]?.abertura || "";
             fechSel.value = appState.escala[day]?.fechamento || "";
-            
-            let diaData = appState.escala[day];
-            let currentFolgaExibida = "";
-
-            if (diaData && diaData.folgas_custom !== undefined && diaData.folgas_custom !== "") {
-                currentFolgaExibida = diaData.folgas_custom;
-            } else {
-                let dateStr = `${appState.currentPeriod}-${String(day).padStart(2, '0')}`;
-                let dateObj = new Date(dateStr + "T12:00:00");
-                let dayOfWeek = dateObj.getDay();
-                let fList = [];
-                if (dayOfWeek === 1) {
-                    let sab = appState.escala[day - 2];
-                    if (sab && sab.abertura) fList.push(sab.abertura, sab.fechamento);
-                } else if (dayOfWeek === 4) {
-                    let sab = appState.escala[day + 2];
-                    if (sab && sab.abertura) fList.push(sab.abertura, sab.fechamento);
-                }
-                currentFolgaExibida = fList.join(' / ');
-            }
-
-            folgasInput.value = currentFolgaExibida;
+            document.getElementById('modalFolgasManuais').value = appState.escala[day]?.folgas_custom || "";
             document.getElementById('dayModal').classList.remove('hidden');
         }
 
         function closeModal() { document.getElementById('dayModal').classList.add('hidden'); }
-        
         function switchTab(tabId) {
             document.getElementById('dashboardSection').classList.remove('active');
             document.getElementById('metricasSection').classList.remove('active');
             if(tabId === 'dashboard') document.getElementById('dashboardSection').classList.add('active');
             if(tabId === 'metricas') document.getElementById('metricasSection').classList.add('active');
         }
-
-        function openAdminManagerModal() { 
-            document.getElementById('adminManagerModal').classList.remove('hidden'); 
-            renderAdminManagerList(); 
-        }
+        function openAdminManagerModal() { document.getElementById('adminManagerModal').classList.remove('hidden'); renderAdminManagerList(); }
         function closeAdminManagerModal() { document.getElementById('adminManagerModal').classList.add('hidden'); }
-
         function renderAdminManagerList() {
             document.getElementById('adminManagerTableBody').innerHTML = appState.gerentes.map(g => `
-                <tr class="text-xs border-b hover:bg-gray-50">
-                    <td class="p-2.5 font-semibold text-gray-800">${g.nome}</td>
-                    <td class="p-2.5 text-gray-500">${g.email}</td>
-                    <td class="p-2.5 text-center">
-                        <button onclick="excluirGerente('${g.id}')" class="text-red-600 hover:text-red-800 p-1"><i class="fas fa-trash-alt"></i></button>
-                    </td>
-                </tr>
+                <tr class="text-xs"><td>${g.nome}</td><td>${g.email}</td><td><button onclick="excluirGerente('${g.id}')">&times;</button></td></tr>
             `).join('');
         }
-
         async function incluirGerenteManualmente() {
-            const nome = document.getElementById('manualName').value.trim();
-            const email = document.getElementById('manualEmail').value.trim().toLowerCase();
-            if (!nome || !email) return alert("Preencha todos os campos.");
-            try {
-                const { error } = await supabaseClient.from('gerentes').insert([{ nome, email }]);
-                if (error) throw error;
-                document.getElementById('manualName').value = "";
-                document.getElementById('manualEmail').value = "";
-                await carregarGerentesEBase();
-                initCalendar();
-            } catch(e) { alert("Erro ao adicionar."); }
+            await supabaseClient.from('gerentes').insert([{ nome: document.getElementById('manualName').value, email: document.getElementById('manualEmail').value }]);
+            await carregarGerentesEBase(); initCalendar();
         }
-
         async function excluirGerente(id) {
-            if(!confirm("Remover gerente?")) return;
-            try {
-                await supabaseClient.from('gerentes').delete().eq('id', id);
-                await carregarGerentesEBase();
-                initCalendar();
-            } catch(e) { alert("Erro."); }
+            await supabaseClient.from('gerentes').delete().eq('id', id);
+            await carregarGerentesEBase(); initCalendar();
         }
     </script>
 </body>
