@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V22 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V22.1 - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Biblioteca Oficial do Supabase CDN -->
@@ -39,7 +39,7 @@
 </head>
 <body class="text-gray-800">
 
-    <!-- TELA DE LOGIN -->
+    <!-- TELA DE LOGIN / AUTO-CADASTRO ATIVADO -->
     <div id="loginScreen" class="fixed inset-0 bg-gray-900 flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-6">
             <div class="text-center space-y-2">
@@ -64,6 +64,22 @@
                     <i class="fas fa-arrow-right text-xs"></i>
                 </button>
             </div>
+
+            <!-- FORMULÁRIO DE CADASTRO EXPANDIDO SE NÃO FOR ENCONTRADO NO BANCO -->
+            <div class="space-y-4 hidden" id="registerForm">
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-3 rounded text-xs text-blue-800">
+                    <p class="font-bold"><i class="fas fa-user-plus"></i> Primeiro Acesso Identificado!</p>
+                    <p class="mt-0.5">O seu e-mail não foi localizado. Cadastre o seu nome completo abaixo para criar o seu perfil na base de forma autônoma.</p>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nome Completo</label>
+                    <input type="text" id="registerName" placeholder="Ex: Maria Souza" 
+                           class="w-full px-3 py-2 border rounded-xl text-sm focus:ring-2 focus:ring-corporate focus:border-transparent outline-none">
+                </div>
+                <button onclick="salvarNovoGerenteEEntrar()" class="w-full bg-blue-600 text-white py-2.5 rounded-xl font-bold text-sm shadow-md hover:bg-blue-700 transition">
+                    Concluir Cadastro e Entrar
+                </button>
+            </div>
         </div>
     </div>
 
@@ -73,7 +89,7 @@
             <div class="flex items-center space-x-3">
                 <div class="bg-white p-2 rounded text-corporate-dark font-bold text-xl shadow">LM</div>
                 <div>
-                    <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V22</h1>
+                    <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V22.1</h1>
                     <p class="text-xs text-green-200 flex items-center space-x-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
                         <span id="userBadge">Carregando usuário...</span>
@@ -109,7 +125,7 @@
             <div id="dashboardSection" class="view-section active space-y-6">
                 <div class="bg-green-50 border-l-4 border-corporate p-4 rounded-r-xl shadow-xs text-xs text-corporate-dark flex justify-between items-center non-printable">
                     <div>
-                        <p class="font-bold text-sm"><i class="fas fa-check-circle"></i> Par de Folgas Casado Ativo (V22):</p>
+                        <p class="font-bold text-sm"><i class="fas fa-check-circle"></i> Controle Administrador & Auto-Cadastro Habilitados:</p>
                         <p class="mt-1">Os DOIS gestores do final de semana ganham folga juntos na Segunda e na Quinta subsequente de forma automática!</p>
                     </div>
                     <button id="adminGenerateBtn" onclick="gerarEscalaAutomatica()" class="hidden bg-corporate text-white px-4 py-2 rounded-lg text-xs font-bold shadow hover:bg-corporate-dark transition">
@@ -158,7 +174,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE GERENCIAMENTO DE GERENTES CORRIGIDO -->
+    <!-- MODAL DE GERENCIAMENTO DE GERENTES -->
     <div id="adminManagerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full p-6 space-y-6 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
@@ -272,10 +288,29 @@
                     appState.currentUser = { id: data.id, nome: data.nome, email: data.email, role: "gerente" };
                     loginSucesso();
                 } else {
-                    alert("Usuário não cadastrado na base. Contate o Administrador.");
+                    // SE NÃO EXISTE, EXIBE O PAINEL DE AUTO-CADASTRO COMPLETO!
+                    document.getElementById('authForm').classList.add('hidden');
+                    document.getElementById('registerForm').classList.remove('hidden');
                 }
             } catch(e) {
                 alert("Falha de comunicação com o Supabase.");
+            }
+        }
+
+        async function salvarNovoGerenteEEntrar() {
+            const nome = document.getElementById('registerName').value.trim();
+            const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+            if(!nome) return alert("Por favor, informe o seu nome completo.");
+
+            try {
+                const { data, error } = await supabaseClient.from('gerentes').insert([{ nome: nome, email: email }]).select().single();
+                if (error) throw error;
+
+                appState.currentUser = { id: data.id, nome: data.nome, email: data.email, role: "gerente" };
+                alert("Cadastro realizado de forma autônoma!");
+                loginSucesso();
+            } catch(e) {
+                alert("Erro ao efetuar o auto-cadastro.");
             }
         }
 
@@ -302,6 +337,8 @@
             appState.currentUser = null;
             document.getElementById('mainDashboard').classList.add('hidden');
             document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('authForm').classList.remove('hidden');
+            document.getElementById('registerForm').classList.add('hidden');
             document.getElementById('loginEmail').value = "";
         }
 
@@ -397,7 +434,7 @@
             closeModal();
         }
 
-        async function gerarEscalaAutomatica() {
+        async function generarEscalaAutomatica() {
             initCalendar();
             for(let d = 1; d <= 31; d++) {
                 if(appState.escala[d]) {
@@ -542,7 +579,7 @@
                 await carregarGerentesEBase();
                 initCalendar();
             } catch(e) {
-                alert("Erro ao adicionar no Supabase: E-mail duplicado ou inválido.");
+                alert("Erro ao adicionar no Supabase.");
             }
         }
 
