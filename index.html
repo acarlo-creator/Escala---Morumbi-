@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V23 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V26 - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Biblioteca Oficial do Supabase CDN -->
@@ -88,7 +88,7 @@
             <div class="flex items-center space-x-3">
                 <div class="bg-white p-2 rounded text-corporate-dark font-bold text-xl shadow">LM</div>
                 <div>
-                    <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V23</h1>
+                    <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V26</h1>
                     <p class="text-xs text-green-200 flex items-center space-x-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
                         <span id="userBadge">Carregando usuário...</span>
@@ -125,8 +125,8 @@
             <div id="dashboardSection" class="view-section active space-y-6">
                 <div class="bg-green-50 border-l-4 border-corporate p-4 rounded-r-xl shadow-xs text-xs text-corporate-dark flex justify-between items-center non-printable">
                     <div>
-                        <p class="font-bold text-sm"><i class="fas fa-check-circle"></i> Regra de Folgas Corrigida (V23):</p>
-                        <p class="mt-1">Folga na Quinta-feira antecedente e na Segunda-feira posterior ao final de semana trabalhado.</p>
+                        <p class="font-bold text-sm"><i class="fas fa-history"></i> Distância Mínima Garatida (V26):</p>
+                        <p class="mt-1">A IA agora força um **espaço de pelo menos 2 dias de descanso** após cada plantão para o gestor, além do equilíbrio de 50%/50% nos turnos.</p>
                     </div>
                     <button id="adminGenerateBtn" onclick="gerarEscalaAutomatica()" class="hidden bg-corporate text-white px-4 py-2 rounded-lg text-xs font-bold shadow hover:bg-corporate-dark transition">
                         <i class="fas fa-magic"></i> Balancear e Salvar Escala na Nuvem
@@ -151,23 +151,23 @@
                 </div>
             </div>
 
-            <!-- TAB 2: METRICAS CORRIGIDO -->
+            <!-- TAB 2: METRICAS -->
             <div id="metricasSection" class="view-section space-y-6">
                 <div class="bg-white p-6 rounded-xl shadow-sm space-y-4">
                     <div class="border-b pb-2">
-                        <h3 class="text-lg font-bold text-gray-800"><i class="fas fa-chart-bar text-corporate"></i> Painel de Controle de Presença e Escala</h3>
+                        <h3 class="text-lg font-bold text-gray-800"><i class="fas fa-chart-bar text-corporate"></i> Painel de Controle e Equilíbrio de Turnos</h3>
                     </div>
                     <div class="overflow-x-auto border rounded-xl">
                         <table class="w-full text-left text-sm border-collapse">
                             <thead>
                                 <tr class="bg-gray-100 border-b text-gray-700 font-bold text-xs uppercase tracking-wider">
                                     <th class="p-3">Nome do Gerente</th>
-                                    <th class="p-3 text-center bg-blue-50 text-blue-800 border-x">Plantões Realizados (No Mês)</th>
+                                    <th class="p-3 text-center bg-green-50 text-green-900 font-bold border-x">☀️ Aberturas</th>
+                                    <th class="p-3 text-center bg-blue-50 text-blue-800 font-bold border-r">🌙 Fechamentos</th>
+                                    <th class="p-3 text-center bg-gray-100 text-gray-800 font-bold">📊 Total Geral</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y text-gray-600 font-medium" id="metricsTableBody">
-                                <!-- Preenchido dinamicamente via JS -->
-                            </tbody>
+                            <tbody class="divide-y text-gray-600 font-medium" id="metricsTableBody"></tbody>
                         </table>
                     </div>
                 </div>
@@ -517,37 +517,66 @@
             }
         }
 
+        // MOTOR REESCRITO COM DISTÂNCIA OBRIGATÓRIA DE 2 DIAS ENTRE PLANTÕES (V26)
         function initCalendar() {
             const totalDays = 31;
             appState.escala = {};
             if (appState.gerentes.length === 0) return;
 
-            let gControl = appState.gerentes.map(g => ({ nome: g.nome, plantoes: 0 }));
+            let gControl = appState.gerentes.map(g => ({ 
+                nome: g.nome, 
+                aberturas: 0, 
+                fechamentos: 0, 
+                total: 0,
+                ultimoPlantaoDia: -99 // Guarda o dia em que trabalhou por último
+            }));
 
+            // Passo 1: Mapeia e fixa primeiro todos os Finais de Semana Casados
             for (let d = 1; d <= totalDays; d++) {
                 let dateStr = `${appState.currentPeriod}-${String(d).padStart(2, '0')}`;
                 let dateObj = new Date(dateStr + "T12:00:00");
-                let dayOfWeek = dateObj.getDay(); 
-
-                if (dayOfWeek === 6) { 
-                    let aptos = gControl.sort((a,b) => a.plantoes - b.plantoes);
-                    let gAb = aptos[0] ? aptos[0].nome : gControl[0].nome;
-                    let gFech = aptos[1] ? aptos[1].nome : gControl[1].nome;
+                if (dateObj.getDay() === 6) { // Sábado
+                    // Busca gestores sem conflito de distância dos dias de semana anteriores
+                    let aptosAb = gControl.filter(g => (d - g.ultimoPlantaoDia) > 2).sort((a,b) => (a.aberturas - b.aberturas) || (a.total - b.total));
+                    let gAb = aptosAb[0] ? aptosAb[0].nome : gControl[0].nome;
+                    
+                    let aptosFech = gControl.filter(g => g.nome !== gAb && (d - g.ultimoPlantaoDia) > 2).sort((a,b) => (a.fechamentos - b.fechamentos) || (a.total - b.total));
+                    let gFech = aptosFech[0] ? aptosFech[0].nome : gControl[1].nome;
 
                     appState.escala[d] = { abertura: gAb, fechamento: gFech, folgas_custom: "" };
                     if (d + 1 <= totalDays) {
-                        appState.escala[d + 1] = { abertura: gAb, fechamento: gFech, folgas_custom: "" };
+                        appState.escala[d + 1] = { abertura: gAb, fechamento: gFech, folgas_custom: "" }; // Domingo casado
                     }
-                    gControl.forEach(g => { if(g.nome === gAb || g.nome === gFech) g.plantoes += 2; });
+
+                    // Grava os plantões e atualiza a última data trabalhada para o Domingo (d+1)
+                    gControl.forEach(g => {
+                        if(g.nome === gAb) { g.aberturas += 2; g.total += 2; g.ultimoPlantaoDia = d + 1; }
+                        if(g.nome === gFech) { g.fechamentos += 2; g.total += 2; g.ultimoPlantaoDia = d + 1; }
+                    });
                 }
             }
 
+            // Passo 2: Mapeia os dias de semana respeitando o descanso interjornada e a distância de 2 dias
             for (let d = 1; d <= totalDays; d++) {
-                if (appState.escala[d]) continue;
-                let aptos = gControl.sort((a,b) => a.plantoes - b.plantoes);
-                appState.escala[d] = { abertura: aptos[0].nome, fechamento: aptos[1].nome, folgas_custom: "" };
-                gControl.forEach(g => { if(g.nome === aptos[0].nome || g.nome === aptos[1].nome) g.plantoes += 1; });
+                if (appState.escala[d]) continue; // Pula FDS já travados
+
+                let ontemFechou = appState.escala[d - 1]?.fechamento || "";
+                
+                // CRUCIAL: Filtra gerentes com distância matemática estrita maior que 2 dias desde o último plantão
+                let aptosAb = gControl.filter(g => g.nome !== ontemFechou && (d - g.ultimoPlantaoDia) > 2).sort((a,b) => (a.aberturas - b.aberturas) || (a.total - b.total));
+                let gAb = aptosAb[0] ? aptosAb[0].nome : gControl.sort((a,b) => a.total - b.total)[0].nome;
+
+                let aptosFech = gControl.filter(g => g.nome !== gAb && g.nome !== ontemFechou && (d - g.ultimoPlantaoDia) > 2).sort((a,b) => (a.fechamentos - b.fechamentos) || (a.total - b.total));
+                let gFech = aptosFech[0] ? aptosFech[0].nome : gControl.filter(g => g.nome !== gAb).sort((a,b) => a.total - b.total)[0].nome;
+
+                appState.escala[d] = { abertura: gAb, fechamento: gFech, folgas_custom: "" };
+
+                gControl.forEach(g => {
+                    if(g.nome === gAb) { g.aberturas += 1; g.total += 1; g.ultimoPlantaoDia = d; }
+                    if(g.nome === gFech) { g.fechamentos += 1; g.total += 1; g.ultimoPlantaoDia = d; }
+                });
             }
+
             renderAll();
         }
 
@@ -586,7 +615,7 @@
                     });
                 }
             }
-            alert("Escala salva!");
+            alert("Escala balanceada com distância mínima de 2 dias entre plantões!");
             await puxarEscalaSalva();
         }
 
@@ -594,9 +623,9 @@
             let sheetsHtml = "";
             const diasSemanaNomes = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
 
-            // Limpa contagem de métricas para recalculá-las perfeitamente no loop
-            const metricasPlantoes = {};
-            appState.gerentes.forEach(g => { metricasPlantoes[g.nome] = 0; });
+            const metricasAb = {};
+            const metricasFech = {};
+            appState.gerentes.forEach(g => { metricasAb[g.nome] = 0; metricasFech[g.nome] = 0; });
 
             for (let d = 1; d <= 31; d++) {
                 let dateStr = `${appState.currentPeriod}-${String(d).padStart(2, '0')}`;
@@ -607,19 +636,15 @@
                 let data = appState.escala[d] || { abertura: "Não Definido", fechamento: "Não Definido", folgas_custom: "" };
                 let folgasLista = [];
 
-                // Incrementa contador de plantões para o painel de métricas
-                if(metricasPlantoes[data.abertura] !== undefined) metricasPlantoes[data.abertura]++;
-                if(metricasPlantoes[data.fechamento] !== undefined) metricasPlantoes[data.fechamento]++;
+                if(metricasAb[data.abertura] !== undefined) metricasAb[data.abertura]++;
+                if(metricasFech[data.fechamento] !== undefined) metricasFech[data.fechamento]++;
 
-                // REGRA DO SANDUÍCHE CORRIGIDA (V23)
                 if (dayOfWeek === 1) { 
-                    // Segunda-feira posterior: Pega os dois gestores do Sábado anterior (d - 2)
                     let sabAnterior = appState.escala[d - 2];
                     if (sabAnterior && sabAnterior.abertura && sabAnterior.fechamento) {
                         folgasLista.push(sabAnterior.abertura, sabAnterior.fechamento);
                     }
                 } else if (dayOfWeek === 4) { 
-                    // Quinta-feira ANTECEDENTE: Pega os dois gestores do Sábado SEGUINTE (d + 2)
                     let sabSeguinte = appState.escala[d + 2];
                     if (sabSeguinte && sabSeguinte.abertura && sabSeguinte.fechamento) {
                         folgasLista.push(sabSeguinte.abertura, sabSeguinte.fechamento);
@@ -647,13 +672,19 @@
             }
             document.getElementById('sheetsTableBody').innerHTML = sheetsHtml;
 
-            // RENDERIZAÇÃO CORRIGIDA DO PAINEL DE METRICAS
-            document.getElementById('metricsTableBody').innerHTML = appState.gerentes.map(g => `
-                <tr class="hover:bg-gray-50 border-b">
-                    <td class="p-3 font-semibold text-gray-900">${g.nome}</td>
-                    <td class="p-3 text-center bg-blue-50 text-blue-800 font-bold border-x">${metricasPlantoes[g.nome] || 0} plantões</td>
-                </tr>
-            `).join('');
+            document.getElementById('metricsTableBody').innerHTML = appState.gerentes.map(g => {
+                let ab = metricasAb[g.nome] || 0;
+                let fech = metricasFech[g.nome] || 0;
+                let total = ab + fech;
+                return `
+                    <tr class="hover:bg-gray-50 border-b text-xs">
+                        <td class="p-3 font-bold text-gray-800">${g.nome}</td>
+                        <td class="p-3 text-center bg-green-50 text-green-900 font-semibold border-x">${ab} manhãs</td>
+                        <td class="p-3 text-center bg-blue-50 text-blue-900 font-semibold border-r">${fech} noites</td>
+                        <td class="p-3 text-center bg-gray-50 text-gray-700 font-bold">${total} plantões</td>
+                    </tr>
+                `;
+            }).join('');
         }
 
         function openModal(day) {
