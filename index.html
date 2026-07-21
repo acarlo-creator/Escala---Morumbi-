@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V29 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V30 - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Biblioteca Oficial do Supabase CDN -->
@@ -88,7 +88,7 @@
             <div class="flex items-center space-x-3">
                 <div class="bg-white p-2 rounded text-corporate-dark font-bold text-xl shadow">LM</div>
                 <div>
-                    <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V29</h1>
+                    <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V30</h1>
                     <p class="text-xs text-green-200 flex items-center space-x-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
                         <span id="userBadge">Carregando usuário...</span>
@@ -125,8 +125,8 @@
             <div id="dashboardSection" class="view-section active space-y-6">
                 <div class="bg-green-50 border-l-4 border-corporate p-4 rounded-r-xl shadow-xs text-xs text-corporate-dark flex justify-between items-center non-printable">
                     <div>
-                        <p class="font-bold text-sm"><i class="fas fa-shield-alt"></i> Versão Homologada para Lançamento (V29):</p>
-                        <p class="mt-1">Trava estrita de 1 FDS por gerente, equilíbrio ideal de turnos e Portal do Gerente 100% estabilizado.</p>
+                        <p class="font-bold text-sm"><i class="fas fa-robot"></i> IA com Leitura Ativa de Solicitações (V30):</p>
+                        <p class="mt-1">A IA prioriza quem pediu preferências de FDS e bloqueia automaticamente quem tem exames/férias sinalizados no portal.</p>
                     </div>
                     <button id="adminGenerateBtn" onclick="gerarEscalaAutomatica()" class="hidden bg-corporate text-white px-4 py-2 rounded-lg text-xs font-bold shadow hover:bg-corporate-dark transition">
                         <i class="fas fa-magic"></i> Balancear e Salvar Escala na Nuvem
@@ -173,7 +173,7 @@
                 </div>
             </div>
 
-            <!-- TAB 3: PORTAL DO GERENTE (100% REESTRUTURADO E ATIVO) -->
+            <!-- TAB 3: PORTAL DO GERENTE -->
             <div id="managerSection" class="view-section space-y-6">
                 <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-amber-500 space-y-6">
                     <div>
@@ -283,7 +283,7 @@
             </div>
 
             <div class="space-y-2">
-                <h4 class="font-bold text-xs uppercase tracking-wider text-gray-600">Lista Geral de GerENTES Ativos</h4>
+                <h4 class="font-bold text-xs uppercase tracking-wider text-gray-600">Lista Geral de Gerentes Ativos</h4>
                 <div class="overflow-x-auto border rounded-xl">
                     <table class="w-full text-left text-xs border-collapse">
                         <thead>
@@ -507,15 +507,25 @@
             } catch(e) { initCalendar(); }
         }
 
-        // MOTOR SEQUENCIAL UNIFICADO COM TRAVA DE 1 FDS E DISTÂNCIA MÍNIMA DE 2 DIAS (V29)
+        // NOVO MOTOR V30: LÊ ATIVAMENTE SOLICITAÇÕES E PREFERÊNCIAS DE FDS
         function initCalendar() {
             const totalDays = 31;
             appState.escala = {};
             if (appState.gerentes.length === 0) return;
 
             let gControl = appState.gerentes.map(g => ({ 
-                nome: g.nome, aberturas: 0, fechamentos: 0, total: 0, ultimoPlantaoDia: -99, fdsTrabalhados: 0
+                id: g.id, nome: g.nome, aberturas: 0, fechamentos: 0, total: 0, ultimoPlantaoDia: -99, fdsTrabalhados: 0
             }));
+
+            // Função auxiliar para verificar se o gerente tem bloqueio ou restrição na data
+            function gerenteEstaBloqueado(gerenteId, dateFormatted) {
+                return appState.restricoes.some(r => r.gerente_id === gerenteId && r.data_bloqueio === dateFormatted && !r.justificativa.includes("Pref. FDS"));
+            }
+
+            // Função auxiliar para checar se o gerente tem preferência explicita para a data
+            function gerenteTemPreferenciaFds(gerenteId, dateFormatted) {
+                return appState.restricoes.some(r => r.gerente_id === gerenteId && r.data_bloqueio === dateFormatted && r.justificativa.includes("Pref. FDS"));
+            }
 
             for (let d = 1; d <= totalDays; d++) {
                 if (appState.escala[d]) continue;
@@ -525,11 +535,28 @@
                 let dayOfWeek = dateObj.getDay();
                 let ontemFechou = appState.escala[d - 1]?.fechamento || "";
 
-                if (dayOfWeek === 6) { // Sábado + Domingo Casado
-                    let aptosAb = gControl.filter(g => (d - g.ultimoPlantaoDia) > 2).sort((a,b) => (a.fdsTrabalhados - b.fdsTrabalhados) || (a.total - b.total));
-                    let gAb = aptosAb[0] ? aptosAb[0].nome : gControl.sort((a,b) => a.total - b.total)[0].nome;
+                if (dayOfWeek === 6) { // Sábado e Domingo Casados
+                    let sabFormatted = dateStr;
+                    let domFormatted = `${appState.currentPeriod}-${String(d+1).padStart(2, '0')}`;
+
+                    // Filtra apenas gerentes livres de bloqueio em ambos os dias e respeitando descanso
+                    let disponiveis = gControl.filter(g => 
+                        !gerenteEstaBloqueado(g.id, sabFormatted) && 
+                        !gerenteEstaBloqueado(g.id, domFormatted) && 
+                        (d - g.ultimoPlantaoDia) > 2
+                    );
+
+                    // Ordena: Primeiro quem tem preferência expressa para este FDS, depois quem tem menos FDS
+                    disponiveis.sort((a,b) => {
+                        let prefA = gerenteTemPreferenciaFds(a.id, sabFormatted) ? -1 : 0;
+                        let prefB = gerenteTemPreferenciaFds(b.id, sabFormatted) ? -1 : 0;
+                        if(prefA !== prefB) return prefA - prefB;
+                        return (a.fdsTrabalhados - b.fdsTrabalhados) || (a.total - b.total);
+                    });
+
+                    let gAb = disponiveis[0] ? disponiveis[0].nome : gControl.sort((a,b) => a.total - b.total)[0].nome;
                     
-                    let aptosFech = gControl.filter(g => g.nome !== gAb && (d - g.ultimoPlantaoDia) > 2).sort((a,b) => (a.fdsTrabalhados - b.fdsTrabalhados) || (a.total - b.total));
+                    let aptosFech = disponiveis.filter(g => g.nome !== gAb);
                     let gFech = aptosFech[0] ? aptosFech[0].nome : gControl.filter(g => g.nome !== gAb).sort((a,b) => a.total - b.total)[0].nome;
 
                     appState.escala[d] = { abertura: gAb, fechamento: gFech, folgas_custom: "" };
@@ -541,11 +568,20 @@
                         if(g.nome === gAb) { g.aberturas += 2; g.total += 2; g.ultimoPlantaoDia = d + 1; g.fdsTrabalhados += 1; }
                         if(g.nome === gFech) { g.fechamentos += 2; g.total += 2; g.ultimoPlantaoDia = d + 1; g.fdsTrabalhados += 1; }
                     });
-                } else { // Dias normais
-                    let aptosAb = gControl.filter(g => g.nome !== ontemFechou && (d - g.ultimoPlantaoDia) > 2).sort((a,b) => (a.total - b.total) || (a.aberturas - b.aberturas));
-                    let gAb = aptosAb[0] ? aptosAb[0].nome : gControl.sort((a,b) => a.total - b.total)[0].nome;
+                } else { // Dias normais da semana
+                    let disponiveis = gControl.filter(g => 
+                        !gerenteEstaBloqueado(g.id, dateStr) && 
+                        g.nome !== ontemFechou && 
+                        (d - g.ultimoPlantaoDia) > 2
+                    );
 
-                    let aptosFech = gControl.filter(g => g.nome !== gAb && g.nome !== ontemFechou && (d - g.ultimoPlantaoDia) > 2).sort((a,b) => (a.total - b.total) || (a.fechamentos - b.fechamentos));
+                    disponiveis.sort((a,b) => (a.total - b.total) || (a.aberturas - b.aberturas));
+
+                    let gAb = disponiveis[0] ? disponiveis[0].nome : gControl.sort((a,b) => a.total - b.total)[0].nome;
+
+                    let aptosFech = disponiveis.filter(g => g.nome !== gAb);
+                    aptosFech.sort((a,b) => (a.total - b.total) || (a.fechamentos - b.fechamentos));
+
                     let gFech = aptosFech[0] ? aptosFech[0].nome : gControl.filter(g => g.nome !== gAb).sort((a,b) => a.total - b.total)[0].nome;
 
                     appState.escala[d] = { abertura: gAb, fechamento: gFech, folgas_custom: "" };
@@ -582,7 +618,7 @@
                     });
                 }
             }
-            alert("Escala calculada com sucesso!");
+            alert("Escala recalculada com leitura inteligente de todas as solicitações!");
             await puxarEscalaSalva();
         }
 
@@ -661,7 +697,6 @@
 
         function closeModal() { document.getElementById('dayModal').classList.add('hidden'); }
 
-        // ALTERAÇÃO DE ABAS CORRIGIDA E COMPLETA (V29)
         function switchTab(tabId) {
             document.getElementById('dashboardSection').classList.remove('active');
             document.getElementById('metricasSection').classList.remove('active');
