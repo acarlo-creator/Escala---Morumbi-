@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V30 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V31 - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Biblioteca Oficial do Supabase CDN -->
@@ -88,7 +88,7 @@
             <div class="flex items-center space-x-3">
                 <div class="bg-white p-2 rounded text-corporate-dark font-bold text-xl shadow">LM</div>
                 <div>
-                    <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V30</h1>
+                    <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V31</h1>
                     <p class="text-xs text-green-200 flex items-center space-x-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
                         <span id="userBadge">Carregando usuário...</span>
@@ -125,8 +125,8 @@
             <div id="dashboardSection" class="view-section active space-y-6">
                 <div class="bg-green-50 border-l-4 border-corporate p-4 rounded-r-xl shadow-xs text-xs text-corporate-dark flex justify-between items-center non-printable">
                     <div>
-                        <p class="font-bold text-sm"><i class="fas fa-robot"></i> IA com Leitura Ativa de Solicitações (V30):</p>
-                        <p class="mt-1">A IA prioriza quem pediu preferências de FDS e bloqueia automaticamente quem tem exames/férias sinalizados no portal.</p>
+                        <p class="font-bold text-sm"><i class="fas fa-plane-departure"></i> Trava de Férias Integrais Ativada (V31):</p>
+                        <p class="mt-1">Gerentes em férias estão 100% blindados de qualquer escalação durante todo o intervalo cadastrado.</p>
                     </div>
                     <button id="adminGenerateBtn" onclick="gerarEscalaAutomatica()" class="hidden bg-corporate text-white px-4 py-2 rounded-lg text-xs font-bold shadow hover:bg-corporate-dark transition">
                         <i class="fas fa-magic"></i> Balancear e Salvar Escala na Nuvem
@@ -471,16 +471,36 @@
             } catch(e) { alert("Erro ao salvar."); }
         }
 
+        // LANÇAMENTO DE FÉRIAS CORRIGIDO: PREENCHE TODOS OS DIAS DO INTERVALO
         async function adicionarFerias() {
-            const start = document.getElementById('vacStart').value;
-            const end = document.getElementById('vacEnd').value;
-            if(!start || !end) return alert("Informe o período completo.");
+            const startStr = document.getElementById('vacStart').value;
+            const endStr = document.getElementById('vacEnd').value;
+            if(!startStr || !endStr) return alert("Informe o período completo de férias.");
+
+            let dtStart = new Date(startStr + "T12:00:00");
+            let dtEnd = new Date(endStr + "T12:00:00");
+
+            if (dtStart > dtEnd) return alert("A data inicial de férias deve ser antes da data final.");
+
+            let registros = [];
+            let cur = new Date(dtStart);
+
+            while (cur <= dtEnd) {
+                let y = cur.getFullYear();
+                let m = String(cur.getMonth() + 1).padStart(2, '0');
+                let d = String(cur.getDate()).padStart(2, '0');
+                
+                registros.push({
+                    data_bloqueio: `${y}-${m}-${d}`,
+                    gerente_id: appState.currentUser.id,
+                    justificativa: "Férias"
+                });
+                cur.setDate(cur.getDate() + 1);
+            }
+
             try {
-                await supabaseClient.from('restricoes').insert([
-                    { data_bloqueio: start, gerente_id: appState.currentUser.id, justificativa: "Início Férias" },
-                    { data_bloqueio: end, gerente_id: appState.currentUser.id, justificativa: "Fim Férias" }
-                ]);
-                alert("Período de Férias gravado!");
+                await supabaseClient.from('restricoes').insert(registros);
+                alert("Período de Férias gravado para todos os dias do intervalo!");
                 document.getElementById('vacStart').value = "";
                 document.getElementById('vacEnd').value = "";
                 await carregarGerentesEBase();
@@ -507,7 +527,37 @@
             } catch(e) { initCalendar(); }
         }
 
-        // NOVO MOTOR V30: LÊ ATIVAMENTE SOLICITAÇÕES E PREFERÊNCIAS DE FDS
+        // FUNÇÃO DE BLOQUEIO DE SEGURANÇA V31 (SUPORTA DATAS PONTUAIS E INTERVALOS DE FÉRIAS)
+        function gerenteEstaBloqueado(gerenteId, dateFormatted) {
+            // Check 1: Registro direto para o dia
+            let temBloqueioDireto = appState.restricoes.some(r => 
+                r.gerente_id === gerenteId && 
+                r.data_bloqueio === dateFormatted && 
+                !r.justificativa.includes("Pref. FDS")
+            );
+            if (temBloqueioDireto) return true;
+
+            // Check 2: Verificação retroativa de par Inicio/Fim Férias
+            let restroesGerente = appState.restricoes.filter(r => r.gerente_id === gerenteId && r.justificativa.includes("Férias"));
+            let inicios = restroesGerente.filter(r => r.justificativa.includes("Início"));
+            let fins = restroesGerente.filter(r => r.justificativa.includes("Fim"));
+
+            for (let i = 0; i < inicios.length; i++) {
+                let dtInicio = inicios[i].data_bloqueio;
+                let dtFim = fins[i] ? fins[i].data_bloqueio : dtInicio;
+                if (dateFormatted >= dtInicio && dateFormatted <= dtFim) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        function gerenteTemPreferenciaFds(gerenteId, dateFormatted) {
+            return appState.restricoes.some(r => r.gerente_id === gerenteId && r.data_bloqueio === dateFormatted && r.justificativa.includes("Pref. FDS"));
+        }
+
+        // MOTOR SEQUENCIAL DIA-A-DIA INTEGRADO COM TRAVA DE FÉRIAS (V31)
         function initCalendar() {
             const totalDays = 31;
             appState.escala = {};
@@ -517,16 +567,6 @@
                 id: g.id, nome: g.nome, aberturas: 0, fechamentos: 0, total: 0, ultimoPlantaoDia: -99, fdsTrabalhados: 0
             }));
 
-            // Função auxiliar para verificar se o gerente tem bloqueio ou restrição na data
-            function gerenteEstaBloqueado(gerenteId, dateFormatted) {
-                return appState.restricoes.some(r => r.gerente_id === gerenteId && r.data_bloqueio === dateFormatted && !r.justificativa.includes("Pref. FDS"));
-            }
-
-            // Função auxiliar para checar se o gerente tem preferência explicita para a data
-            function gerenteTemPreferenciaFds(gerenteId, dateFormatted) {
-                return appState.restricoes.some(r => r.gerente_id === gerenteId && r.data_bloqueio === dateFormatted && r.justificativa.includes("Pref. FDS"));
-            }
-
             for (let d = 1; d <= totalDays; d++) {
                 if (appState.escala[d]) continue;
 
@@ -535,18 +575,17 @@
                 let dayOfWeek = dateObj.getDay();
                 let ontemFechou = appState.escala[d - 1]?.fechamento || "";
 
-                if (dayOfWeek === 6) { // Sábado e Domingo Casados
+                if (dayOfWeek === 6) { // Sábado + Domingo
                     let sabFormatted = dateStr;
                     let domFormatted = `${appState.currentPeriod}-${String(d+1).padStart(2, '0')}`;
 
-                    // Filtra apenas gerentes livres de bloqueio em ambos os dias e respeitando descanso
+                    // Filtra quem NÃO está de férias nem bloqueado em NENHUM dos dois dias do FDS
                     let disponiveis = gControl.filter(g => 
                         !gerenteEstaBloqueado(g.id, sabFormatted) && 
                         !gerenteEstaBloqueado(g.id, domFormatted) && 
                         (d - g.ultimoPlantaoDia) > 2
                     );
 
-                    // Ordena: Primeiro quem tem preferência expressa para este FDS, depois quem tem menos FDS
                     disponiveis.sort((a,b) => {
                         let prefA = gerenteTemPreferenciaFds(a.id, sabFormatted) ? -1 : 0;
                         let prefB = gerenteTemPreferenciaFds(b.id, sabFormatted) ? -1 : 0;
@@ -568,7 +607,7 @@
                         if(g.nome === gAb) { g.aberturas += 2; g.total += 2; g.ultimoPlantaoDia = d + 1; g.fdsTrabalhados += 1; }
                         if(g.nome === gFech) { g.fechamentos += 2; g.total += 2; g.ultimoPlantaoDia = d + 1; g.fdsTrabalhados += 1; }
                     });
-                } else { // Dias normais da semana
+                } else { // Dias normais
                     let disponiveis = gControl.filter(g => 
                         !gerenteEstaBloqueado(g.id, dateStr) && 
                         g.nome !== ontemFechou && 
@@ -618,7 +657,7 @@
                     });
                 }
             }
-            alert("Escala recalculada com leitura inteligente de todas as solicitações!");
+            alert("Escala recalculada respeitando integralmente os períodos de férias!");
             await puxarEscalaSalva();
         }
 
