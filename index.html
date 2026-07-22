@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V35 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V36 - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Biblioteca Oficial do Supabase CDN -->
@@ -37,13 +37,13 @@
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
-            body { background: white !important; color: black !important; font-size: 9px !important; }
+            body { background: white !important; color: black !important; font-size: 8.5px !important; }
             nav, .non-printable, button, input { display: none !important; }
             select { border: none !important; appearance: none !important; -webkit-appearance: none !important; background: transparent !important; }
             .view-section { display: block !important; }
-            .print-grid { display: flex !important; flex-direction: row !important; align-items: start !important; gap: 8px !important; }
+            .print-grid { display: flex !important; flex-direction: row !important; align-items: start !important; gap: 6px !important; }
             table { border-collapse: collapse !important; width: 100% !important; }
-            th, td { border: 1px solid #385723 !important; padding: 3px 5px !important; text-align: center !important; font-size: 9px !important; }
+            th, td { border: 1px solid #385723 !important; padding: 2px 4px !important; text-align: center !important; font-size: 8.5px !important; }
             .bg-[#70ad47] { background-color: #70ad47 !important; color: white !important; }
             .bg-[#548235] { background-color: #548235 !important; color: white !important; }
             .bg-[#8ea9db] { background-color: #8ea9db !important; color: white !important; }
@@ -60,7 +60,7 @@
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-6">
             <div class="text-center space-y-2">
                 <div class="inline-block bg-[#548235] p-3 rounded-full text-white text-2xl shadow-md">LM</div>
-                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V35</h2>
+                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V36</h2>
                 <p class="text-xs text-gray-500">Acesse com seu e-mail corporativo</p>
             </div>
 
@@ -97,7 +97,7 @@
             <div class="flex items-center space-x-3">
                 <div class="bg-white text-[#548235] font-bold text-xl px-2.5 py-1 rounded shadow">LM</div>
                 <div>
-                    <h1 class="text-base font-bold">Escala Morumbi — V35</h1>
+                    <h1 class="text-base font-bold">Escala Morumbi — V36</h1>
                     <p class="text-[11px] text-green-100 flex items-center space-x-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-green-300 animate-pulse"></span>
                         <span id="userBadge">Carregando...</span>
@@ -108,7 +108,7 @@
             <div class="flex items-center space-x-3 bg-green-900/40 px-3 py-1 rounded-xl border border-green-400/30">
                 <label class="text-xs font-bold uppercase">Mês:</label>
                 <select id="periodSelector" onchange="alterarPeriodo()" class="bg-transparent text-xs font-bold text-white outline-none cursor-pointer">
-                    <option value="2026-08" selected class="text-gray-800">Agosto / 2026</option>
+                    <option value="2026-08" selected class="text-gray-800">Agosto / 2026 (5 FDS)</option>
                     <option value="2026-09" class="text-gray-800">Setembro / 2026</option>
                     <option value="2026-10" class="text-gray-800">Outubro / 2026</option>
                     <option value="2026-11" class="text-gray-800">Novembro / 2026</option>
@@ -134,8 +134,8 @@
             <div id="dashboardSection" class="view-section active space-y-4">
                 <div class="bg-green-50 border-l-4 border-[#548235] p-3 rounded-r-xl text-xs text-green-900 flex justify-between items-center non-printable shadow-sm">
                     <div>
-                        <p class="font-bold text-sm"><i class="fas fa-table"></i> Visualização Exata da Planilha (Ajustada):</p>
-                        <p class="mt-0.5">Listas suspensas para FDS, células esticadas, métricas sem coluna seções e impressão colorida ativada.</p>
+                        <p class="font-bold text-sm"><i class="fas fa-table"></i> Escala Completa (V36):</p>
+                        <p class="mt-0.5">5 Finais de Semana em Agosto, 6 linhas por FDS e contagem dinâmica da coluna "Sábados".</p>
                     </div>
                     <button id="adminGenerateBtn" onclick="gerarEscalaAutomatica()" class="hidden bg-[#548235] text-white px-4 py-2 rounded-lg text-xs font-bold shadow hover:bg-green-800 transition">
                         <i class="fas fa-magic"></i> Balancear e Salvar Escala na Nuvem
@@ -153,8 +153,8 @@
                 <!-- ESTRUTURA LADO A LADO EXATA -->
                 <div class="print-grid grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
                     
-                    <!-- TABELA PRINCIPAL DE PLANTÕES -->
-                    <div class="lg:col-span-8 overflow-x-auto bg-white p-2 rounded-b-lg shadow-sm">
+                    <!-- TABELA PRINCIPAL DE PLANTÕES (70% DA LARGURA) -->
+                    <div class="lg:col-span-7 overflow-x-auto bg-white p-2 rounded-b-lg shadow-sm">
                         <table class="w-full text-xs border-collapse border border-gray-400">
                             <thead>
                                 <tr class="bg-[#e2efda] text-gray-800 font-bold border-b-2 border-gray-400">
@@ -170,43 +170,19 @@
                     </div>
 
                     <!-- BLOCOS LATERAIS (GERENTES PRESENTES + MÉTRICAS) -->
-                    <div class="lg:col-span-4 space-y-4">
+                    <div class="lg:col-span-5 space-y-4">
                         
-                        <!-- TABELA FIM DE SEMANA / GERENTES PRESENTES COM LISTAS SUSPENSAS -->
+                        <!-- TABELA FIM DE SEMANA (5 FDS COM 6 LINHAS CADA) -->
                         <div class="bg-white p-2 rounded-lg shadow-sm border border-gray-300">
                             <div class="bg-gray-200 font-extrabold p-1.5 text-center text-xs text-gray-700 uppercase border border-gray-400">
-                                FIM DE SEMANA
+                                FIM DE SEMANA — GERENTES PRESENTES (6 VAGAS POR SÁBADO)
                             </div>
-                            <table class="w-full text-xs border-collapse border border-gray-400 mt-1">
-                                <thead>
-                                    <tr class="bg-gray-100 font-bold">
-                                        <th class="p-1 border border-gray-400 text-center w-1/2">Gerentes Presentes</th>
-                                        <th class="p-1 border border-gray-400 text-center w-1/2">Gerentes Presentes</th>
-                                    </tr>
-                                    <tr class="bg-emerald-50 text-emerald-900 font-bold">
-                                        <th class="p-1 border border-gray-400 text-center">04/08/2026</th>
-                                        <th class="p-1 border border-gray-400 text-center">11/08/2026</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="fdsPresentesTableBody"></tbody>
-                            </table>
-
-                            <table class="w-full text-xs border-collapse border border-gray-400 mt-2">
-                                <thead>
-                                    <tr class="bg-gray-100 font-bold">
-                                        <th class="p-1 border border-gray-400 text-center w-1/2">Gerentes Presentes</th>
-                                        <th class="p-1 border border-gray-400 text-center w-1/2">Gerentes Presentes</th>
-                                    </tr>
-                                    <tr class="bg-emerald-50 text-emerald-900 font-bold">
-                                        <th class="p-1 border border-gray-400 text-center">18/08/2026</th>
-                                        <th class="p-1 border border-gray-400 text-center">25/08/2026</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="fdsPresentesTableBody2"></tbody>
-                            </table>
+                            <div id="fdsTablesContainer" class="space-y-3 mt-2">
+                                <!-- Preenchido Dinamicamente para todos os 5 FDS -->
+                            </div>
                         </div>
 
-                        <!-- TABELA DE MÉTRICAS (SEM A COLUNA SEÇÕES) -->
+                        <!-- TABELA DE MÉTRICAS -->
                         <div class="bg-white p-2 rounded-lg shadow-sm border border-gray-300">
                             <table class="w-full text-xs border-collapse border border-gray-400">
                                 <thead>
@@ -215,7 +191,7 @@
                                         <th class="p-1.5 border border-gray-400 text-center">Abertura</th>
                                         <th class="p-1.5 border border-gray-400 text-center">Fechamento</th>
                                         <th class="p-1.5 border border-gray-400 text-center font-extrabold">Total</th>
-                                        <th class="p-1.5 border border-gray-400 text-center">Sábados</th>
+                                        <th class="p-1.5 border border-gray-400 text-center bg-green-800 text-white">Sábados</th>
                                     </tr>
                                 </thead>
                                 <tbody id="metricsExcelTableBody" class="divide-y font-medium text-gray-800"></tbody>
@@ -403,7 +379,7 @@
             gerentes: [],      
             escala: {},        
             restricoes: [],
-            fdsPresentes: {},
+            fdsPresentesSelecoes: {}, // Armazena as seleções dos gerentes presentes nos FDS
             currentPeriod: "2026-08" 
         };
 
@@ -741,16 +717,30 @@
                     });
                 }
             }
-            alert("Escala atualizada!");
+            alert("Escala atualizada com sucesso!");
             await puxarEscalaSalva();
+        }
+
+        // RETORNA TODOS OS SÁBADOS DO MÊS ATIVO
+        function obterSabadosDoMes() {
+            const [ano, mes] = appState.currentPeriod.split('-').map(Number);
+            const totalDias = new Date(ano, mes, 0).getDate();
+            const sabados = [];
+            for (let d = 1; d <= totalDias; d++) {
+                let dt = new Date(ano, mes - 1, d, 12, 0, 0);
+                if (dt.getDay() === 6) {
+                    sabados.push(d);
+                }
+            }
+            return sabados;
         }
 
         function renderAll() {
             let sheetsHtml = "";
             const diasSemanaNomes = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
 
-            const metricasAb = {}; const metricasFech = {}; const metricasSab = {};
-            appState.gerentes.forEach(g => { metricasAb[g.nome] = 0; metricasFech[g.nome] = 0; metricasSab[g.nome] = 0; });
+            const metricasAb = {}; const metricasFech = {};
+            appState.gerentes.forEach(g => { metricasAb[g.nome] = 0; metricasFech[g.nome] = 0; });
 
             for (let d = 1; d <= 31; d++) {
                 let dateStr = `${appState.currentPeriod}-${String(d).padStart(2, '0')}`;
@@ -763,10 +753,6 @@
 
                 if(metricasAb[data.abertura] !== undefined) metricasAb[data.abertura]++;
                 if(metricasFech[data.fechamento] !== undefined) metricasFech[data.fechamento]++;
-                if(dayOfWeek === 6) {
-                    if(metricasSab[data.abertura] !== undefined) metricasSab[data.abertura]++;
-                    if(metricasSab[data.fechamento] !== undefined) metricasSab[data.fechamento]++;
-                }
 
                 if (dayOfWeek === 1) { 
                     let sabAnterior = appState.escala[d - 2];
@@ -798,65 +784,108 @@
             }
             document.getElementById('sheetsTableBody').innerHTML = sheetsHtml;
 
-            // RENDERIZAÇÃO DO QUADRO DE MÉTRICAS (SEM A COLUNA SEÇÕES)
+            // RENDERIZAÇÃO DAS TABELAS DE GERENTES PRESENTES NOS SÁBADOS (5 FDS / 6 LINHAS CADA)
+            renderFdsPresentesTables();
+
+            // RENDERIZAÇÃO DA TABELA DE MÉTRICAS (MANTÉM CONTAGEM EM TEMPO REAL)
+            renderMetricsTable(metricasAb, metricasFech);
+        }
+
+        function renderFdsPresentesTables() {
+            const sabados = obterSabadosDoMes();
+            const container = document.getElementById('fdsTablesContainer');
+            const optionsHtml = `<option value="">- Selecionar -</option>` + 
+                appState.gerentes.map(g => `<option value="${g.nome}">${g.nome}</option>`).join('');
+
+            let html = "";
+
+            // Agrupa os sábados em blocos de 2
+            for (let i = 0; i < sabados.length; i += 2) {
+                let sab1 = sabados[i];
+                let sab2 = sabados[i + 1];
+
+                let data1Formatted = `${String(sab1).padStart(2, '0')}/${appState.currentPeriod.split('-')[1]}/2026`;
+                let data2Formatted = sab2 ? `${String(sab2).padStart(2, '0')}/${appState.currentPeriod.split('-')[1]}/2026` : '';
+
+                html += `
+                    <table class="w-full text-xs border-collapse border border-gray-400">
+                        <thead>
+                            <tr class="bg-gray-100 font-bold">
+                                <th class="p-1 border border-gray-400 text-center w-1/2">Gerentes Presentes</th>
+                                ${sab2 ? `<th class="p-1 border border-gray-400 text-center w-1/2">Gerentes Presentes</th>` : ''}
+                            </tr>
+                            <tr class="bg-emerald-50 text-emerald-900 font-bold">
+                                <th class="p-1 border border-gray-400 text-center">${data1Formatted}</th>
+                                ${sab2 ? `<th class="p-1 border border-gray-400 text-center">${data2Formatted}</th>` : ''}
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                // Renderiza as 6 LINHAS solicitadas
+                for (let r = 0; r < 6; r++) {
+                    let key1 = `fds_${appState.currentPeriod}_${sab1}_row_${r}`;
+                    let key2 = sab2 ? `fds_${appState.currentPeriod}_${sab2}_row_${r}` : null;
+
+                    let val1 = appState.fdsPresentesSelecoes[key1] || "";
+                    let val2 = key2 ? (appState.fdsPresentesSelecoes[key2] || "") : "";
+
+                    html += `
+                        <tr>
+                            <td class="p-1 border border-gray-300 text-center">
+                                <select onchange="salvarSelecaoFds('${key1}', this.value)" class="fds-select w-full text-center outline-none bg-transparent font-semibold text-xs text-gray-800 cursor-pointer">
+                                    ${appState.gerentes.map(g => `<option value="${g.nome}" ${g.nome === val1 ? 'selected' : ''}>${g.nome}</option>`).join('')}
+                                    <option value="" ${val1 === '' ? 'selected' : ''}>- Selecionar -</option>
+                                </select>
+                            </td>
+                            ${sab2 ? `
+                                <td class="p-1 border border-gray-300 text-center">
+                                    <select onchange="salvarSelecaoFds('${key2}', this.value)" class="fds-select w-full text-center outline-none bg-transparent font-semibold text-xs text-gray-800 cursor-pointer">
+                                        ${appState.gerentes.map(g => `<option value="${g.nome}" ${g.nome === val2 ? 'selected' : ''}>${g.nome}</option>`).join('')}
+                                        <option value="" ${val2 === '' ? 'selected' : ''}>- Selecionar -</option>
+                                    </select>
+                                </td>
+                            ` : ''}
+                        </tr>
+                    `;
+                }
+
+                html += `</tbody></table>`;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function salvarSelecaoFds(key, valor) {
+            appState.fdsPresentesSelecoes[key] = valor;
+            renderAll(); // Re-renderiza para atualizar a métrica da coluna "Sábados" em tempo real
+        }
+
+        function renderMetricsTable(metricasAb, metricasFech) {
+            // Contagem em tempo real das aparições dos gerentes no painel de Sábados
+            const contagemSabados = {};
+            appState.gerentes.forEach(g => { contagemSabados[g.nome] = 0; });
+
+            Object.values(appState.fdsPresentesSelecoes).forEach(nomeSelected => {
+                if (nomeSelected && contagemSabados[nomeSelected] !== undefined) {
+                    contagemSabados[nomeSelected]++;
+                }
+            });
+
             document.getElementById('metricsExcelTableBody').innerHTML = appState.gerentes.map(g => {
                 let ab = metricasAb[g.nome] || 0; 
                 let fech = metricasFech[g.nome] || 0;
-                let sab = metricasSab[g.nome] || 0;
+                let sab = contagemSabados[g.nome] || 0;
                 return `
                     <tr class="hover:bg-gray-50 border-b border-gray-300 text-xs">
                         <td class="p-1.5 font-bold text-gray-800 border border-gray-300 text-left">${g.nome}</td>
                         <td class="p-1.5 text-center bg-green-50 font-semibold border border-gray-300">${ab}</td>
                         <td class="p-1.5 text-center bg-blue-50 font-semibold border border-gray-300">${fech}</td>
                         <td class="p-1.5 text-center font-extrabold bg-gray-100 border border-gray-300">${ab + fech}</td>
-                        <td class="p-1.5 text-center font-bold text-green-800 border border-gray-300">${sab}</td>
+                        <td class="p-1.5 text-center font-extrabold text-green-900 bg-green-100 border border-gray-300">${sab}</td>
                     </tr>
                 `;
             }).join('');
-
-            renderFdsPresentesSelects();
-        }
-
-        // MONTA OS MENUS SUSPENSOS (<select>) PARA CADA LINHA DOS FINAIS DE SEMANA
-        function renderFdsPresentesSelects() {
-            const optionsHtml = `<option value="">- Selecionar -</option>` + 
-                appState.gerentes.map(g => `<option value="${g.nome}">${g.nome}</option>`).join('');
-
-            let body1 = "";
-            let body2 = "";
-
-            for(let i = 0; i < 4; i++) {
-                body1 += `
-                    <tr>
-                        <td class="p-1 border border-gray-300 text-center">
-                            <select class="w-full text-center outline-none bg-transparent font-semibold text-xs text-gray-700 cursor-pointer">
-                                ${optionsHtml}
-                            </select>
-                        </td>
-                        <td class="p-1 border border-gray-300 text-center">
-                            <select class="w-full text-center outline-none bg-transparent font-semibold text-xs text-gray-700 cursor-pointer">
-                                ${optionsHtml}
-                            </select>
-                        </td>
-                    </tr>
-                `;
-                body2 += `
-                    <tr>
-                        <td class="p-1 border border-gray-300 text-center">
-                            <select class="w-full text-center outline-none bg-transparent font-semibold text-xs text-gray-700 cursor-pointer">
-                                ${optionsHtml}
-                            </select>
-                        </td>
-                        <td class="p-1 border border-gray-300 text-center">
-                            <select class="w-full text-center outline-none bg-transparent font-semibold text-xs text-gray-700 cursor-pointer">
-                                ${optionsHtml}
-                            </select>
-                        </td>
-                    </tr>
-                `;
-            }
-            document.getElementById('fdsPresentesTableBody').innerHTML = body1;
-            document.getElementById('fdsPresentesTableBody2').innerHTML = body2;
         }
 
         function openModal(day) {
