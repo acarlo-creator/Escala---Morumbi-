@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V34 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V35 - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Biblioteca Oficial do Supabase CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         tailwind.config = {
@@ -26,32 +27,40 @@
         .view-section { display: none; }
         .view-section.active { display: block; }
         
-        /* ESTILOS DE IMPRESSÃO - MODO PAISAGEM LADO A LADO SEM CORTES */
+        /* FORÇAR CORES NA IMPRESSÃO E PDF (MODO PAISAGEM) */
         @page {
             size: landscape;
-            margin: 5mm;
+            margin: 4mm;
         }
         @media print {
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
             body { background: white !important; color: black !important; font-size: 9px !important; }
-            nav, .non-printable, button, input, select { display: none !important; }
+            nav, .non-printable, button, input { display: none !important; }
+            select { border: none !important; appearance: none !important; -webkit-appearance: none !important; background: transparent !important; }
             .view-section { display: block !important; }
             .print-grid { display: flex !important; flex-direction: row !important; align-items: start !important; gap: 8px !important; }
             table { border-collapse: collapse !important; width: 100% !important; }
-            th, td { border: 1px solid #385723 !important; padding: 2px 4px !important; text-align: center !important; font-size: 9px !important; }
-            .bg-excel-week { background-color: #70ad47 !important; color: white !important; -webkit-print-color-adjust: exact; }
-            .bg-excel-hdr { background-color: #548235 !important; color: white !important; -webkit-print-color-adjust: exact; }
-            .bg-excel-sub { background-color: #8ea9db !important; color: white !important; -webkit-print-color-adjust: exact; }
+            th, td { border: 1px solid #385723 !important; padding: 3px 5px !important; text-align: center !important; font-size: 9px !important; }
+            .bg-[#70ad47] { background-color: #70ad47 !important; color: white !important; }
+            .bg-[#548235] { background-color: #548235 !important; color: white !important; }
+            .bg-[#8ea9db] { background-color: #8ea9db !important; color: white !important; }
+            .bg-green-50 { background-color: #f0fdf4 !important; }
+            .bg-blue-50 { background-color: #eff6ff !important; }
+            .bg-gray-100 { background-color: #f3f4f6 !important; }
         }
     </style>
 </head>
 <body class="text-gray-800">
 
-    <!-- TELA DE LOGIN -->
+    <!-- TELA DE LOGIN / AUTO-CADASTRO -->
     <div id="loginScreen" class="fixed inset-0 bg-gray-900 flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-6">
             <div class="text-center space-y-2">
                 <div class="inline-block bg-[#548235] p-3 rounded-full text-white text-2xl shadow-md">LM</div>
-                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V34</h2>
+                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V35</h2>
                 <p class="text-xs text-gray-500">Acesse com seu e-mail corporativo</p>
             </div>
 
@@ -88,7 +97,7 @@
             <div class="flex items-center space-x-3">
                 <div class="bg-white text-[#548235] font-bold text-xl px-2.5 py-1 rounded shadow">LM</div>
                 <div>
-                    <h1 class="text-base font-bold">Escala Morumbi — Padrão Excel V34</h1>
+                    <h1 class="text-base font-bold">Escala Morumbi — V35</h1>
                     <p class="text-[11px] text-green-100 flex items-center space-x-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-green-300 animate-pulse"></span>
                         <span id="userBadge">Carregando...</span>
@@ -106,7 +115,7 @@
                     <option value="2026-12" class="text-gray-800">Dezembro / 2026</option>
                 </select>
                 <button onclick="window.print()" class="bg-white text-[#548235] text-xs px-2.5 py-1 rounded font-bold shadow hover:bg-gray-100 transition">
-                    <i class="fas fa-print"></i> Imprimir / PDF
+                    <i class="fas fa-print"></i> Imprimir / PDF (Com Cores)
                 </button>
             </div>
 
@@ -125,8 +134,8 @@
             <div id="dashboardSection" class="view-section active space-y-4">
                 <div class="bg-green-50 border-l-4 border-[#548235] p-3 rounded-r-xl text-xs text-green-900 flex justify-between items-center non-printable shadow-sm">
                     <div>
-                        <p class="font-bold text-sm"><i class="fas fa-table"></i> Visualização Exata da Planilha:</p>
-                        <p class="mt-0.5">Tabela principal sincronizada com o quadro de Gerentes Presentes no FDS e Métricas calculadas em tempo real.</p>
+                        <p class="font-bold text-sm"><i class="fas fa-table"></i> Visualização Exata da Planilha (Ajustada):</p>
+                        <p class="mt-0.5">Listas suspensas para FDS, células esticadas, métricas sem coluna seções e impressão colorida ativada.</p>
                     </div>
                     <button id="adminGenerateBtn" onclick="gerarEscalaAutomatica()" class="hidden bg-[#548235] text-white px-4 py-2 rounded-lg text-xs font-bold shadow hover:bg-green-800 transition">
                         <i class="fas fa-magic"></i> Balancear e Salvar Escala na Nuvem
@@ -141,31 +150,29 @@
                     ago.-26
                 </div>
 
-                <!-- ESTRUTURA LADO A LADO EXATA DO EXCEL -->
+                <!-- ESTRUTURA LADO A LADO EXATA -->
                 <div class="print-grid grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
                     
-                    <!-- TABELA PRINCIPAL (COLUNAS A ATÊ G) -->
+                    <!-- TABELA PRINCIPAL DE PLANTÕES -->
                     <div class="lg:col-span-8 overflow-x-auto bg-white p-2 rounded-b-lg shadow-sm">
                         <table class="w-full text-xs border-collapse border border-gray-400">
                             <thead>
                                 <tr class="bg-[#e2efda] text-gray-800 font-bold border-b-2 border-gray-400">
-                                    <th class="p-1.5 border border-gray-400 w-20 text-center">Dia/Mês</th>
-                                    <th class="p-1.5 border border-gray-400 w-24 text-center">Dia/Semana</th>
-                                    <th class="p-1.5 border border-gray-400 text-center">Abertura</th>
-                                    <th class="p-1.5 border border-gray-400 text-center">Fechamento</th>
-                                    <th class="p-1.5 border border-gray-400 text-center">Folga</th>
-                                    <th class="p-1.5 border border-gray-400 text-center bg-gray-100">Abertura Coord</th>
-                                    <th class="p-1.5 border border-gray-400 text-center bg-gray-100">Fechamento Coord</th>
+                                    <th class="p-2 border border-gray-400 w-24 text-center">Dia/Mês</th>
+                                    <th class="p-2 border border-gray-400 w-28 text-center">Dia/Semana</th>
+                                    <th class="p-2 border border-gray-400 text-center min-w-[180px]">Abertura</th>
+                                    <th class="p-2 border border-gray-400 text-center min-w-[180px]">Fechamento</th>
+                                    <th class="p-2 border border-gray-400 text-center min-w-[220px]">Folga</th>
                                 </tr>
                             </thead>
                             <tbody id="sheetsTableBody" class="divide-y font-semibold text-gray-800"></tbody>
                         </table>
                     </div>
 
-                    <!-- BLOCOS LATERAIS DO EXCEL (FIM DE SEMANA + MÉTRICAS) -->
+                    <!-- BLOCOS LATERAIS (GERENTES PRESENTES + MÉTRICAS) -->
                     <div class="lg:col-span-4 space-y-4">
                         
-                        <!-- TABELA FIM DE SEMANA / GERENTES PRESENTES -->
+                        <!-- TABELA FIM DE SEMANA / GERENTES PRESENTES COM LISTAS SUSPENSAS -->
                         <div class="bg-white p-2 rounded-lg shadow-sm border border-gray-300">
                             <div class="bg-gray-200 font-extrabold p-1.5 text-center text-xs text-gray-700 uppercase border border-gray-400">
                                 FIM DE SEMANA
@@ -173,52 +180,45 @@
                             <table class="w-full text-xs border-collapse border border-gray-400 mt-1">
                                 <thead>
                                     <tr class="bg-gray-100 font-bold">
-                                        <th class="p-1 border border-gray-400 text-center">Gerentes Presentes</th>
-                                        <th class="p-1 border border-gray-400 text-center">Gerentes Presentes</th>
+                                        <th class="p-1 border border-gray-400 text-center w-1/2">Gerentes Presentes</th>
+                                        <th class="p-1 border border-gray-400 text-center w-1/2">Gerentes Presentes</th>
                                     </tr>
                                     <tr class="bg-emerald-50 text-emerald-900 font-bold">
                                         <th class="p-1 border border-gray-400 text-center">04/08/2026</th>
                                         <th class="p-1 border border-gray-400 text-center">11/08/2026</th>
                                     </tr>
                                 </thead>
-                                <tbody id="fdsPresentesTableBody">
-                                    <!-- Preenchido Dinamicamente / Editável pelo Admin -->
-                                </tbody>
+                                <tbody id="fdsPresentesTableBody"></tbody>
                             </table>
 
                             <table class="w-full text-xs border-collapse border border-gray-400 mt-2">
                                 <thead>
                                     <tr class="bg-gray-100 font-bold">
-                                        <th class="p-1 border border-gray-400 text-center">Gerentes Presentes</th>
-                                        <th class="p-1 border border-gray-400 text-center">Gerentes Presentes</th>
+                                        <th class="p-1 border border-gray-400 text-center w-1/2">Gerentes Presentes</th>
+                                        <th class="p-1 border border-gray-400 text-center w-1/2">Gerentes Presentes</th>
                                     </tr>
                                     <tr class="bg-emerald-50 text-emerald-900 font-bold">
                                         <th class="p-1 border border-gray-400 text-center">18/08/2026</th>
                                         <th class="p-1 border border-gray-400 text-center">25/08/2026</th>
                                     </tr>
                                 </thead>
-                                <tbody id="fdsPresentesTableBody2">
-                                    <!-- Preenchido Dinamicamente / Editável pelo Admin -->
-                                </tbody>
+                                <tbody id="fdsPresentesTableBody2"></tbody>
                             </table>
                         </div>
 
-                        <!-- TABELA DE MÉTRICAS AO VIVO (IGUAL AO EXCEL) -->
+                        <!-- TABELA DE MÉTRICAS (SEM A COLUNA SEÇÕES) -->
                         <div class="bg-white p-2 rounded-lg shadow-sm border border-gray-300">
                             <table class="w-full text-xs border-collapse border border-gray-400">
                                 <thead>
                                     <tr class="bg-[#70ad47] text-white font-bold">
                                         <th class="p-1.5 border border-gray-400 text-left">Gerentes</th>
-                                        <th class="p-1.5 border border-gray-400 text-center">Seções</th>
                                         <th class="p-1.5 border border-gray-400 text-center">Abertura</th>
                                         <th class="p-1.5 border border-gray-400 text-center">Fechamento</th>
                                         <th class="p-1.5 border border-gray-400 text-center font-extrabold">Total</th>
                                         <th class="p-1.5 border border-gray-400 text-center">Sábados</th>
                                     </tr>
                                 </thead>
-                                <tbody id="metricsExcelTableBody" class="divide-y font-medium text-gray-800">
-                                    <!-- Atualizado em tempo real pelo JS -->
-                                </tbody>
+                                <tbody id="metricsExcelTableBody" class="divide-y font-medium text-gray-800"></tbody>
                             </table>
                         </div>
 
@@ -366,7 +366,7 @@
         </div>
     </div>
 
-    <!-- MODAL POPUP DE EDICÃO -->
+    <!-- MODAL POPUP DE EDIÇÃO -->
     <div id="dayModal" class="fixed inset-0 bg-black bg-opacity-40 hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-xl shadow-xl max-w-sm w-full p-5 space-y-4">
             <h3 class="font-bold text-gray-800 text-sm border-b pb-2" id="modalTitle">Edição de Plantão</h3>
@@ -382,14 +382,6 @@
                 <div>
                     <label class="block font-semibold text-[#548235] mb-1">🏳️ Folga:</label>
                     <input type="text" id="modalFolgasManuais" placeholder="Ex: Pedro / Danielle" class="w-full border p-2 rounded bg-white text-xs outline-none font-bold">
-                </div>
-                <div>
-                    <label class="block font-semibold text-gray-600 mb-1">Abertura Coord:</label>
-                    <input type="text" id="modalAbCoord" placeholder="Opcional" class="w-full border p-2 rounded bg-white text-xs outline-none">
-                </div>
-                <div>
-                    <label class="block font-semibold text-gray-600 mb-1">Fechamento Coord:</label>
-                    <input type="text" id="modalFechCoord" placeholder="Opcional" class="w-full border p-2 rounded bg-white text-xs outline-none">
                 </div>
             </div>
             <div class="flex justify-end space-x-2 pt-1 text-xs">
@@ -411,6 +403,7 @@
             gerentes: [],      
             escala: {},        
             restricoes: [],
+            fdsPresentes: {},
             currentPeriod: "2026-08" 
         };
 
@@ -601,9 +594,7 @@
                         appState.escala[item.dia_mes] = { 
                             abertura: item.abertura, 
                             fechamento: item.fechamento, 
-                            folgas_custom: item.folgas_custom || "",
-                            ab_coord: item.ab_coord || "",
-                            fech_coord: item.fech_coord || ""
+                            folgas_custom: item.folgas_custom || ""
                         };
                     });
                     renderAll();
@@ -629,7 +620,6 @@
             );
         }
 
-        // MOTOR V34: ETAPA 1 (FDS PRIMEIRO) + ETAPA 2 (DIAS DE SEMANA)
         function initCalendar() {
             const totalDays = 31;
             appState.escala = {};
@@ -639,12 +629,11 @@
                 id: g.id, nome: g.nome, aberturas: 0, fechamentos: 0, total: 0, ultimoPlantaoDia: -99, fdsTrabalhados: 0
             }));
 
-            // 1. Passo: Finais de semana travados de acordo com solicitações
             for (let d = 1; d <= totalDays; d++) {
                 let dateStr = `${appState.currentPeriod}-${String(d).padStart(2, '0')}`;
                 let dateObj = new Date(dateStr + "T12:00:00");
 
-                if (dateObj.getDay() === 6) { // Sábado
+                if (dateObj.getDay() === 6) {
                     let sabFormatted = dateStr;
                     let domFormatted = `${appState.currentPeriod}-${String(d+1).padStart(2, '0')}`;
 
@@ -665,9 +654,9 @@
                     let aptosFech = disponiveis.filter(g => g.nome !== gAb);
                     let gFech = aptosFech[0] ? aptosFech[0].nome : gControl.filter(g => g.nome !== gAb).sort((a,b) => a.total - b.total)[0].nome;
 
-                    appState.escala[d] = { abertura: gAb, fechamento: gFech, folgas_custom: "", ab_coord: "", fech_coord: "" };
+                    appState.escala[d] = { abertura: gAb, fechamento: gFech, folgas_custom: "" };
                     if (d + 1 <= totalDays) {
-                        appState.escala[d + 1] = { abertura: gAb, fechamento: gFech, folgas_custom: "", ab_coord: "", fech_coord: "" };
+                        appState.escala[d + 1] = { abertura: gAb, fechamento: gFech, folgas_custom: "" };
                     }
 
                     gControl.forEach(g => {
@@ -677,7 +666,6 @@
                 }
             }
 
-            // 2. Passo: Preenchimento dos dias de semana
             for (let d = 1; d <= totalDays; d++) {
                 if (appState.escala[d]) continue;
 
@@ -709,7 +697,7 @@
                 aptosFech.sort((a,b) => (a.total - b.total) || (a.fechamentos - b.fechamentos));
                 let gFech = aptosFech[0] ? aptosFech[0].nome : gControl.filter(g => g.nome !== gAb && !emFolgaSanduiche.includes(g.nome)).sort((a,b) => a.total - b.total)[0].nome;
 
-                appState.escala[d] = { abertura: gAb, fechamento: gFech, folgas_custom: "", ab_coord: "", fech_coord: "" };
+                appState.escala[d] = { abertura: gAb, fechamento: gFech, folgas_custom: "" };
 
                 gControl.forEach(g => {
                     if(g.nome === gAb) { g.aberturas += 1; g.total += 1; g.ultimoPlantaoDia = d; }
@@ -724,8 +712,6 @@
             const ab = document.getElementById('modalAbertura').value;
             const fech = document.getElementById('modalFechamento').value;
             const folgasCustom = document.getElementById('modalFolgasManuais').value.trim();
-            const abCoord = document.getElementById('modalAbCoord').value.trim();
-            const fechCoord = document.getElementById('modalFechCoord').value.trim();
 
             await supabaseClient.from('escalas_mensais').upsert({
                 id: parseInt(`${appState.currentPeriod.split('-')[1]}${currentSelectedDay}`),
@@ -733,12 +719,10 @@
                 dia_mes: currentSelectedDay, 
                 abertura: ab, 
                 fechamento: fech, 
-                folgas_custom: folgasCustom,
-                ab_coord: abCoord,
-                fech_coord: fechCoord
+                folgas_custom: folgasCustom
             });
 
-            appState.escala[currentSelectedDay] = { abertura: ab, fechamento: fech, folgas_custom: folgasCustom, ab_coord: abCoord, fech_coord: fechCoord };
+            appState.escala[currentSelectedDay] = { abertura: ab, fechamento: fech, folgas_custom: folgasCustom };
             renderAll();
             closeModal();
         }
@@ -753,17 +737,14 @@
                         dia_mes: d, 
                         abertura: appState.escala[d].abertura, 
                         fechamento: appState.escala[d].fechamento, 
-                        folgas_custom: "",
-                        ab_coord: "",
-                        fech_coord: ""
+                        folgas_custom: ""
                     });
                 }
             }
-            alert("Escala atualizada em padrão Excel!");
+            alert("Escala atualizada!");
             await puxarEscalaSalva();
         }
 
-        // RENDERIZAÇÃO ESTILIZADA IDÊNTICA À PLANILHA DO EXCEL
         function renderAll() {
             let sheetsHtml = "";
             const diasSemanaNomes = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
@@ -777,7 +758,7 @@
                 let dayOfWeek = dateObj.getDay(); 
                 let diaSemanaNome = diasSemanaNomes[dayOfWeek];
 
-                let data = appState.escala[d] || { abertura: "", fechamento: "", folgas_custom: "", ab_coord: "", fech_coord: "" };
+                let data = appState.escala[d] || { abertura: "", fechamento: "", folgas_custom: "" };
                 let folgasLista = [];
 
                 if(metricasAb[data.abertura] !== undefined) metricasAb[data.abertura]++;
@@ -798,7 +779,6 @@
                 let folgaTextoFinal = folgasLista.join(' / ');
                 if(data.folgas_custom) folgaTextoFinal = data.folgas_custom;
 
-                // COR EXATA DO EXCEL PARA FIM DE SEMANA
                 let rowBg = "bg-white";
                 let textStyle = "text-gray-800";
                 if (dayOfWeek === 6 || dayOfWeek === 0) {
@@ -808,27 +788,24 @@
 
                 sheetsHtml += `
                     <tr class="${rowBg} hover:opacity-90 border-b border-gray-300 transition cursor-pointer text-center" onclick="openModal(${d})">
-                        <td class="p-1.5 border border-gray-400 font-bold">${String(d).padStart(2, '0')}/${appState.currentPeriod.split('-')[1]}/2026</td>
-                        <td class="p-1.5 border border-gray-400 font-semibold">${diaSemanaNome}</td>
-                        <td class="p-1.5 border border-gray-400 font-bold ${textStyle}">${data.abertura}</td>
-                        <td class="p-1.5 border border-gray-400 font-bold ${textStyle}">${data.fechamento}</td>
-                        <td class="p-1.5 border border-gray-400 font-bold ${dayOfWeek === 6 || dayOfWeek === 0 ? 'text-white' : 'text-amber-800'}">${folgaTextoFinal}</td>
-                        <td class="p-1.5 border border-gray-400 bg-opacity-20">${data.ab_coord || ''}</td>
-                        <td class="p-1.5 border border-gray-400 bg-opacity-20">${data.fech_coord || ''}</td>
+                        <td class="p-2 border border-gray-400 font-bold">${String(d).padStart(2, '0')}/${appState.currentPeriod.split('-')[1]}/2026</td>
+                        <td class="p-2 border border-gray-400 font-semibold">${diaSemanaNome}</td>
+                        <td class="p-2 border border-gray-400 font-bold ${textStyle}">${data.abertura}</td>
+                        <td class="p-2 border border-gray-400 font-bold ${textStyle}">${data.fechamento}</td>
+                        <td class="p-2 border border-gray-400 font-bold ${dayOfWeek === 6 || dayOfWeek === 0 ? 'text-white' : 'text-amber-800'}">${folgaTextoFinal}</td>
                     </tr>
                 `;
             }
             document.getElementById('sheetsTableBody').innerHTML = sheetsHtml;
 
-            // RENDERIZAÇÃO DO QUADRO DE MÉTRICAS AO VIVO (IGUAL AO EXCEL)
+            // RENDERIZAÇÃO DO QUADRO DE MÉTRICAS (SEM A COLUNA SEÇÕES)
             document.getElementById('metricsExcelTableBody').innerHTML = appState.gerentes.map(g => {
                 let ab = metricasAb[g.nome] || 0; 
                 let fech = metricasFech[g.nome] || 0;
                 let sab = metricasSab[g.nome] || 0;
                 return `
                     <tr class="hover:bg-gray-50 border-b border-gray-300 text-xs">
-                        <td class="p-1.5 font-bold text-gray-800 border border-gray-300">${g.nome}</td>
-                        <td class="p-1.5 text-center text-gray-500 border border-gray-300">01.02</td>
+                        <td class="p-1.5 font-bold text-gray-800 border border-gray-300 text-left">${g.nome}</td>
                         <td class="p-1.5 text-center bg-green-50 font-semibold border border-gray-300">${ab}</td>
                         <td class="p-1.5 text-center bg-blue-50 font-semibold border border-gray-300">${fech}</td>
                         <td class="p-1.5 text-center font-extrabold bg-gray-100 border border-gray-300">${ab + fech}</td>
@@ -837,25 +814,44 @@
                 `;
             }).join('');
 
-            // TABELAS DE SÁBADOS/DOMINGOS (GERENTES PRESENTES)
-            renderFdsPresentesTable();
+            renderFdsPresentesSelects();
         }
 
-        function renderFdsPresentesTable() {
+        // MONTA OS MENUS SUSPENSOS (<select>) PARA CADA LINHA DOS FINAIS DE SEMANA
+        function renderFdsPresentesSelects() {
+            const optionsHtml = `<option value="">- Selecionar -</option>` + 
+                appState.gerentes.map(g => `<option value="${g.nome}">${g.nome}</option>`).join('');
+
             let body1 = "";
             let body2 = "";
 
             for(let i = 0; i < 4; i++) {
                 body1 += `
                     <tr>
-                        <td class="p-1 border border-gray-300 text-center"><input type="text" class="w-full text-center outline-none bg-transparent" placeholder="-"></td>
-                        <td class="p-1 border border-gray-300 text-center"><input type="text" class="w-full text-center outline-none bg-transparent" placeholder="-"></td>
+                        <td class="p-1 border border-gray-300 text-center">
+                            <select class="w-full text-center outline-none bg-transparent font-semibold text-xs text-gray-700 cursor-pointer">
+                                ${optionsHtml}
+                            </select>
+                        </td>
+                        <td class="p-1 border border-gray-300 text-center">
+                            <select class="w-full text-center outline-none bg-transparent font-semibold text-xs text-gray-700 cursor-pointer">
+                                ${optionsHtml}
+                            </select>
+                        </td>
                     </tr>
                 `;
                 body2 += `
                     <tr>
-                        <td class="p-1 border border-gray-300 text-center"><input type="text" class="w-full text-center outline-none bg-transparent" placeholder="-"></td>
-                        <td class="p-1 border border-gray-300 text-center"><input type="text" class="w-full text-center outline-none bg-transparent" placeholder="-"></td>
+                        <td class="p-1 border border-gray-300 text-center">
+                            <select class="w-full text-center outline-none bg-transparent font-semibold text-xs text-gray-700 cursor-pointer">
+                                ${optionsHtml}
+                            </select>
+                        </td>
+                        <td class="p-1 border border-gray-300 text-center">
+                            <select class="w-full text-center outline-none bg-transparent font-semibold text-xs text-gray-700 cursor-pointer">
+                                ${optionsHtml}
+                            </select>
+                        </td>
                     </tr>
                 `;
             }
@@ -875,8 +871,6 @@
             abSel.value = appState.escala[day]?.abertura || "";
             fechSel.value = appState.escala[day]?.fechamento || "";
             document.getElementById('modalFolgasManuais').value = appState.escala[day]?.folgas_custom || "";
-            document.getElementById('modalAbCoord').value = appState.escala[day]?.ab_coord || "";
-            document.getElementById('modalFechCoord').value = appState.escala[day]?.fech_coord || "";
             document.getElementById('dayModal').classList.remove('hidden');
         }
 
