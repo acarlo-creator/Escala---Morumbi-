@@ -3,85 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V33 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V34 - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Biblioteca Oficial do Supabase CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        corporate: {
-                            light: '#e8f5e9',
-                            DEFAULT: '#2e7d32',
-                            dark: '#1b5e20',
-                            accent: '#4caf50'
-                        }
+                        excelGreen: '#70ad47',
+                        excelHeader: '#548235',
+                        excelBg: '#e2efda',
+                        excelBorder: '#385723'
                     }
                 }
             }
         }
     </script>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f3f4f6; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; }
         .view-section { display: none; }
         .view-section.active { display: block; }
         
-        /* IMPRESSÃO EM MODO PAISAGEM (FOLHA DEITADA) */
+        /* ESTILOS DE IMPRESSÃO - MODO PAISAGEM LADO A LADO SEM CORTES */
         @page {
             size: landscape;
-            margin: 8mm;
+            margin: 5mm;
         }
         @media print {
-            body { background: white; color: black; }
-            nav, .bg-green-50, button, #adminManageBtn, #managerBtn, select, input, .non-printable { display: none !important; }
+            body { background: white !important; color: black !important; font-size: 9px !important; }
+            nav, .non-printable, button, input, select { display: none !important; }
             .view-section { display: block !important; }
-            table { width: 100% !important; border-collapse: collapse !important; font-size: 10px !important; }
-            th, td { border: 1px solid #000 !important; padding: 3px 6px !important; color: black !important; text-align: center !important; }
+            .print-grid { display: flex !important; flex-direction: row !important; align-items: start !important; gap: 8px !important; }
+            table { border-collapse: collapse !important; width: 100% !important; }
+            th, td { border: 1px solid #385723 !important; padding: 2px 4px !important; text-align: center !important; font-size: 9px !important; }
+            .bg-excel-week { background-color: #70ad47 !important; color: white !important; -webkit-print-color-adjust: exact; }
+            .bg-excel-hdr { background-color: #548235 !important; color: white !important; -webkit-print-color-adjust: exact; }
+            .bg-excel-sub { background-color: #8ea9db !important; color: white !important; -webkit-print-color-adjust: exact; }
         }
     </style>
 </head>
 <body class="text-gray-800">
 
-    <!-- TELA DE LOGIN / AUTO-CADASTRO -->
+    <!-- TELA DE LOGIN -->
     <div id="loginScreen" class="fixed inset-0 bg-gray-900 flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-6">
             <div class="text-center space-y-2">
-                <div class="inline-block bg-corporate p-3 rounded-full text-white text-2xl shadow-md">LM</div>
-                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Inteligente Morumbi</h2>
-                <p class="text-xs text-gray-500">Acesse com o seu e-mail corporativo</p>
+                <div class="inline-block bg-[#548235] p-3 rounded-full text-white text-2xl shadow-md">LM</div>
+                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V34</h2>
+                <p class="text-xs text-gray-500">Acesse com seu e-mail corporativo</p>
             </div>
 
             <div class="space-y-4" id="authForm">
                 <div>
                     <label class="block text-xs font-bold text-gray-600 uppercase mb-1">E-mail Corporativo</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                            <i class="fas fa-envelope"></i>
-                        </span>
-                        <input type="email" id="loginEmail" placeholder="exemplo@leroymerlin.com.br" 
-                               class="w-full pl-9 pr-3 py-2 border rounded-xl text-sm focus:ring-2 focus:ring-corporate focus:border-transparent outline-none">
-                    </div>
+                    <input type="email" id="loginEmail" placeholder="exemplo@leroymerlin.com.br" 
+                           class="w-full px-3 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-green-600">
                 </div>
-                <button onclick="verificarOuCadastrarGerente()" class="w-full bg-corporate text-white py-2.5 rounded-xl font-bold text-sm shadow-md hover:bg-corporate-dark transition flex items-center justify-center space-x-2">
-                    <span>Avançar para o Painel</span>
-                    <i class="fas fa-arrow-right text-xs"></i>
+                <button onclick="verificarOuCadastrarGerente()" class="w-full bg-[#548235] text-white py-2.5 rounded-xl font-bold text-sm shadow hover:bg-green-800 transition">
+                    Avançar para o Painel
                 </button>
             </div>
 
             <div class="space-y-4 hidden" id="registerForm">
                 <div class="bg-blue-50 border-l-4 border-blue-500 p-3 rounded text-xs text-blue-800">
-                    <p class="font-bold"><i class="fas fa-user-plus"></i> Primeiro Acesso Identificado!</p>
-                    <p class="mt-0.5">O seu e-mail não foi localizado. Cadastre o seu nome completo abaixo para criar o seu perfil na base de forma autônoma.</p>
+                    <p class="font-bold">Primeiro Acesso Identificado!</p>
+                    <p class="mt-0.5">Informe seu nome completo para concluir seu cadastro.</p>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nome Completo</label>
-                    <input type="text" id="registerName" placeholder="Ex: Maria Souza" 
-                           class="w-full px-3 py-2 border rounded-xl text-sm focus:ring-2 focus:ring-corporate focus:border-transparent outline-none">
+                    <input type="text" id="registerName" placeholder="Ex: Maria Souza" class="w-full px-3 py-2 border rounded-xl text-sm outline-none">
                 </div>
-                <button onclick="salvarNovoGerenteEEntrar()" class="w-full bg-blue-600 text-white py-2.5 rounded-xl font-bold text-sm shadow-md hover:bg-blue-700 transition">
+                <button onclick="salvarNovoGerenteEEntrar()" class="w-full bg-blue-600 text-white py-2.5 rounded-xl font-bold text-sm shadow hover:bg-blue-700 transition">
                     Concluir Cadastro e Entrar
                 </button>
             </div>
@@ -90,92 +84,146 @@
 
     <!-- PAINEL PRINCIPAL -->
     <div id="mainDashboard" class="hidden">
-        <nav class="bg-corporate-dark text-white shadow-md px-6 py-4 flex flex-col sm:flex-row justify-between items-center space-y-3 sm:space-y-0 non-printable">
+        <nav class="bg-[#548235] text-white shadow-md px-6 py-3 flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0 non-printable">
             <div class="flex items-center space-x-3">
-                <div class="bg-white p-2 rounded text-corporate-dark font-bold text-xl shadow">LM</div>
+                <div class="bg-white text-[#548235] font-bold text-xl px-2.5 py-1 rounded shadow">LM</div>
                 <div>
-                    <h1 class="text-lg font-bold tracking-wide">Escala Morumbi V33</h1>
-                    <p class="text-xs text-green-200 flex items-center space-x-1">
-                        <span class="inline-block w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-                        <span id="userBadge">Carregando usuário...</span>
+                    <h1 class="text-base font-bold">Escala Morumbi — Padrão Excel V34</h1>
+                    <p class="text-[11px] text-green-100 flex items-center space-x-1">
+                        <span class="inline-block w-2 h-2 rounded-full bg-green-300 animate-pulse"></span>
+                        <span id="userBadge">Carregando...</span>
                     </p>
                 </div>
             </div>
 
-            <div class="flex items-center space-x-3 bg-green-800 px-3 py-1.5 rounded-xl border border-green-700">
-                <label class="text-xs font-bold text-green-100 uppercase tracking-wide">Período:</label>
+            <div class="flex items-center space-x-3 bg-green-900/40 px-3 py-1 rounded-xl border border-green-400/30">
+                <label class="text-xs font-bold uppercase">Mês:</label>
                 <select id="periodSelector" onchange="alterarPeriodo()" class="bg-transparent text-xs font-bold text-white outline-none cursor-pointer">
-                    <option value="2026-08" selected class="text-gray-800 font-semibold">Agosto / 2026 (Atual)</option>
-                    <option value="2026-09" class="text-gray-800 font-semibold">Setembro / 2026</option>
-                    <option value="2026-10" class="text-gray-800 font-semibold">Outubro / 2026</option>
-                    <option value="2026-11" class="text-gray-800 font-semibold">Novembro / 2026</option>
-                    <option value="2026-12" class="text-gray-800 font-semibold">Dezembro / 2026</option>
+                    <option value="2026-08" selected class="text-gray-800">Agosto / 2026</option>
+                    <option value="2026-09" class="text-gray-800">Setembro / 2026</option>
+                    <option value="2026-10" class="text-gray-800">Outubro / 2026</option>
+                    <option value="2026-11" class="text-gray-800">Novembro / 2026</option>
+                    <option value="2026-12" class="text-gray-800">Dezembro / 2026</option>
                 </select>
-                <button onclick="window.print()" class="bg-white text-corporate-dark text-[10px] px-2 py-0.5 rounded font-bold shadow-xs hover:bg-gray-100 transition"><i class="fas fa-print"></i> Imprimir / PDF (Paisagem)</button>
+                <button onclick="window.print()" class="bg-white text-[#548235] text-xs px-2.5 py-1 rounded font-bold shadow hover:bg-gray-100 transition">
+                    <i class="fas fa-print"></i> Imprimir / PDF
+                </button>
             </div>
 
             <div class="flex items-center space-x-2">
-                <button id="adminManageBtn" onclick="openAdminManagerModal()" class="hidden text-xs bg-amber-500 text-white px-3 py-1.5 rounded font-bold hover:bg-amber-600 transition shadow">
+                <button id="adminManageBtn" onclick="openAdminManagerModal()" class="hidden text-xs bg-amber-500 text-white px-3 py-1.5 rounded font-bold hover:bg-amber-600 shadow">
                     <i class="fas fa-users-cog"></i> Gerenciar Gerentes
                 </button>
-                <button onclick="switchTab('dashboard')" class="text-xs bg-green-700 text-white px-3 py-1.5 rounded font-semibold hover:bg-green-600 transition shadow">Quadro de Plantão (Sheets)</button>
-                <button id="metricasNavBtn" onclick="switchTab('metricas')" class="hidden text-xs bg-white text-corporate-dark px-3 py-1.5 rounded font-semibold hover:bg-green-50 transition shadow">Painel de Métricas</button>
-                <button id="managerBtn" onclick="switchTab('manager')" class="hidden text-xs bg-amber-500 text-white px-3 py-1.5 rounded font-semibold hover:bg-amber-600 transition shadow">Área do Gerente</button>
-                <button onclick="logout()" class="text-xs bg-red-600 text-white px-2 py-1.5 rounded font-semibold hover:bg-red-700 transition shadow"><i class="fas fa-sign-out-alt"></i></button>
+                <button id="managerBtn" onclick="switchTab('manager')" class="hidden text-xs bg-amber-500 text-white px-3 py-1.5 rounded font-bold hover:bg-amber-600 shadow">Área do Gerente</button>
+                <button onclick="logout()" class="text-xs bg-red-600 text-white px-2 py-1.5 rounded font-bold shadow"><i class="fas fa-sign-out-alt"></i></button>
             </div>
         </nav>
 
-        <div class="max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
+        <div class="max-w-[1600px] mx-auto p-3 sm:p-5 space-y-4">
 
-            <!-- TAB 1: QUADRO DE PLANTÃO -->
-            <div id="dashboardSection" class="view-section active space-y-6">
-                <div class="bg-green-50 border-l-4 border-corporate p-4 rounded-r-xl shadow-xs text-xs text-corporate-dark flex justify-between items-center non-printable">
+            <!-- QUADRO DE PLANTÃO + PAINEL LATERAL EM GRID -->
+            <div id="dashboardSection" class="view-section active space-y-4">
+                <div class="bg-green-50 border-l-4 border-[#548235] p-3 rounded-r-xl text-xs text-green-900 flex justify-between items-center non-printable shadow-sm">
                     <div>
-                        <p class="font-bold text-sm"><i class="fas fa-check-circle"></i> Algoritmo Mestre de Finais de Semana (V33):</p>
-                        <p class="mt-1">Pré-alocação dos FDS pelas preferências enviadas no portal + Layout impresso em Modo Paisagem.</p>
+                        <p class="font-bold text-sm"><i class="fas fa-table"></i> Visualização Exata da Planilha:</p>
+                        <p class="mt-0.5">Tabela principal sincronizada com o quadro de Gerentes Presentes no FDS e Métricas calculadas em tempo real.</p>
                     </div>
-                    <button id="adminGenerateBtn" onclick="gerarEscalaAutomatica()" class="hidden bg-corporate text-white px-4 py-2 rounded-lg text-xs font-bold shadow hover:bg-corporate-dark transition">
+                    <button id="adminGenerateBtn" onclick="gerarEscalaAutomatica()" class="hidden bg-[#548235] text-white px-4 py-2 rounded-lg text-xs font-bold shadow hover:bg-green-800 transition">
                         <i class="fas fa-magic"></i> Balancear e Salvar Escala na Nuvem
                     </button>
                 </div>
 
-                <!-- LINHAS DA PLANILHA -->
-                <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm space-y-4 overflow-x-auto">
-                    <div class="bg-[#2e7d32] text-white font-bold p-3 text-center text-sm rounded-t-xl uppercase tracking-wider">Escala de Plantão Morumbi</div>
-                    <table class="w-full text-left text-xs border-collapse">
-                        <thead>
-                            <tr class="bg-gray-100 text-gray-700 font-bold text-center">
-                                <th class="p-2.5 border border-gray-300 w-24">Dia/Mês</th>
-                                <th class="p-2.5 border border-gray-300 w-32">Dia/Semana</th>
-                                <th class="p-2.5 border border-gray-300 bg-green-50 text-corporate-dark">☀️ Abertura</th>
-                                <th class="p-2.5 border border-gray-300 bg-blue-50 text-blue-900">🌙 Fechamento</th>
-                                <th class="p-2.5 border border-gray-300 text-gray-800 bg-gray-50">🏳️ Folga</th>
-                            </tr>
-                        </thead>
-                        <tbody id="sheetsTableBody" class="divide-y font-semibold text-center text-gray-700"></tbody>
-                    </table>
+                <!-- TÍTULO CORPORATIVO DO EXCEL -->
+                <div class="bg-[#70ad47] text-white font-extrabold p-2 text-center text-base rounded-t-lg tracking-wider uppercase shadow-xs">
+                    ESCALA DE PLANTÃO
                 </div>
-            </div>
+                <div class="bg-[#8ea9db] text-white font-bold p-1 text-center text-xs tracking-wider uppercase mb-2">
+                    ago.-26
+                </div>
 
-            <!-- TAB 2: METRICAS -->
-            <div id="metricasSection" class="view-section space-y-6">
-                <div class="bg-white p-6 rounded-xl shadow-sm space-y-4">
-                    <div class="border-b pb-2">
-                        <h3 class="text-lg font-bold text-gray-800"><i class="fas fa-chart-bar text-corporate"></i> Painel de Controle e Equilíbrio de Turnos</h3>
-                    </div>
-                    <div class="overflow-x-auto border rounded-xl">
-                        <table class="w-full text-left text-sm border-collapse">
+                <!-- ESTRUTURA LADO A LADO EXATA DO EXCEL -->
+                <div class="print-grid grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+                    
+                    <!-- TABELA PRINCIPAL (COLUNAS A ATÊ G) -->
+                    <div class="lg:col-span-8 overflow-x-auto bg-white p-2 rounded-b-lg shadow-sm">
+                        <table class="w-full text-xs border-collapse border border-gray-400">
                             <thead>
-                                <tr class="bg-gray-100 border-b text-gray-700 font-bold text-xs uppercase tracking-wider">
-                                    <th class="p-3">Nome do Gerente</th>
-                                    <th class="p-3 text-center bg-green-50 text-green-900 font-bold border-x">☀️ Aberturas</th>
-                                    <th class="p-3 text-center bg-blue-50 text-blue-800 font-bold border-r">🌙 Fechamentos</th>
-                                    <th class="p-3 text-center bg-gray-100 text-gray-800 font-bold">📊 Total Geral</th>
+                                <tr class="bg-[#e2efda] text-gray-800 font-bold border-b-2 border-gray-400">
+                                    <th class="p-1.5 border border-gray-400 w-20 text-center">Dia/Mês</th>
+                                    <th class="p-1.5 border border-gray-400 w-24 text-center">Dia/Semana</th>
+                                    <th class="p-1.5 border border-gray-400 text-center">Abertura</th>
+                                    <th class="p-1.5 border border-gray-400 text-center">Fechamento</th>
+                                    <th class="p-1.5 border border-gray-400 text-center">Folga</th>
+                                    <th class="p-1.5 border border-gray-400 text-center bg-gray-100">Abertura Coord</th>
+                                    <th class="p-1.5 border border-gray-400 text-center bg-gray-100">Fechamento Coord</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y text-gray-600 font-medium" id="metricsTableBody"></tbody>
+                            <tbody id="sheetsTableBody" class="divide-y font-semibold text-gray-800"></tbody>
                         </table>
                     </div>
+
+                    <!-- BLOCOS LATERAIS DO EXCEL (FIM DE SEMANA + MÉTRICAS) -->
+                    <div class="lg:col-span-4 space-y-4">
+                        
+                        <!-- TABELA FIM DE SEMANA / GERENTES PRESENTES -->
+                        <div class="bg-white p-2 rounded-lg shadow-sm border border-gray-300">
+                            <div class="bg-gray-200 font-extrabold p-1.5 text-center text-xs text-gray-700 uppercase border border-gray-400">
+                                FIM DE SEMANA
+                            </div>
+                            <table class="w-full text-xs border-collapse border border-gray-400 mt-1">
+                                <thead>
+                                    <tr class="bg-gray-100 font-bold">
+                                        <th class="p-1 border border-gray-400 text-center">Gerentes Presentes</th>
+                                        <th class="p-1 border border-gray-400 text-center">Gerentes Presentes</th>
+                                    </tr>
+                                    <tr class="bg-emerald-50 text-emerald-900 font-bold">
+                                        <th class="p-1 border border-gray-400 text-center">04/08/2026</th>
+                                        <th class="p-1 border border-gray-400 text-center">11/08/2026</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="fdsPresentesTableBody">
+                                    <!-- Preenchido Dinamicamente / Editável pelo Admin -->
+                                </tbody>
+                            </table>
+
+                            <table class="w-full text-xs border-collapse border border-gray-400 mt-2">
+                                <thead>
+                                    <tr class="bg-gray-100 font-bold">
+                                        <th class="p-1 border border-gray-400 text-center">Gerentes Presentes</th>
+                                        <th class="p-1 border border-gray-400 text-center">Gerentes Presentes</th>
+                                    </tr>
+                                    <tr class="bg-emerald-50 text-emerald-900 font-bold">
+                                        <th class="p-1 border border-gray-400 text-center">18/08/2026</th>
+                                        <th class="p-1 border border-gray-400 text-center">25/08/2026</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="fdsPresentesTableBody2">
+                                    <!-- Preenchido Dinamicamente / Editável pelo Admin -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- TABELA DE MÉTRICAS AO VIVO (IGUAL AO EXCEL) -->
+                        <div class="bg-white p-2 rounded-lg shadow-sm border border-gray-300">
+                            <table class="w-full text-xs border-collapse border border-gray-400">
+                                <thead>
+                                    <tr class="bg-[#70ad47] text-white font-bold">
+                                        <th class="p-1.5 border border-gray-400 text-left">Gerentes</th>
+                                        <th class="p-1.5 border border-gray-400 text-center">Seções</th>
+                                        <th class="p-1.5 border border-gray-400 text-center">Abertura</th>
+                                        <th class="p-1.5 border border-gray-400 text-center">Fechamento</th>
+                                        <th class="p-1.5 border border-gray-400 text-center font-extrabold">Total</th>
+                                        <th class="p-1.5 border border-gray-400 text-center">Sábados</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="metricsExcelTableBody" class="divide-y font-medium text-gray-800">
+                                    <!-- Atualizado em tempo real pelo JS -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+
                 </div>
             </div>
 
@@ -187,7 +235,6 @@
                         <p class="text-xs text-gray-500 mt-0.5">Sinalize suas ausências e preferências para o fechamento da escala</p>
                     </div>
 
-                    <!-- PREFERÊNCIA FDS -->
                     <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-r-xl space-y-3">
                         <h4 class="font-bold text-sm text-emerald-800 flex items-center space-x-1.5">
                             <i class="fas fa-star"></i>
@@ -196,62 +243,59 @@
                         <div class="text-xs grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
                             <div>
                                 <label class="block mb-1 font-semibold text-gray-600">Sábado (Início):</label>
-                                <input type="date" id="prefFdsStart" class="w-full border p-2 rounded-lg bg-white text-xs outline-none font-semibold text-gray-700">
+                                <input type="date" id="prefFdsStart" class="w-full border p-2 rounded-lg bg-white text-xs outline-none">
                             </div>
                             <div>
                                 <label class="block mb-1 font-semibold text-gray-600">Domingo (Fim):</label>
-                                <input type="date" id="prefFdsEnd" class="w-full border p-2 rounded-lg bg-white text-xs outline-none font-semibold text-gray-700">
+                                <input type="date" id="prefFdsEnd" class="w-full border p-2 rounded-lg bg-white text-xs outline-none">
                             </div>
-                            <button onclick="salvarPreferenciaFdsIntervalo()" class="bg-corporate hover:bg-corporate-dark text-white font-bold px-4 py-2 rounded-lg shadow-sm transition flex items-center justify-center space-x-1 h-9">
+                            <button onclick="salvarPreferenciaFdsIntervalo()" class="bg-[#548235] hover:bg-green-800 text-white font-bold px-4 py-2 rounded-lg shadow transition flex items-center justify-center space-x-1 h-9">
                                 <i class="fas fa-check-circle"></i> <span>Registrar Preferência</span>
                             </button>
                         </div>
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <!-- DIA BLOQUEADO -->
                         <div class="border p-4 rounded-xl space-y-3 bg-gray-50">
                             <h4 class="font-bold text-sm text-red-700"><i class="fas fa-calendar-times"></i> Sinalizar Dia Bloqueado</h4>
                             <div class="text-xs space-y-2">
                                 <div>
                                     <label class="block mb-1 font-semibold text-gray-600">Escolha a Data:</label>
-                                    <input type="date" id="blockDate" class="w-full border p-2 rounded bg-white text-xs font-semibold text-gray-700">
+                                    <input type="date" id="blockDate" class="w-full border p-2 rounded bg-white text-xs font-semibold">
                                 </div>
                                 <div>
-                                    <label class="block mb-1 font-semibold text-gray-600">Escreva o Motivo:</label>
-                                    <input type="text" id="blockReason" placeholder="Ex: Consulta médica" class="w-full border p-2 rounded bg-white text-xs outline-none font-semibold text-gray-700">
+                                    <label class="block mb-1 font-semibold text-gray-600">Motivo:</label>
+                                    <input type="text" id="blockReason" placeholder="Ex: Consulta médica" class="w-full border p-2 rounded bg-white text-xs outline-none">
                                 </div>
                             </div>
                             <button onclick="registrarBloqueioComMotivo()" class="w-full bg-red-600 text-white py-2 rounded text-xs font-bold shadow">Registrar Bloqueio</button>
                         </div>
 
-                        <!-- FÉRIAS -->
                         <div class="border p-4 rounded-xl space-y-3 bg-gray-50">
-                            <h4 class="font-bold text-sm text-corporate-dark"><i class="fas fa-plane"></i> Lançamento de Férias</h4>
+                            <h4 class="font-bold text-sm text-[#548235]"><i class="fas fa-plane"></i> Lançamento de Férias</h4>
                             <div class="grid grid-cols-2 gap-2 text-xs">
                                 <div>
                                     <label class="block mb-1 font-semibold text-gray-600">Início:</label>
-                                    <input type="date" id="vacStart" class="w-full border p-2 rounded bg-white text-xs font-semibold text-gray-700">
+                                    <input type="date" id="vacStart" class="w-full border p-2 rounded bg-white text-xs font-semibold">
                                 </div>
                                 <div>
                                     <label class="block mb-1 font-semibold text-gray-600">Fim:</label>
-                                    <input type="date" id="vacEnd" class="w-full border p-2 rounded bg-white text-xs font-semibold text-gray-700">
+                                    <input type="date" id="vacEnd" class="w-full border p-2 rounded bg-white text-xs font-semibold">
                                 </div>
                             </div>
-                            <button onclick="adicionarFerias()" class="w-full bg-corporate text-white py-2 rounded text-xs font-bold shadow">Registrar Férias</button>
+                            <button onclick="adicionarFerias()" class="w-full bg-[#548235] text-white py-2 rounded text-xs font-bold shadow">Registrar Férias</button>
                         </div>
 
-                        <!-- PERÍODO DE AUSÊNCIA -->
                         <div class="border p-4 rounded-xl space-y-3 bg-gray-50">
                             <h4 class="font-bold text-sm text-blue-700"><i class="fas fa-user-clock"></i> Período de Ausência</h4>
                             <div class="grid grid-cols-2 gap-2 text-xs">
                                 <div>
                                     <label class="block mb-1 font-semibold text-gray-600">Início:</label>
-                                    <input type="date" id="ausStart" class="w-full border p-2 rounded bg-white text-xs font-semibold text-gray-700">
+                                    <input type="date" id="ausStart" class="w-full border p-2 rounded bg-white text-xs font-semibold">
                                 </div>
                                 <div>
                                     <label class="block mb-1 font-semibold text-gray-600">Fim:</label>
-                                    <input type="date" id="ausEnd" class="w-full border p-2 rounded bg-white text-xs font-semibold text-gray-700">
+                                    <input type="date" id="ausEnd" class="w-full border p-2 rounded bg-white text-xs font-semibold">
                                 </div>
                             </div>
                             <button onclick="adicionarAusencia()" class="w-full bg-blue-600 text-white py-2 rounded text-xs font-bold shadow">Registrar Ausência</button>
@@ -286,12 +330,12 @@
 
             <div class="bg-gray-50 border p-4 rounded-xl space-y-3">
                 <h4 class="font-bold text-xs uppercase tracking-wider text-gray-600 flex items-center space-x-1">
-                    <i class="fas fa-user-plus text-corporate"></i>
+                    <i class="fas fa-user-plus text-[#548235]"></i>
                     <span>Incluir Gerente Manualmente</span>
                 </h4>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                     <div>
-                        <label class="block mb-1 font-semibold text-gray-600">Nome Completo do Gerente:</label>
+                        <label class="block mb-1 font-semibold text-gray-600">Nome Completo:</label>
                         <input type="text" id="manualName" placeholder="Ex: Tatiane Araujo" class="w-full border p-2 rounded-lg bg-white outline-none">
                     </div>
                     <div>
@@ -299,7 +343,7 @@
                         <input type="email" id="manualEmail" placeholder="exemplo@leroymerlin.com.br" class="w-full border p-2 rounded-lg bg-white outline-none">
                     </div>
                 </div>
-                <button onclick="incluirGerenteManualmente()" class="bg-corporate text-white px-4 py-2 rounded-lg text-xs font-bold shadow hover:bg-corporate-dark transition">
+                <button onclick="incluirGerenteManualmente()" class="bg-[#548235] text-white px-4 py-2 rounded-lg text-xs font-bold shadow hover:bg-green-800 transition">
                     Adicionar Gerente na Base
                 </button>
             </div>
@@ -322,27 +366,35 @@
         </div>
     </div>
 
-    <!-- MODAL POPUP DE DETALHES -->
+    <!-- MODAL POPUP DE EDICÃO -->
     <div id="dayModal" class="fixed inset-0 bg-black bg-opacity-40 hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-xl shadow-xl max-w-sm w-full p-5 space-y-4">
-            <h3 class="font-bold text-gray-800 text-sm border-b pb-2" id="modalTitle">Alteração de Plantão</h3>
+            <h3 class="font-bold text-gray-800 text-sm border-b pb-2" id="modalTitle">Edição de Plantão</h3>
             <div class="space-y-3 text-xs">
                 <div>
-                    <label class="block font-semibold text-gray-600 mb-1">☀️ Gerente da Abertura:</label>
+                    <label class="block font-semibold text-gray-600 mb-1">☀️ Abertura:</label>
                     <select id="modalAbertura" class="w-full border p-2 rounded bg-white text-xs"></select>
                 </div>
                 <div>
-                    <label class="block font-semibold text-gray-600 mb-1">🌙 Gerente do Fechamento:</label>
+                    <label class="block font-semibold text-gray-600 mb-1">🌙 Fechamento:</label>
                     <select id="modalFechamento" class="w-full border p-2 rounded bg-white text-xs"></select>
                 </div>
                 <div>
-                    <label class="block font-semibold text-corporate mb-1">🏳️ Folgas Aplicadas:</label>
+                    <label class="block font-semibold text-[#548235] mb-1">🏳️ Folga:</label>
                     <input type="text" id="modalFolgasManuais" placeholder="Ex: Pedro / Danielle" class="w-full border p-2 rounded bg-white text-xs outline-none font-bold">
+                </div>
+                <div>
+                    <label class="block font-semibold text-gray-600 mb-1">Abertura Coord:</label>
+                    <input type="text" id="modalAbCoord" placeholder="Opcional" class="w-full border p-2 rounded bg-white text-xs outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold text-gray-600 mb-1">Fechamento Coord:</label>
+                    <input type="text" id="modalFechCoord" placeholder="Opcional" class="w-full border p-2 rounded bg-white text-xs outline-none">
                 </div>
             </div>
             <div class="flex justify-end space-x-2 pt-1 text-xs">
                 <button onclick="closeModal()" class="px-3 py-1.5 bg-gray-200 rounded-lg">Fechar</button>
-                <button id="modalSaveBtn" onclick="saveChanges()" class="px-3 py-1.5 bg-corporate text-white font-semibold rounded-lg shadow">Salvar na Nuvem</button>
+                <button id="modalSaveBtn" onclick="saveChanges()" class="px-3 py-1.5 bg-[#548235] text-white font-semibold rounded-lg shadow">Salvar na Nuvem</button>
             </div>
         </div>
     </div>
@@ -366,7 +418,7 @@
 
         async function verificarOuCadastrarGerente() {
             const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-            if(!email) return alert("Por favor, digite o seu e-mail corporativo.");
+            if(!email) return alert("Por favor, digite seu e-mail.");
             if(!email.endsWith("@leroymerlin.com.br") && email !== ADMIN_EMAIL) return alert("Acesso restrito.");
 
             if(email === ADMIN_EMAIL) {
@@ -383,17 +435,16 @@
                     document.getElementById('authForm').classList.add('hidden');
                     document.getElementById('registerForm').classList.remove('hidden');
                 }
-            } catch(e) { alert("Falha de comunicação."); }
+            } catch(e) { alert("Falha de conexão."); }
         }
 
         async function salvarNovoGerenteEEntrar() {
             const nome = document.getElementById('registerName').value.trim();
             const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-            if(!nome) return alert("Informe o nome.");
+            if(!nome) return alert("Informe seu nome completo.");
             try {
                 const { data } = await supabaseClient.from('gerentes').insert([{ nome, email }]).select().single();
                 appState.currentUser = { id: data.id, nome: data.nome, email: data.email, role: "gerente" };
-                document.getElementById('registerName').value = "";
                 loginSucesso();
             } catch(e) { alert("Erro ao cadastrar."); }
         }
@@ -408,13 +459,11 @@
                 document.getElementById('adminManageBtn').classList.remove('hidden');
                 document.getElementById('modalSaveBtn').classList.remove('hidden');
                 document.getElementById('managerBtn').classList.add('hidden');
-                document.getElementById('metricasNavBtn').classList.remove('hidden');
             } else {
                 document.getElementById('adminGenerateBtn').classList.add('hidden');
                 document.getElementById('adminManageBtn').classList.add('hidden');
                 document.getElementById('modalSaveBtn').classList.add('hidden');
                 document.getElementById('managerBtn').classList.remove('hidden');
-                document.getElementById('metricasNavBtn').classList.add('hidden');
             }
             await carregarGerentesEBase();
             await puxarEscalaSalva();
@@ -426,7 +475,6 @@
             document.getElementById('loginScreen').classList.remove('hidden');
             document.getElementById('authForm').classList.remove('hidden');
             document.getElementById('registerForm').classList.add('hidden');
-            document.getElementById('loginEmail').value = "";
         }
 
         async function carregarGerentesEBase() {
@@ -446,7 +494,7 @@
             const container = document.getElementById('adminRestrictionsList');
             if(!container) return;
             if(appState.restricoes.length === 0) {
-                container.innerHTML = "<p class='text-gray-500 italic'>Nenhum gerente sinalizou indisponibilidades ainda.</p>";
+                container.innerHTML = "<p class='text-gray-500 italic'>Nenhuma restrição registrada.</p>";
                 return;
             }
             const agrupamento = {};
@@ -469,15 +517,13 @@
         async function salvarPreferenciaFdsIntervalo() {
             const start = document.getElementById('prefFdsStart').value;
             const end = document.getElementById('prefFdsEnd').value;
-            if(!start || !end) return alert("Selecione as datas.");
+            if(!start || !end) return alert("Selecione o sábado e o domingo.");
             try {
                 await supabaseClient.from('restricoes').insert([
                     { data_bloqueio: start, gerente_id: appState.currentUser.id, justificativa: "Pref. FDS" },
                     { data_bloqueio: end, gerente_id: appState.currentUser.id, justificativa: "Pref. FDS" }
                 ]);
-                alert("Preferência Registrada com sucesso!");
-                document.getElementById('prefFdsStart').value = "";
-                document.getElementById('prefFdsEnd').value = "";
+                alert("Preferência Registrada!");
                 await carregarGerentesEBase();
             } catch(e) { alert("Erro ao salvar."); }
         }
@@ -485,14 +531,12 @@
         async function registrarBloqueioComMotivo() {
             const dt = document.getElementById('blockDate').value;
             const motivo = document.getElementById('blockReason').value.trim();
-            if(!dt || !motivo) return alert("Preencha a data e o motivo.");
+            if(!dt || !motivo) return alert("Preencha todos os campos.");
             try {
                 await supabaseClient.from('restricoes').insert([{ data_bloqueio: dt, gerente_id: appState.currentUser.id, justificativa: motivo }]);
                 alert("Dia bloqueado gravado!");
-                document.getElementById('blockDate').value = "";
-                document.getElementById('blockReason').value = "";
                 await carregarGerentesEBase();
-            } catch(e) { alert("Erro ao salvar."); }
+            } catch(e) { alert("Erro."); }
         }
 
         async function adicionarFerias() {
@@ -500,12 +544,10 @@
             const endStr = document.getElementById('vacEnd').value;
             if(!startStr || !endStr) return alert("Informe o período completo de férias.");
 
-            let dtStart = new Date(startStr + "T12:00:00");
+            let cur = new Date(startStr + "T12:00:00");
             let dtEnd = new Date(endStr + "T12:00:00");
-            if (dtStart > dtEnd) return alert("A data inicial deve ser anterior à data final.");
-
             let registros = [];
-            let cur = new Date(dtStart);
+
             while (cur <= dtEnd) {
                 let y = cur.getFullYear();
                 let m = String(cur.getMonth() + 1).padStart(2, '0');
@@ -517,8 +559,6 @@
             try {
                 await supabaseClient.from('restricoes').insert(registros);
                 alert("Período de Férias gravado!");
-                document.getElementById('vacStart').value = "";
-                document.getElementById('vacEnd').value = "";
                 await carregarGerentesEBase();
             } catch(e) { alert("Erro ao lançar férias."); }
         }
@@ -526,14 +566,12 @@
         async function adicionarAusencia() {
             const startStr = document.getElementById('ausStart').value;
             const endStr = document.getElementById('ausEnd').value;
-            if(!startStr || !endStr) return alert("Informe o período completo de ausência.");
+            if(!startStr || !endStr) return alert("Informe o período de ausência.");
 
-            let dtStart = new Date(startStr + "T12:00:00");
+            let cur = new Date(startStr + "T12:00:00");
             let dtEnd = new Date(endStr + "T12:00:00");
-            if (dtStart > dtEnd) return alert("A data inicial deve ser anterior à data final.");
-
             let registros = [];
-            let cur = new Date(dtStart);
+
             while (cur <= dtEnd) {
                 let y = cur.getFullYear();
                 let m = String(cur.getMonth() + 1).padStart(2, '0');
@@ -544,9 +582,7 @@
 
             try {
                 await supabaseClient.from('restricoes').insert(registros);
-                alert("Período de Ausência gravado com sucesso!");
-                document.getElementById('ausStart').value = "";
-                document.getElementById('ausEnd').value = "";
+                alert("Ausência registrada!");
                 await carregarGerentesEBase();
             } catch(e) { alert("Erro ao lançar ausência."); }
         }
@@ -562,7 +598,13 @@
                 appState.escala = {};
                 if(data && data.length > 0) {
                     data.forEach(item => {
-                        appState.escala[item.dia_mes] = { abertura: item.abertura, fechamento: item.fechamento, folgas_custom: item.folgas_custom || "" };
+                        appState.escala[item.dia_mes] = { 
+                            abertura: item.abertura, 
+                            fechamento: item.fechamento, 
+                            folgas_custom: item.folgas_custom || "",
+                            ab_coord: item.ab_coord || "",
+                            fech_coord: item.fech_coord || ""
+                        };
                     });
                     renderAll();
                 } else {
@@ -587,7 +629,7 @@
             );
         }
 
-        // MOTOR V33 REESTRUTURADO EM 2 ETAPAS (FDS PRIMEIRO + DIAS DE SEMANA)
+        // MOTOR V34: ETAPA 1 (FDS PRIMEIRO) + ETAPA 2 (DIAS DE SEMANA)
         function initCalendar() {
             const totalDays = 31;
             appState.escala = {};
@@ -597,9 +639,7 @@
                 id: g.id, nome: g.nome, aberturas: 0, fechamentos: 0, total: 0, ultimoPlantaoDia: -99, fdsTrabalhados: 0
             }));
 
-            // -------------------------------------------------------------
-            // ETAPA 1: ALOCAÇÃO E PRE-TRAVAMENTO DOS FINAIS DE SEMANA (FDS)
-            // -------------------------------------------------------------
+            // 1. Passo: Finais de semana travados de acordo com solicitações
             for (let d = 1; d <= totalDays; d++) {
                 let dateStr = `${appState.currentPeriod}-${String(d).padStart(2, '0')}`;
                 let dateObj = new Date(dateStr + "T12:00:00");
@@ -608,14 +648,12 @@
                     let sabFormatted = dateStr;
                     let domFormatted = `${appState.currentPeriod}-${String(d+1).padStart(2, '0')}`;
 
-                    // Filtra apenas gerentes totalmente livres no Sábado e no Domingo
                     let disponiveis = gControl.filter(g => 
                         !gerenteEstaBloqueado(g.id, sabFormatted) && 
                         !gerenteEstaBloqueado(g.id, domFormatted) && 
                         g.fdsTrabalhados === 0
                     );
 
-                    // Prioridade 1: Quem pediu PREFERÊNCIA de FDS para este sábado específico
                     disponiveis.sort((a,b) => {
                         let prefA = gerenteTemPreferenciaFds(a.id, sabFormatted) ? -1 : 0;
                         let prefB = gerenteTemPreferenciaFds(b.id, sabFormatted) ? -1 : 0;
@@ -624,13 +662,12 @@
                     });
 
                     let gAb = disponiveis[0] ? disponiveis[0].nome : gControl.sort((a,b) => a.total - b.total)[0].nome;
-                    
                     let aptosFech = disponiveis.filter(g => g.nome !== gAb);
                     let gFech = aptosFech[0] ? aptosFech[0].nome : gControl.filter(g => g.nome !== gAb).sort((a,b) => a.total - b.total)[0].nome;
 
-                    appState.escala[d] = { abertura: gAb, fechamento: gFech, folgas_custom: "" };
+                    appState.escala[d] = { abertura: gAb, fechamento: gFech, folgas_custom: "", ab_coord: "", fech_coord: "" };
                     if (d + 1 <= totalDays) {
-                        appState.escala[d + 1] = { abertura: gAb, fechamento: gFech, folgas_custom: "" };
+                        appState.escala[d + 1] = { abertura: gAb, fechamento: gFech, folgas_custom: "", ab_coord: "", fech_coord: "" };
                     }
 
                     gControl.forEach(g => {
@@ -640,23 +677,20 @@
                 }
             }
 
-            // -------------------------------------------------------------
-            // ETAPA 2: PREENCHIMENTO DOS DIAS DE SEMANA (SEGUNDA A SEXTA)
-            // -------------------------------------------------------------
+            // 2. Passo: Preenchimento dos dias de semana
             for (let d = 1; d <= totalDays; d++) {
-                if (appState.escala[d]) continue; // Se for sábado ou domingo já travado, pula
+                if (appState.escala[d]) continue;
 
                 let dateStr = `${appState.currentPeriod}-${String(d).padStart(2, '0')}`;
                 let dateObj = new Date(dateStr + "T12:00:00");
                 let dayOfWeek = dateObj.getDay();
                 let ontemFechou = appState.escala[d - 1]?.fechamento || "";
 
-                // Verifica quem está de folga do FDS casado (Quinta anterior d+2 ou Segunda posterior d-2)
                 let emFolgaSanduiche = [];
-                if (dayOfWeek === 1) { // Segunda-feira
+                if (dayOfWeek === 1) { 
                     let sabAnterior = appState.escala[d - 2];
                     if (sabAnterior) emFolgaSanduiche.push(sabAnterior.abertura, sabAnterior.fechamento);
-                } else if (dayOfWeek === 4) { // Quinta-feira
+                } else if (dayOfWeek === 4) { 
                     let sabSeguinte = appState.escala[d + 2];
                     if (sabSeguinte) emFolgaSanduiche.push(sabSeguinte.abertura, sabSeguinte.fechamento);
                 }
@@ -671,13 +705,11 @@
                 disponiveis.sort((a,b) => (a.total - b.total) || (a.aberturas - b.aberturas));
 
                 let gAb = disponiveis[0] ? disponiveis[0].nome : gControl.filter(g => !emFolgaSanduiche.includes(g.nome)).sort((a,b) => a.total - b.total)[0].nome;
-
                 let aptosFech = disponiveis.filter(g => g.nome !== gAb);
                 aptosFech.sort((a,b) => (a.total - b.total) || (a.fechamentos - b.fechamentos));
-
                 let gFech = aptosFech[0] ? aptosFech[0].nome : gControl.filter(g => g.nome !== gAb && !emFolgaSanduiche.includes(g.nome)).sort((a,b) => a.total - b.total)[0].nome;
 
-                appState.escala[d] = { abertura: gAb, fechamento: gFech, folgas_custom: "" };
+                appState.escala[d] = { abertura: gAb, fechamento: gFech, folgas_custom: "", ab_coord: "", fech_coord: "" };
 
                 gControl.forEach(g => {
                     if(g.nome === gAb) { g.aberturas += 1; g.total += 1; g.ultimoPlantaoDia = d; }
@@ -692,11 +724,21 @@
             const ab = document.getElementById('modalAbertura').value;
             const fech = document.getElementById('modalFechamento').value;
             const folgasCustom = document.getElementById('modalFolgasManuais').value.trim();
+            const abCoord = document.getElementById('modalAbCoord').value.trim();
+            const fechCoord = document.getElementById('modalFechCoord').value.trim();
+
             await supabaseClient.from('escalas_mensais').upsert({
                 id: parseInt(`${appState.currentPeriod.split('-')[1]}${currentSelectedDay}`),
-                ano_mes: appState.currentPeriod, dia_mes: currentSelectedDay, abertura: ab, fechamento: fech, folgas_custom: folgasCustom
+                ano_mes: appState.currentPeriod, 
+                dia_mes: currentSelectedDay, 
+                abertura: ab, 
+                fechamento: fech, 
+                folgas_custom: folgasCustom,
+                ab_coord: abCoord,
+                fech_coord: fechCoord
             });
-            appState.escala[currentSelectedDay] = { abertura: ab, fechamento: fech, folgas_custom: folgasCustom };
+
+            appState.escala[currentSelectedDay] = { abertura: ab, fechamento: fech, folgas_custom: folgasCustom, ab_coord: abCoord, fech_coord: fechCoord };
             renderAll();
             closeModal();
         }
@@ -707,20 +749,27 @@
                 if(appState.escala[d]) {
                     await supabaseClient.from('escalas_mensais').upsert({
                         id: parseInt(`${appState.currentPeriod.split('-')[1]}${d}`),
-                        ano_mes: appState.currentPeriod, dia_mes: d, abertura: appState.escala[d].abertura, fechamento: appState.escala[d].fechamento, folgas_custom: ""
+                        ano_mes: appState.currentPeriod, 
+                        dia_mes: d, 
+                        abertura: appState.escala[d].abertura, 
+                        fechamento: appState.escala[d].fechamento, 
+                        folgas_custom: "",
+                        ab_coord: "",
+                        fech_coord: ""
                     });
                 }
             }
-            alert("Escala calculada com sucesso com alocação perfeita dos Finais de Semana!");
+            alert("Escala atualizada em padrão Excel!");
             await puxarEscalaSalva();
         }
 
+        // RENDERIZAÇÃO ESTILIZADA IDÊNTICA À PLANILHA DO EXCEL
         function renderAll() {
             let sheetsHtml = "";
             const diasSemanaNomes = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
 
-            const metricasAb = {}; const metricasFech = {};
-            appState.gerentes.forEach(g => { metricasAb[g.nome] = 0; metricasFech[g.nome] = 0; });
+            const metricasAb = {}; const metricasFech = {}; const metricasSab = {};
+            appState.gerentes.forEach(g => { metricasAb[g.nome] = 0; metricasFech[g.nome] = 0; metricasSab[g.nome] = 0; });
 
             for (let d = 1; d <= 31; d++) {
                 let dateStr = `${appState.currentPeriod}-${String(d).padStart(2, '0')}`;
@@ -728,49 +777,90 @@
                 let dayOfWeek = dateObj.getDay(); 
                 let diaSemanaNome = diasSemanaNomes[dayOfWeek];
 
-                let data = appState.escala[d] || { abertura: "Não Definido", fechamento: "Não Definido", folgas_custom: "" };
+                let data = appState.escala[d] || { abertura: "", fechamento: "", folgas_custom: "", ab_coord: "", fech_coord: "" };
                 let folgasLista = [];
 
                 if(metricasAb[data.abertura] !== undefined) metricasAb[data.abertura]++;
                 if(metricasFech[data.fechamento] !== undefined) metricasFech[data.fechamento]++;
+                if(dayOfWeek === 6) {
+                    if(metricasSab[data.abertura] !== undefined) metricasSab[data.abertura]++;
+                    if(metricasSab[data.fechamento] !== undefined) metricasSab[data.fechamento]++;
+                }
 
                 if (dayOfWeek === 1) { 
                     let sabAnterior = appState.escala[d - 2];
-                    if (sabAnterior && sabAnterior.abertura && sabAnterior.fechamento) folgasLista.push(sabAnterior.abertura, sabAnterior.fechamento);
+                    if (sabAnterior && sabAnterior.abertura) folgasLista.push(sabAnterior.abertura, sabAnterior.fechamento);
                 } else if (dayOfWeek === 4) { 
                     let sabSeguinte = appState.escala[d + 2];
-                    if (sabSeguinte && sabSeguinte.abertura && sabSeguinte.fechamento) folgasLista.push(sabSeguinte.abertura, sabSeguinte.fechamento);
+                    if (sabSeguinte && sabSeguinte.abertura) folgasLista.push(sabSeguinte.abertura, sabSeguinte.fechamento);
                 }
 
                 let folgaTextoFinal = folgasLista.join(' / ');
                 if(data.folgas_custom) folgaTextoFinal = data.folgas_custom;
 
+                // COR EXATA DO EXCEL PARA FIM DE SEMANA
                 let rowBg = "bg-white";
-                if (dayOfWeek === 6 || dayOfWeek === 0) rowBg = "bg-green-50 border-y border-green-200";
+                let textStyle = "text-gray-800";
+                if (dayOfWeek === 6 || dayOfWeek === 0) {
+                    rowBg = "bg-[#70ad47] text-white border-b border-[#385723]";
+                    textStyle = "text-white font-bold";
+                }
 
                 sheetsHtml += `
-                    <tr class="${rowBg} hover:bg-gray-50 border-b border-gray-200 transition cursor-pointer" onclick="openModal(${d})">
-                        <td class="p-2.5 border border-gray-300 font-bold text-gray-800">${String(d).padStart(2, '0')}/${appState.currentPeriod.split('-')[1]}</td>
-                        <td class="p-2.5 border border-gray-300 text-left capitalize pl-4">${diaSemanaNome}</td>
-                        <td class="p-2.5 border border-gray-300 font-bold text-corporate-dark">${data.abertura}</td>
-                        <td class="p-2.5 border border-gray-300 font-bold text-blue-900">${data.fechamento}</td>
-                        <td class="p-2.5 border border-gray-300 text-amber-800 font-bold bg-amber-50/20">${folgaTextoFinal}</td>
+                    <tr class="${rowBg} hover:opacity-90 border-b border-gray-300 transition cursor-pointer text-center" onclick="openModal(${d})">
+                        <td class="p-1.5 border border-gray-400 font-bold">${String(d).padStart(2, '0')}/${appState.currentPeriod.split('-')[1]}/2026</td>
+                        <td class="p-1.5 border border-gray-400 font-semibold">${diaSemanaNome}</td>
+                        <td class="p-1.5 border border-gray-400 font-bold ${textStyle}">${data.abertura}</td>
+                        <td class="p-1.5 border border-gray-400 font-bold ${textStyle}">${data.fechamento}</td>
+                        <td class="p-1.5 border border-gray-400 font-bold ${dayOfWeek === 6 || dayOfWeek === 0 ? 'text-white' : 'text-amber-800'}">${folgaTextoFinal}</td>
+                        <td class="p-1.5 border border-gray-400 bg-opacity-20">${data.ab_coord || ''}</td>
+                        <td class="p-1.5 border border-gray-400 bg-opacity-20">${data.fech_coord || ''}</td>
                     </tr>
                 `;
             }
             document.getElementById('sheetsTableBody').innerHTML = sheetsHtml;
 
-            document.getElementById('metricsTableBody').innerHTML = appState.gerentes.map(g => {
-                let ab = metricasAb[g.nome] || 0; let fech = metricasFech[g.nome] || 0;
+            // RENDERIZAÇÃO DO QUADRO DE MÉTRICAS AO VIVO (IGUAL AO EXCEL)
+            document.getElementById('metricsExcelTableBody').innerHTML = appState.gerentes.map(g => {
+                let ab = metricasAb[g.nome] || 0; 
+                let fech = metricasFech[g.nome] || 0;
+                let sab = metricasSab[g.nome] || 0;
                 return `
-                    <tr class="hover:bg-gray-50 border-b text-xs">
-                        <td class="p-3 font-bold text-gray-900">${g.nome}</td>
-                        <td class="p-3 text-center bg-green-50 text-green-900 font-semibold border-x">${ab} manhãs</td>
-                        <td class="p-3 text-center bg-blue-50 text-blue-900 font-semibold border-r">${fech} noites</td>
-                        <td class="p-3 text-center bg-gray-50 text-gray-700 font-bold">${ab + fech} plantões</td>
+                    <tr class="hover:bg-gray-50 border-b border-gray-300 text-xs">
+                        <td class="p-1.5 font-bold text-gray-800 border border-gray-300">${g.nome}</td>
+                        <td class="p-1.5 text-center text-gray-500 border border-gray-300">01.02</td>
+                        <td class="p-1.5 text-center bg-green-50 font-semibold border border-gray-300">${ab}</td>
+                        <td class="p-1.5 text-center bg-blue-50 font-semibold border border-gray-300">${fech}</td>
+                        <td class="p-1.5 text-center font-extrabold bg-gray-100 border border-gray-300">${ab + fech}</td>
+                        <td class="p-1.5 text-center font-bold text-green-800 border border-gray-300">${sab}</td>
                     </tr>
                 `;
             }).join('');
+
+            // TABELAS DE SÁBADOS/DOMINGOS (GERENTES PRESENTES)
+            renderFdsPresentesTable();
+        }
+
+        function renderFdsPresentesTable() {
+            let body1 = "";
+            let body2 = "";
+
+            for(let i = 0; i < 4; i++) {
+                body1 += `
+                    <tr>
+                        <td class="p-1 border border-gray-300 text-center"><input type="text" class="w-full text-center outline-none bg-transparent" placeholder="-"></td>
+                        <td class="p-1 border border-gray-300 text-center"><input type="text" class="w-full text-center outline-none bg-transparent" placeholder="-"></td>
+                    </tr>
+                `;
+                body2 += `
+                    <tr>
+                        <td class="p-1 border border-gray-300 text-center"><input type="text" class="w-full text-center outline-none bg-transparent" placeholder="-"></td>
+                        <td class="p-1 border border-gray-300 text-center"><input type="text" class="w-full text-center outline-none bg-transparent" placeholder="-"></td>
+                    </tr>
+                `;
+            }
+            document.getElementById('fdsPresentesTableBody').innerHTML = body1;
+            document.getElementById('fdsPresentesTableBody2').innerHTML = body2;
         }
 
         function openModal(day) {
@@ -785,6 +875,8 @@
             abSel.value = appState.escala[day]?.abertura || "";
             fechSel.value = appState.escala[day]?.fechamento || "";
             document.getElementById('modalFolgasManuais').value = appState.escala[day]?.folgas_custom || "";
+            document.getElementById('modalAbCoord').value = appState.escala[day]?.ab_coord || "";
+            document.getElementById('modalFechCoord').value = appState.escala[day]?.fech_coord || "";
             document.getElementById('dayModal').classList.remove('hidden');
         }
 
@@ -792,11 +884,9 @@
 
         function switchTab(tabId) {
             document.getElementById('dashboardSection').classList.remove('active');
-            document.getElementById('metricasSection').classList.remove('active');
             document.getElementById('managerSection').classList.remove('active');
 
             if(tabId === 'dashboard') document.getElementById('dashboardSection').classList.add('active');
-            if(tabId === 'metricas') document.getElementById('metricasSection').classList.add('active');
             if(tabId === 'manager') document.getElementById('managerSection').classList.add('active');
         }
 
@@ -809,7 +899,7 @@
                     <td class="p-2.5 font-semibold text-gray-800">${g.nome}</td>
                     <td class="p-2.5 text-gray-500">${g.email}</td>
                     <td class="p-2.5 text-center">
-                        <button onclick="excluirGerente('${g.id}')" class="bg-red-500 hover:bg-red-600 text-white font-bold px-3 py-1 rounded shadow-sm transition">Excluir</button>
+                        <button onclick="excluirGerente('${g.id}')" class="bg-red-500 hover:bg-red-600 text-white font-bold px-3 py-1 rounded shadow transition">Excluir</button>
                     </td>
                 </tr>
             `).join('');
