@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V44 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V45 - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Biblioteca Oficial do Supabase CDN -->
@@ -60,7 +60,7 @@
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-6">
             <div class="text-center space-y-2">
                 <div class="inline-block bg-[#548235] p-3 rounded-full text-white text-2xl shadow-md">LM</div>
-                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V44</h2>
+                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V45</h2>
                 <p class="text-xs text-gray-500">Acesse com seu e-mail corporativo</p>
             </div>
 
@@ -97,7 +97,7 @@
             <div class="flex items-center space-x-3">
                 <div class="bg-white text-[#548235] font-bold text-xl px-2.5 py-1 rounded shadow">LM</div>
                 <div>
-                    <h1 class="text-base font-bold">Escala Morumbi — V44</h1>
+                    <h1 class="text-base font-bold">Escala Morumbi — V45</h1>
                     <p class="text-[11px] text-green-100 flex items-center space-x-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-green-300 animate-pulse"></span>
                         <span id="userBadge">Carregando...</span>
@@ -438,6 +438,12 @@
 
         let currentSelectedDay = null;
 
+        // HELPER PARA GERAR ID NÚMERICO ÚNICO POR DIA/MÊS/ANO (EX: 20260801)
+        function gerarIdUnicoDia(anoMesStr, dia) {
+            const limpo = anoMesStr.replace('-', ''); // "202608"
+            return parseInt(`${limpo}${String(dia).padStart(2, '0')}`); // 20260801
+        }
+
         async function verificarOuCadastrarGerente() {
             const email = document.getElementById('loginEmail').value.trim().toLowerCase();
             if(!email) return alert("Por favor, digite seu e-mail.");
@@ -457,7 +463,7 @@
                     document.getElementById('authForm').classList.add('hidden');
                     document.getElementById('registerForm').classList.remove('hidden');
                 }
-            } catch(e) { alert("Falha de conexão."); }
+            } catch(e) { alert("Falha de conexão com o banco."); }
         }
 
         async function salvarNovoGerenteEEntrar() {
@@ -465,10 +471,11 @@
             const email = document.getElementById('loginEmail').value.trim().toLowerCase();
             if(!nome) return alert("Informe seu nome completo.");
             try {
-                const { data } = await supabaseClient.from('gerentes').insert([{ nome, email, role: "gerente" }]).select().single();
+                const { data, error } = await supabaseClient.from('gerentes').insert([{ nome, email, role: "gerente" }]).select().single();
+                if (error) throw error;
                 appState.currentUser = { id: data.id, nome: data.nome, email: data.email, role: "gerente" };
                 loginSucesso();
-            } catch(e) { alert("Erro ao cadastrar."); }
+            } catch(e) { alert("Erro ao cadastrar: " + (e.message || e)); }
         }
 
         async function loginSucesso() {
@@ -566,13 +573,14 @@
             const end = document.getElementById('prefFdsEnd').value;
             if(!start || !end) return alert("Selecione o sábado e o domingo.");
             try {
-                await supabaseClient.from('restricoes').insert([
+                const { error } = await supabaseClient.from('restricoes').insert([
                     { data_bloqueio: start, gerente_id: appState.currentUser.id, justificativa: "Pref. FDS" },
                     { data_bloqueio: end, gerente_id: appState.currentUser.id, justificativa: "Pref. FDS" }
                 ]);
-                alert("Preferência Registrada!");
+                if (error) throw error;
+                alert("Preferência Registrada com sucesso no banco!");
                 await carregarGerentesEBase();
-            } catch(e) { alert("Erro ao salvar."); }
+            } catch(e) { alert("Erro ao salvar no banco: " + (e.message || e)); }
         }
 
         async function registrarBloqueioComMotivo() {
@@ -581,10 +589,11 @@
             const motivo = document.getElementById('blockReason').value.trim();
             if(!dt || !motivo) return alert("Preencha todos os campos.");
             try {
-                await supabaseClient.from('restricoes').insert([{ data_bloqueio: dt, gerente_id: appState.currentUser.id, justificativa: motivo }]);
-                alert("Dia bloqueado gravado!");
+                const { error } = await supabaseClient.from('restricoes').insert([{ data_bloqueio: dt, gerente_id: appState.currentUser.id, justificativa: motivo }]);
+                if (error) throw error;
+                alert("Dia bloqueado gravado com sucesso no banco!");
                 await carregarGerentesEBase();
-            } catch(e) { alert("Erro."); }
+            } catch(e) { alert("Erro ao salvar no banco: " + (e.message || e)); }
         }
 
         async function adicionarFerias() {
@@ -606,10 +615,11 @@
             }
 
             try {
-                await supabaseClient.from('restricoes').insert(registros);
-                alert("Período de Férias gravado!");
+                const { error } = await supabaseClient.from('restricoes').insert(registros);
+                if (error) throw error;
+                alert("Período de Férias gravado no banco!");
                 await carregarGerentesEBase();
-            } catch(e) { alert("Erro ao lançar férias."); }
+            } catch(e) { alert("Erro ao lançar férias: " + (e.message || e)); }
         }
 
         async function adicionarAusencia() {
@@ -631,10 +641,11 @@
             }
 
             try {
-                await supabaseClient.from('restricoes').insert(registros);
-                alert("Ausência registrada!");
+                const { error } = await supabaseClient.from('restricoes').insert(registros);
+                if (error) throw error;
+                alert("Ausência registrada no banco!");
                 await carregarGerentesEBase();
-            } catch(e) { alert("Erro ao lançar ausência."); }
+            } catch(e) { alert("Erro ao lançar ausência: " + (e.message || e)); }
         }
 
         async function alterarPeriodo() {
@@ -642,7 +653,7 @@
             await puxarEscalaSalva();
         }
 
-        // CARREGA A ESCALA GRAVADA PERMANENTEMENTE NO SUPABASE (SEM GERAR SIMULAÇÕES SOZINHO)
+        // CARREGA E PRESERVA FIELMENTE OS DADOS SALVOS NO SUPABASE SEMA REESCREVER AUTOMATICAMENTE
         async function puxarEscalaSalva() {
             let savedFds = localStorage.getItem('fds_presentes_' + appState.currentPeriod);
             if (savedFds) {
@@ -652,9 +663,10 @@
             }
 
             try {
-                const { data } = await supabaseClient.from('escalas_mensais').select('*').eq('ano_mes', appState.currentPeriod);
-                appState.escala = {};
+                const { data, error } = await supabaseClient.from('escalas_mensais').select('*').eq('ano_mes', appState.currentPeriod);
+                if (error) throw error;
 
+                appState.escala = {};
                 appState.mesEstaCongelado = data && data.length > 0 && data[0].congelado === true;
 
                 if(data && data.length > 0) {
@@ -667,11 +679,16 @@
                     });
                     renderAll();
                 } else {
-                    // SE NÃO HOUVER ESCALA GRAVADA NO BANCO, ELE CRIA E GRAVA UMA PRIMEIRA VEZ
+                    // SE O BANCO ESTIVER TOTALMENTE VAZIO PARA ESTE MÊS, APENAS INICIA UMA MATRIZ DE TELA SEM FORÇAR OVERWRITE
                     initCalendar(); 
-                    await gravarEscalaIntegralNoSupabase();
+                    if(appState.currentUser.role === 'admin') {
+                        await gravarEscalaIntegralNoSupabase();
+                    }
                 }
-            } catch(e) { initCalendar(); }
+            } catch(e) { 
+                console.error("Erro ao puxar dados da nuvem:", e);
+                initCalendar(); 
+            }
         }
 
         function obterJustificativaBloqueio(gerenteId, dateFormatted) {
@@ -789,11 +806,13 @@
             renderAll();
         }
 
+        // SALVAMENTO COMPLETO NO SUPABASE COM FORMATO ID ÚNICO
         async function gravarEscalaIntegralNoSupabase() {
+            let dadosParaUpsert = [];
             for(let d = 1; d <= 31; d++) {
                 if(appState.escala[d]) {
-                    await supabaseClient.from('escalas_mensais').upsert({
-                        id: parseInt(`${appState.currentPeriod.split('-')[1]}${d}`),
+                    dadosParaUpsert.push({
+                        id: gerarIdUnicoDia(appState.currentPeriod, d),
                         ano_mes: appState.currentPeriod, 
                         dia_mes: d, 
                         abertura: appState.escala[d].abertura, 
@@ -802,6 +821,11 @@
                         congelado: appState.mesEstaCongelado
                     });
                 }
+            }
+
+            const { error } = await supabaseClient.from('escalas_mensais').upsert(dadosParaUpsert);
+            if (error) {
+                alert("🛑 ATENÇÃO: Falha ao gravar dados no Supabase!\nErro: " + error.message);
             }
         }
 
@@ -815,7 +839,7 @@
             try {
                 appState.mesEstaCongelado = novoStatus;
                 await gravarEscalaIntegralNoSupabase();
-                alert(`Escala ${novoStatus ? 'congelada e homologada' : 'descongelada'} com sucesso!`);
+                alert(`Escala ${novoStatus ? 'congelada e homologada' : 'descongelada'} com sucesso no banco!`);
                 await puxarEscalaSalva();
             } catch(e) { alert("Erro ao alterar o status do mês."); }
         }
@@ -846,8 +870,8 @@
                 }
             }
 
-            await supabaseClient.from('escalas_mensais').upsert({
-                id: parseInt(`${appState.currentPeriod.split('-')[1]}${currentSelectedDay}`),
+            const { error } = await supabaseClient.from('escalas_mensais').upsert({
+                id: gerarIdUnicoDia(appState.currentPeriod, currentSelectedDay),
                 ano_mes: appState.currentPeriod, 
                 dia_mes: currentSelectedDay, 
                 abertura: ab, 
@@ -855,6 +879,10 @@
                 folgas_custom: folgasCustom,
                 congelado: appState.mesEstaCongelado
             });
+
+            if (error) {
+                return alert("🛑 Erro ao salvar alteração no Supabase: " + error.message);
+            }
 
             appState.escala[currentSelectedDay] = { abertura: ab, fechamento: fech, folgas_custom: folgasCustom };
             renderAll();
@@ -1169,17 +1197,18 @@
             if (!nameInput.value.trim() || !emailInput.value.trim()) return alert("Preencha todos os campos.");
             
             try {
-                await supabaseClient.from('gerentes').insert([{ 
+                const { error } = await supabaseClient.from('gerentes').insert([{ 
                     nome: nameInput.value.trim(), 
                     email: emailInput.value.trim().toLowerCase(),
                     role: roleInput.value
                 }]);
+                if (error) throw error;
                 nameInput.value = "";
                 emailInput.value = "";
                 alert("Usuário adicionado com sucesso!");
                 await carregarGerentesEBase(); 
                 initCalendar();
-            } catch (e) { alert("Erro ao inserir."); }
+            } catch (e) { alert("Erro ao inserir: " + (e.message || e)); }
         }
 
         async function excluirGerente(id) {
@@ -1189,7 +1218,7 @@
                 if (error) throw error;
                 await carregarGerentesEBase(); 
                 initCalendar();
-            } catch(e) { alert("Erro ao excluir."); }
+            } catch(e) { alert("Erro ao excluir: " + (e.message || e)); }
         }
     </script>
 </body>
