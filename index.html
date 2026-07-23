@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V43 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V44 - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Biblioteca Oficial do Supabase CDN -->
@@ -60,7 +60,7 @@
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-6">
             <div class="text-center space-y-2">
                 <div class="inline-block bg-[#548235] p-3 rounded-full text-white text-2xl shadow-md">LM</div>
-                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V43</h2>
+                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V44</h2>
                 <p class="text-xs text-gray-500">Acesse com seu e-mail corporativo</p>
             </div>
 
@@ -97,7 +97,7 @@
             <div class="flex items-center space-x-3">
                 <div class="bg-white text-[#548235] font-bold text-xl px-2.5 py-1 rounded shadow">LM</div>
                 <div>
-                    <h1 class="text-base font-bold">Escala Morumbi — V43</h1>
+                    <h1 class="text-base font-bold">Escala Morumbi — V44</h1>
                     <p class="text-[11px] text-green-100 flex items-center space-x-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-green-300 animate-pulse"></span>
                         <span id="userBadge">Carregando...</span>
@@ -144,14 +144,14 @@
                             <span id="statusLockIcon"><i class="fas fa-lock-open text-green-700"></i></span>
                             <span id="statusLockText">Escala Aberta para Edição</span>
                         </p>
-                        <p class="mt-0.5 text-gray-600" id="statusBannerSubtext">Acompanhe as atualizações da escala em tempo real na nuvem.</p>
+                        <p class="mt-0.5 text-gray-600" id="statusBannerSubtext">Todas as edições são salvas automaticamente na nuvem de forma permanente.</p>
                     </div>
                     <div class="flex items-center space-x-2">
                         <button id="adminLockBtn" onclick="alternarBloqueioMes()" class="hidden bg-slate-800 text-white px-3 py-2 rounded-lg text-xs font-bold shadow hover:bg-black transition">
                             <i class="fas fa-lock"></i> Congelar Escala do Mês
                         </button>
                         <button id="adminGenerateBtn" onclick="gerarEscalaAutomatica()" class="hidden bg-[#548235] text-white px-4 py-2 rounded-lg text-xs font-bold shadow hover:bg-green-800 transition">
-                            <i class="fas fa-magic"></i> Balancear e Salvar
+                            <i class="fas fa-magic"></i> Balancear e Salvar na Nuvem
                         </button>
                     </div>
                 </div>
@@ -215,7 +215,7 @@
                 </div>
             </div>
 
-            <!-- TAB 2: CONSOLIDADO ACUMULADO (TODOS OS MESES SOMADOS) -->
+            <!-- TAB 2: CONSOLIDADO ACUMULADO -->
             <div id="consolidadoSection" class="view-section space-y-6">
                 <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-[#548235] space-y-4">
                     <div class="border-b pb-3 flex justify-between items-center">
@@ -224,7 +224,7 @@
                                 <i class="fas fa-calculator text-[#548235]"></i>
                                 <span>Relatório Acumulado Geral (Apenas Meses Homologados)</span>
                             </h3>
-                            <p class="text-xs text-gray-500 mt-0.5">Soma histórica de plantões reais gravados. Meses futuros não salvos não são contabilizados.</p>
+                            <p class="text-xs text-gray-500 mt-0.5">Soma histórica de plantões reais gravados no banco de dados.</p>
                         </div>
                         <button onclick="carregarConsolidadoGeral()" class="bg-[#548235] text-white px-3 py-1.5 rounded text-xs font-bold shadow hover:bg-green-800 transition">
                             <i class="fas fa-sync-alt"></i> Atualizar Dados
@@ -481,7 +481,6 @@
 
             document.getElementById('userBadge').textContent = `${appState.currentUser.nome} (${roleLabel})`;
 
-            // EXCLUSIVIDADE ABSOLUTA DO ADMIN PARA BOTAO DE CONGELAR E BOTÃO DE BALANCEAR
             if (appState.currentUser.role === 'admin') {
                 document.getElementById('adminGenerateBtn').classList.remove('hidden');
                 document.getElementById('adminManageBtn').classList.remove('hidden');
@@ -494,7 +493,7 @@
                 document.getElementById('adminLockBtn').classList.add('hidden');
                 document.getElementById('modalSaveBtn').classList.add('hidden');
                 document.getElementById('managerBtn').classList.add('hidden');
-            } else { // PERFIL GERENTE
+            } else {
                 document.getElementById('adminGenerateBtn').classList.add('hidden');
                 document.getElementById('adminManageBtn').classList.add('hidden');
                 document.getElementById('adminLockBtn').classList.add('hidden');
@@ -507,7 +506,6 @@
             iniciarSincronizacaoRealtime();
         }
 
-        // SINCRONIZAÇÃO EM TEMPO REAL VIA WEBSOCKET (SE O ADMIN MUDAR, ATUALIZA A TELA DOS GERENTES NA HORA)
         function iniciarSincronizacaoRealtime() {
             supabaseClient
                 .channel('realtime_escalas')
@@ -644,6 +642,7 @@
             await puxarEscalaSalva();
         }
 
+        // CARREGA A ESCALA GRAVADA PERMANENTEMENTE NO SUPABASE (SEM GERAR SIMULAÇÕES SOZINHO)
         async function puxarEscalaSalva() {
             let savedFds = localStorage.getItem('fds_presentes_' + appState.currentPeriod);
             if (savedFds) {
@@ -668,7 +667,9 @@
                     });
                     renderAll();
                 } else {
+                    // SE NÃO HOUVER ESCALA GRAVADA NO BANCO, ELE CRIA E GRAVA UMA PRIMEIRA VEZ
                     initCalendar(); 
+                    await gravarEscalaIntegralNoSupabase();
                 }
             } catch(e) { initCalendar(); }
         }
@@ -788,6 +789,22 @@
             renderAll();
         }
 
+        async function gravarEscalaIntegralNoSupabase() {
+            for(let d = 1; d <= 31; d++) {
+                if(appState.escala[d]) {
+                    await supabaseClient.from('escalas_mensais').upsert({
+                        id: parseInt(`${appState.currentPeriod.split('-')[1]}${d}`),
+                        ano_mes: appState.currentPeriod, 
+                        dia_mes: d, 
+                        abertura: appState.escala[d].abertura, 
+                        fechamento: appState.escala[d].fechamento, 
+                        folgas_custom: appState.escala[d].folgas_custom || "",
+                        congelado: appState.mesEstaCongelado
+                    });
+                }
+            }
+        }
+
         async function alternarBloqueioMes() {
             if(appState.currentUser.role !== 'admin') return;
             let novoStatus = !appState.mesEstaCongelado;
@@ -796,19 +813,8 @@
             if(!confirm(`Deseja realmente ${acaoTexto} a escala do mês de ${appState.currentPeriod}?`)) return;
 
             try {
-                for(let d = 1; d <= 31; d++) {
-                    if(appState.escala[d]) {
-                        await supabaseClient.from('escalas_mensais').upsert({
-                            id: parseInt(`${appState.currentPeriod.split('-')[1]}${d}`),
-                            ano_mes: appState.currentPeriod, 
-                            dia_mes: d, 
-                            abertura: appState.escala[d].abertura, 
-                            fechamento: appState.escala[d].fechamento, 
-                            folgas_custom: appState.escala[d].folgas_custom || "",
-                            congelado: novoStatus
-                        });
-                    }
-                }
+                appState.mesEstaCongelado = novoStatus;
+                await gravarEscalaIntegralNoSupabase();
                 alert(`Escala ${novoStatus ? 'congelada e homologada' : 'descongelada'} com sucesso!`);
                 await puxarEscalaSalva();
             } catch(e) { alert("Erro ao alterar o status do mês."); }
@@ -847,7 +853,7 @@
                 abertura: ab, 
                 fechamento: fech, 
                 folgas_custom: folgasCustom,
-                congelado: false
+                congelado: appState.mesEstaCongelado
             });
 
             appState.escala[currentSelectedDay] = { abertura: ab, fechamento: fech, folgas_custom: folgasCustom };
@@ -859,20 +865,8 @@
             if(appState.currentUser.role !== 'admin') return;
             if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO! Descongele a escala no botão do topo para recalcular.");
             initCalendar();
-            for(let d = 1; d <= 31; d++) {
-                if(appState.escala[d]) {
-                    await supabaseClient.from('escalas_mensais').upsert({
-                        id: parseInt(`${appState.currentPeriod.split('-')[1]}${d}`),
-                        ano_mes: appState.currentPeriod, 
-                        dia_mes: d, 
-                        abertura: appState.escala[d].abertura, 
-                        fechamento: appState.escala[d].fechamento, 
-                        folgas_custom: "",
-                        congelado: false
-                    });
-                }
-            }
-            alert("Escala atualizada com sucesso!");
+            await gravarEscalaIntegralNoSupabase();
+            alert("Escala recalculada e salva permanentemente na nuvem!");
             await puxarEscalaSalva();
         }
 
@@ -906,7 +900,7 @@
             } else {
                 iconSpan.innerHTML = `<i class="fas fa-lock-open text-green-700 text-base"></i>`;
                 textSpan.innerHTML = `<span class="text-green-800 font-bold">Escala Aberta para Edição</span>`;
-                if(subtextP) subtextP.textContent = "Altere plantões ou clique no botão ao lado para homologar e congelar este mês contra edições.";
+                if(subtextP) subtextP.textContent = "Todas as edições são salvas automaticamente na nuvem de forma permanente.";
                 if(lockBtn) {
                     lockBtn.innerHTML = `<i class="fas fa-lock"></i> Congelar Escala do Mês`;
                     lockBtn.className = "bg-slate-800 text-white px-3 py-2 rounded-lg text-xs font-bold shadow hover:bg-black transition";
