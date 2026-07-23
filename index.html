@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V38 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V39 - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Biblioteca Oficial do Supabase CDN -->
@@ -60,7 +60,7 @@
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-6">
             <div class="text-center space-y-2">
                 <div class="inline-block bg-[#548235] p-3 rounded-full text-white text-2xl shadow-md">LM</div>
-                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V38</h2>
+                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V39</h2>
                 <p class="text-xs text-gray-500">Acesse com seu e-mail corporativo</p>
             </div>
 
@@ -97,7 +97,7 @@
             <div class="flex items-center space-x-3">
                 <div class="bg-white text-[#548235] font-bold text-xl px-2.5 py-1 rounded shadow">LM</div>
                 <div>
-                    <h1 class="text-base font-bold">Escala Morumbi — V38</h1>
+                    <h1 class="text-base font-bold">Escala Morumbi — V39</h1>
                     <p class="text-[11px] text-green-100 flex items-center space-x-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-green-300 animate-pulse"></span>
                         <span id="userBadge">Carregando...</span>
@@ -138,14 +138,22 @@
 
             <!-- TAB 1: QUADRO DE PLANTÃO + PAINEL LATERAL EM GRID -->
             <div id="dashboardSection" class="view-section active space-y-4">
-                <div class="bg-green-50 border-l-4 border-[#548235] p-3 rounded-r-xl text-xs text-green-900 flex justify-between items-center non-printable shadow-sm">
+                <div class="bg-green-50 border-l-4 border-[#548235] p-3 rounded-r-xl text-xs text-green-900 flex justify-between items-center non-printable shadow-sm" id="adminControlBanner">
                     <div>
-                        <p class="font-bold text-sm"><i class="fas fa-[#548235]"></i> Escala Morumbi com Trava Anti-Erro (V38):</p>
-                        <p class="mt-0.5">Sua alteração é validada contra o banco de dados de ausências. Clique na nova aba "Acumulado Geral" para somar todos os meses.</p>
+                        <p class="font-bold text-sm flex items-center space-x-2">
+                            <span id="statusLockIcon"><i class="fas fa-lock-open text-green-700"></i></span>
+                            <span id="statusLockText">Escala Aberta para Edição</span>
+                        </p>
+                        <p class="mt-0.5 text-gray-600">Altere plantões ou clique no botão ao lado para homologar e congelar este mês contra edições.</p>
                     </div>
-                    <button id="adminGenerateBtn" onclick="gerarEscalaAutomatica()" class="hidden bg-[#548235] text-white px-4 py-2 rounded-lg text-xs font-bold shadow hover:bg-green-800 transition">
-                        <i class="fas fa-magic"></i> Balancear e Salvar Escala na Nuvem
-                    </button>
+                    <div class="flex items-center space-x-2">
+                        <button id="adminLockBtn" onclick="alternarBloqueioMes()" class="hidden bg-slate-800 text-white px-3 py-2 rounded-lg text-xs font-bold shadow hover:bg-black transition">
+                            <i class="fas fa-lock"></i> Congelar Escala do Mês
+                        </button>
+                        <button id="adminGenerateBtn" onclick="gerarEscalaAutomatica()" class="hidden bg-[#548235] text-white px-4 py-2 rounded-lg text-xs font-bold shadow hover:bg-green-800 transition">
+                            <i class="fas fa-magic"></i> Balancear e Salvar
+                        </button>
+                    </div>
                 </div>
 
                 <!-- TÍTULO CORPORATIVO DO EXCEL -->
@@ -214,9 +222,9 @@
                         <div>
                             <h3 class="text-lg font-bold text-gray-800 flex items-center space-x-2">
                                 <i class="fas fa-calculator text-[#548235]"></i>
-                                <span>Relatório Acumulado Geral (Soma de Todos os Meses)</span>
+                                <span>Relatório Acumulado Geral (Apenas Meses Homologados)</span>
                             </h3>
-                            <p class="text-xs text-gray-500 mt-0.5">Soma histórica automatizada de todas as aberturas e fechamentos gravados na nuvem</p>
+                            <p class="text-xs text-gray-500 mt-0.5">Soma histórica de plantões reais gravados. Meses futuros não salvos não são contabilizados.</p>
                         </div>
                         <button onclick="carregarConsolidadoGeral()" class="bg-[#548235] text-white px-3 py-1.5 rounded text-xs font-bold shadow hover:bg-green-800 transition">
                             <i class="fas fa-sync-alt"></i> Atualizar Dados
@@ -378,7 +386,7 @@
         </div>
     </div>
 
-    <!-- MODAL POPUP DE EDIÇÃO COM TRAVA ANTI-ERRO -->
+    <!-- MODAL POPUP DE EDIÇÃO -->
     <div id="dayModal" class="fixed inset-0 bg-black bg-opacity-40 hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-xl shadow-xl max-w-sm w-full p-5 space-y-4">
             <h3 class="font-bold text-gray-800 text-sm border-b pb-2" id="modalTitle">Edição de Plantão</h3>
@@ -416,7 +424,8 @@
             escala: {},        
             restricoes: [],
             fdsPresentesSelecoes: {}, 
-            currentPeriod: "2026-08" 
+            currentPeriod: "2026-08",
+            mesEstaCongelado: false 
         };
 
         let currentSelectedDay = null;
@@ -462,11 +471,13 @@
             if (appState.currentUser.role === 'admin') {
                 document.getElementById('adminGenerateBtn').classList.remove('hidden');
                 document.getElementById('adminManageBtn').classList.remove('hidden');
+                document.getElementById('adminLockBtn').classList.remove('hidden');
                 document.getElementById('modalSaveBtn').classList.remove('hidden');
                 document.getElementById('managerBtn').classList.add('hidden');
             } else {
                 document.getElementById('adminGenerateBtn').classList.add('hidden');
                 document.getElementById('adminManageBtn').classList.add('hidden');
+                document.getElementById('adminLockBtn').classList.add('hidden');
                 document.getElementById('modalSaveBtn').classList.add('hidden');
                 document.getElementById('managerBtn').classList.remove('hidden');
             }
@@ -520,6 +531,7 @@
         }
 
         async function salvarPreferenciaFdsIntervalo() {
+            if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO! Não é possível enviar novas solicitações.");
             const start = document.getElementById('prefFdsStart').value;
             const end = document.getElementById('prefFdsEnd').value;
             if(!start || !end) return alert("Selecione o sábado e o domingo.");
@@ -534,6 +546,7 @@
         }
 
         async function registrarBloqueioComMotivo() {
+            if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO! Não é possível enviar novas solicitações.");
             const dt = document.getElementById('blockDate').value;
             const motivo = document.getElementById('blockReason').value.trim();
             if(!dt || !motivo) return alert("Preencha todos os campos.");
@@ -545,6 +558,7 @@
         }
 
         async function adicionarFerias() {
+            if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO! Não é possível enviar férias.");
             const startStr = document.getElementById('vacStart').value;
             const endStr = document.getElementById('vacEnd').value;
             if(!startStr || !endStr) return alert("Informe o período completo de férias.");
@@ -569,6 +583,7 @@
         }
 
         async function adicionarAusencia() {
+            if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO! Não é possível enviar ausência.");
             const startStr = document.getElementById('ausStart').value;
             const endStr = document.getElementById('ausEnd').value;
             if(!startStr || !endStr) return alert("Informe o período de ausência.");
@@ -601,6 +616,10 @@
             try {
                 const { data } = await supabaseClient.from('escalas_mensais').select('*').eq('ano_mes', appState.currentPeriod);
                 appState.escala = {};
+                
+                // Checa se o mês está congelado no banco
+                appState.mesEstaCongelado = data && data.length > 0 && data[0].congelado === true;
+
                 if(data && data.length > 0) {
                     data.forEach(item => {
                         appState.escala[item.dia_mes] = { 
@@ -729,7 +748,35 @@
             renderAll();
         }
 
+        async function alternarBloqueioMes() {
+            let novoStatus = !appState.mesEstaCongelado;
+            let acaoTexto = novoStatus ? "CONGELAR E HOMOLOGAR" : "DESCONGELAR";
+
+            if(!confirm(`Deseja realmente ${acaoTexto} a escala do mês de ${appState.currentPeriod}?`)) return;
+
+            try {
+                // Atualiza a flag em todas as linhas do mês
+                for(let d = 1; d <= 31; d++) {
+                    if(appState.escala[d]) {
+                        await supabaseClient.from('escalas_mensais').upsert({
+                            id: parseInt(`${appState.currentPeriod.split('-')[1]}${d}`),
+                            ano_mes: appState.currentPeriod, 
+                            dia_mes: d, 
+                            abertura: appState.escala[d].abertura, 
+                            fechamento: appState.escala[d].fechamento, 
+                            folgas_custom: appState.escala[d].folgas_custom || "",
+                            congelado: novoStatus
+                        });
+                    }
+                }
+                alert(`Escala ${novoStatus ? 'congelada e homologada' : 'descongelada'} com sucesso!`);
+                await puxarEscalaSalva();
+            } catch(e) { alert("Erro ao alterar o status do mês."); }
+        }
+
         async function saveChanges() {
+            if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO! Descongele a escala no botão do topo para fazer alterações.");
+
             const ab = document.getElementById('modalAbertura').value;
             const fech = document.getElementById('modalFechamento').value;
             const folgasCustom = document.getElementById('modalFolgasManuais').value.trim();
@@ -758,7 +805,8 @@
                 dia_mes: currentSelectedDay, 
                 abertura: ab, 
                 fechamento: fech, 
-                folgas_custom: folgasCustom
+                folgas_custom: folgasCustom,
+                congelado: false
             });
 
             appState.escala[currentSelectedDay] = { abertura: ab, fechamento: fech, folgas_custom: folgasCustom };
@@ -767,6 +815,7 @@
         }
 
         async function gerarEscalaAutomatica() {
+            if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO! Descongele a escala no botão do topo para recalcular.");
             initCalendar();
             for(let d = 1; d <= 31; d++) {
                 if(appState.escala[d]) {
@@ -776,7 +825,8 @@
                         dia_mes: d, 
                         abertura: appState.escala[d].abertura, 
                         fechamento: appState.escala[d].fechamento, 
-                        folgas_custom: ""
+                        folgas_custom: "",
+                        congelado: false
                     });
                 }
             }
@@ -798,6 +848,27 @@
         }
 
         function renderAll() {
+            // Atualiza o visual do Banner de Status de Congelamento
+            const iconSpan = document.getElementById('statusLockIcon');
+            const textSpan = document.getElementById('statusLockText');
+            const lockBtn = document.getElementById('adminLockBtn');
+
+            if(appState.mesEstaCongelado) {
+                iconSpan.innerHTML = `<i class="fas fa-lock text-red-600 text-base"></i>`;
+                textSpan.innerHTML = `<span class="text-red-700 font-extrabold uppercase tracking-wide">Escala Homologada e Congelada (Bloqueada)</span>`;
+                if(lockBtn) {
+                    lockBtn.innerHTML = `<i class="fas fa-unlock"></i> Descongelar Escala`;
+                    lockBtn.className = "bg-amber-600 text-white px-3 py-2 rounded-lg text-xs font-bold shadow hover:bg-amber-700 transition";
+                }
+            } else {
+                iconSpan.innerHTML = `<i class="fas fa-lock-open text-green-700 text-base"></i>`;
+                textSpan.innerHTML = `<span class="text-green-800 font-bold">Escala Aberta para Edição</span>`;
+                if(lockBtn) {
+                    lockBtn.innerHTML = `<i class="fas fa-lock"></i> Congelar Escala do Mês`;
+                    lockBtn.className = "bg-slate-800 text-white px-3 py-2 rounded-lg text-xs font-bold shadow hover:bg-black transition";
+                }
+            }
+
             let sheetsHtml = "";
             const diasSemanaNomes = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
 
@@ -888,14 +959,14 @@
                     html += `
                         <tr>
                             <td class="p-1 border border-gray-300 text-center">
-                                <select onchange="salvarSelecaoFds('${key1}', this.value)" class="fds-select w-full text-center outline-none bg-transparent font-semibold text-xs text-gray-800 cursor-pointer">
+                                <select onchange="salvarSelecaoFds('${key1}', this.value)" ${appState.mesEstaCongelado ? 'disabled' : ''} class="fds-select w-full text-center outline-none bg-transparent font-semibold text-xs text-gray-800 cursor-pointer">
                                     ${appState.gerentes.map(g => `<option value="${g.nome}" ${g.nome === val1 ? 'selected' : ''}>${g.nome}</option>`).join('')}
                                     <option value="" ${val1 === '' ? 'selected' : ''}>- Selecionar -</option>
                                 </select>
                             </td>
                             ${sab2 ? `
                                 <td class="p-1 border border-gray-300 text-center">
-                                    <select onchange="salvarSelecaoFds('${key2}', this.value)" class="fds-select w-full text-center outline-none bg-transparent font-semibold text-xs text-gray-800 cursor-pointer">
+                                    <select onchange="salvarSelecaoFds('${key2}', this.value)" ${appState.mesEstaCongelado ? 'disabled' : ''} class="fds-select w-full text-center outline-none bg-transparent font-semibold text-xs text-gray-800 cursor-pointer">
                                         ${appState.gerentes.map(g => `<option value="${g.nome}" ${g.nome === val2 ? 'selected' : ''}>${g.nome}</option>`).join('')}
                                         <option value="" ${val2 === '' ? 'selected' : ''}>- Selecionar -</option>
                                     </select>
@@ -942,19 +1013,16 @@
             }).join('');
         }
 
-        // CARREGA E SOMA OS PLANTÕES DE TODOS OS MESES NA HISTÓRIA
         async function carregarConsolidadoGeral() {
             const tbody = document.getElementById('consolidadoTableBody');
-            tbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-gray-500 font-bold"><i class="fas fa-spinner animate-spin text-xl text-[#548235] mb-2 block"></i> Calculando total acumulado de todos os meses...</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-gray-500 font-bold"><i class="fas fa-spinner animate-spin text-xl text-[#548235] mb-2 block"></i> Calculando total acumulado dos meses homologados...</td></tr>`;
 
             try {
                 const { data, error } = await supabaseClient.from('escalas_mensais').select('abertura, fechamento');
                 if (error) throw error;
 
                 const totals = {};
-                appState.gerentes.forEach(g => {
-                    totals[g.nome] = { ab: 0, fech: 0 };
-                });
+                appState.gerentes.forEach(g => { totals[g.nome] = { ab: 0, fech: 0 }; });
 
                 if (data) {
                     data.forEach(row => {
@@ -976,12 +1044,14 @@
                     `;
                 }).join('');
             } catch(e) {
-                tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-red-600 font-bold">Erro ao conectar com o banco de dados.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-red-600 font-bold">Erro ao conectar com a base.</td></tr>`;
             }
         }
 
         function openModal(day) {
             if (appState.currentUser.role !== 'admin') return; 
+            if (appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO! Descongele a escala no botão do topo para editar.");
+
             currentSelectedDay = day;
             let dateFormatted = `${appState.currentPeriod}-${String(day).padStart(2, '0')}`;
 
