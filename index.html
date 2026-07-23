@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V39 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V40 - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Biblioteca Oficial do Supabase CDN -->
@@ -60,7 +60,7 @@
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-6">
             <div class="text-center space-y-2">
                 <div class="inline-block bg-[#548235] p-3 rounded-full text-white text-2xl shadow-md">LM</div>
-                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V39</h2>
+                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V40</h2>
                 <p class="text-xs text-gray-500">Acesse com seu e-mail corporativo</p>
             </div>
 
@@ -97,7 +97,7 @@
             <div class="flex items-center space-x-3">
                 <div class="bg-white text-[#548235] font-bold text-xl px-2.5 py-1 rounded shadow">LM</div>
                 <div>
-                    <h1 class="text-base font-bold">Escala Morumbi — V39</h1>
+                    <h1 class="text-base font-bold">Escala Morumbi — V40</h1>
                     <p class="text-[11px] text-green-100 flex items-center space-x-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-green-300 animate-pulse"></span>
                         <span id="userBadge">Carregando...</span>
@@ -186,10 +186,10 @@
                     <!-- BLOCOS LATERAIS (GERENTES PRESENTES + MÉTRICAS) -->
                     <div class="lg:col-span-5 space-y-4">
                         
-                        <!-- TABELA FIM DE SEMANA -->
+                        <!-- TABELA FIM DE SEMANA COM SALVAMENTO PERMANENTE -->
                         <div class="bg-white p-2 rounded-lg shadow-sm border border-gray-300">
                             <div class="bg-gray-200 font-extrabold p-1.5 text-center text-xs text-gray-700 uppercase border border-gray-400">
-                                FIM DE SEMANA — GERENTES PRESENTES (6 VAGAS POR SÁBADO)
+                                FIM DE SEMANA — GERENTES PRESENTES (SALVAMENTO AUTOMÁTICO)
                             </div>
                             <div id="fdsTablesContainer" class="space-y-3 mt-2"></div>
                         </div>
@@ -613,11 +613,18 @@
         }
 
         async function puxarEscalaSalva() {
+            // CARREGA AS SELEÇÕES DE SÁBADOS SALVAS NO NAVEGADOR PARA O MÊS ATUAL
+            let savedFds = localStorage.getItem('fds_presentes_' + appState.currentPeriod);
+            if (savedFds) {
+                try { appState.fdsPresentesSelecoes = JSON.parse(savedFds); } catch(e) { appState.fdsPresentesSelecoes = {}; }
+            } else {
+                appState.fdsPresentesSelecoes = {};
+            }
+
             try {
                 const { data } = await supabaseClient.from('escalas_mensais').select('*').eq('ano_mes', appState.currentPeriod);
                 appState.escala = {};
-                
-                // Checa se o mês está congelado no banco
+
                 appState.mesEstaCongelado = data && data.length > 0 && data[0].congelado === true;
 
                 if(data && data.length > 0) {
@@ -755,7 +762,6 @@
             if(!confirm(`Deseja realmente ${acaoTexto} a escala do mês de ${appState.currentPeriod}?`)) return;
 
             try {
-                // Atualiza a flag em todas as linhas do mês
                 for(let d = 1; d <= 31; d++) {
                     if(appState.escala[d]) {
                         await supabaseClient.from('escalas_mensais').upsert({
@@ -848,7 +854,6 @@
         }
 
         function renderAll() {
-            // Atualiza o visual do Banner de Status de Congelamento
             const iconSpan = document.getElementById('statusLockIcon');
             const textSpan = document.getElementById('statusLockText');
             const lockBtn = document.getElementById('adminLockBtn');
@@ -960,15 +965,15 @@
                         <tr>
                             <td class="p-1 border border-gray-300 text-center">
                                 <select onchange="salvarSelecaoFds('${key1}', this.value)" ${appState.mesEstaCongelado ? 'disabled' : ''} class="fds-select w-full text-center outline-none bg-transparent font-semibold text-xs text-gray-800 cursor-pointer">
-                                    ${appState.gerentes.map(g => `<option value="${g.nome}" ${g.nome === val1 ? 'selected' : ''}>${g.nome}</option>`).join('')}
                                     <option value="" ${val1 === '' ? 'selected' : ''}>- Selecionar -</option>
+                                    ${appState.gerentes.map(g => `<option value="${g.nome}" ${g.nome === val1 ? 'selected' : ''}>${g.nome}</option>`).join('')}
                                 </select>
                             </td>
                             ${sab2 ? `
                                 <td class="p-1 border border-gray-300 text-center">
                                     <select onchange="salvarSelecaoFds('${key2}', this.value)" ${appState.mesEstaCongelado ? 'disabled' : ''} class="fds-select w-full text-center outline-none bg-transparent font-semibold text-xs text-gray-800 cursor-pointer">
-                                        ${appState.gerentes.map(g => `<option value="${g.nome}" ${g.nome === val2 ? 'selected' : ''}>${g.nome}</option>`).join('')}
                                         <option value="" ${val2 === '' ? 'selected' : ''}>- Selecionar -</option>
+                                        ${appState.gerentes.map(g => `<option value="${g.nome}" ${g.nome === val2 ? 'selected' : ''}>${g.nome}</option>`).join('')}
                                     </select>
                                 </td>
                             ` : ''}
@@ -982,8 +987,15 @@
             container.innerHTML = html;
         }
 
+        // SALVA AS SELEÇÕES DOS GERENTES PRESENTES NO PERMANENT STORAGE DO NAVEGADOR
         function salvarSelecaoFds(key, valor) {
+            if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO! Descongele a escala no botão do topo para alterar.");
+            
             appState.fdsPresentesSelecoes[key] = valor;
+            
+            // Grava permanentemente para o mês selecionado
+            localStorage.setItem('fds_presentes_' + appState.currentPeriod, JSON.stringify(appState.fdsPresentesSelecoes));
+            
             renderAll(); 
         }
 
