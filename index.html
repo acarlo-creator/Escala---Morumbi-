@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V37 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V38 - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Biblioteca Oficial do Supabase CDN -->
@@ -60,7 +60,7 @@
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-6">
             <div class="text-center space-y-2">
                 <div class="inline-block bg-[#548235] p-3 rounded-full text-white text-2xl shadow-md">LM</div>
-                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V37</h2>
+                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V38</h2>
                 <p class="text-xs text-gray-500">Acesse com seu e-mail corporativo</p>
             </div>
 
@@ -97,7 +97,7 @@
             <div class="flex items-center space-x-3">
                 <div class="bg-white text-[#548235] font-bold text-xl px-2.5 py-1 rounded shadow">LM</div>
                 <div>
-                    <h1 class="text-base font-bold">Escala Morumbi — V37</h1>
+                    <h1 class="text-base font-bold">Escala Morumbi — V38</h1>
                     <p class="text-[11px] text-green-100 flex items-center space-x-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-green-300 animate-pulse"></span>
                         <span id="userBadge">Carregando...</span>
@@ -115,11 +115,17 @@
                     <option value="2026-12" class="text-gray-800">Dezembro / 2026</option>
                 </select>
                 <button onclick="window.print()" class="bg-white text-[#548235] text-xs px-2.5 py-1 rounded font-bold shadow hover:bg-gray-100 transition">
-                    <i class="fas fa-print"></i> Imprimir / PDF (Com Cores)
+                    <i class="fas fa-print"></i> Imprimir / PDF
                 </button>
             </div>
 
             <div class="flex items-center space-x-2">
+                <button onclick="switchTab('dashboard')" class="text-xs bg-green-700 text-white px-3 py-1.5 rounded font-bold hover:bg-green-600 shadow">
+                    Quadro Mensal
+                </button>
+                <button onclick="switchTab('consolidado')" class="text-xs bg-white text-[#548235] px-3 py-1.5 rounded font-bold hover:bg-green-50 shadow">
+                    <i class="fas fa-calculator"></i> Acumulado Geral
+                </button>
                 <button id="adminManageBtn" onclick="openAdminManagerModal()" class="hidden text-xs bg-amber-500 text-white px-3 py-1.5 rounded font-bold hover:bg-amber-600 shadow">
                     <i class="fas fa-users-cog"></i> Gerenciar Gerentes
                 </button>
@@ -130,12 +136,12 @@
 
         <div class="max-w-[1600px] mx-auto p-3 sm:p-5 space-y-4">
 
-            <!-- QUADRO DE PLANTÃO + PAINEL LATERAL EM GRID -->
+            <!-- TAB 1: QUADRO DE PLANTÃO + PAINEL LATERAL EM GRID -->
             <div id="dashboardSection" class="view-section active space-y-4">
                 <div class="bg-green-50 border-l-4 border-[#548235] p-3 rounded-r-xl text-xs text-green-900 flex justify-between items-center non-printable shadow-sm">
                     <div>
-                        <p class="font-bold text-sm"><i class="fas fa-shield-alt"></i> Trava Anti-Erro Ativada (V37):</p>
-                        <p class="mt-0.5">O sistema bloqueia qualquer tentativa de alterar a escala para um gerente que registrou ausência, bloqueio ou férias no portal.</p>
+                        <p class="font-bold text-sm"><i class="fas fa-[#548235]"></i> Escala Morumbi com Trava Anti-Erro (V38):</p>
+                        <p class="mt-0.5">Sua alteração é validada contra o banco de dados de ausências. Clique na nova aba "Acumulado Geral" para somar todos os meses.</p>
                     </div>
                     <button id="adminGenerateBtn" onclick="gerarEscalaAutomatica()" class="hidden bg-[#548235] text-white px-4 py-2 rounded-lg text-xs font-bold shadow hover:bg-green-800 transition">
                         <i class="fas fa-magic"></i> Balancear e Salvar Escala na Nuvem
@@ -180,12 +186,12 @@
                             <div id="fdsTablesContainer" class="space-y-3 mt-2"></div>
                         </div>
 
-                        <!-- TABELA DE MÉTRICAS -->
+                        <!-- TABELA DE MÉTRICAS DO MÊS ATUAL -->
                         <div class="bg-white p-2 rounded-lg shadow-sm border border-gray-300">
                             <table class="w-full text-xs border-collapse border border-gray-400">
                                 <thead>
                                     <tr class="bg-[#70ad47] text-white font-bold">
-                                        <th class="p-1.5 border border-gray-400 text-left">Gerentes</th>
+                                        <th class="p-1.5 border border-gray-400 text-left">Gerentes (Mês)</th>
                                         <th class="p-1.5 border border-gray-400 text-center">Abertura</th>
                                         <th class="p-1.5 border border-gray-400 text-center">Fechamento</th>
                                         <th class="p-1.5 border border-gray-400 text-center font-extrabold">Total</th>
@@ -198,6 +204,38 @@
 
                     </div>
 
+                </div>
+            </div>
+
+            <!-- TAB 2: CONSOLIDADO ACUMULADO (TODOS OS MESES SOMADOS) -->
+            <div id="consolidadoSection" class="view-section space-y-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-[#548235] space-y-4">
+                    <div class="border-b pb-3 flex justify-between items-center">
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800 flex items-center space-x-2">
+                                <i class="fas fa-calculator text-[#548235]"></i>
+                                <span>Relatório Acumulado Geral (Soma de Todos os Meses)</span>
+                            </h3>
+                            <p class="text-xs text-gray-500 mt-0.5">Soma histórica automatizada de todas as aberturas e fechamentos gravados na nuvem</p>
+                        </div>
+                        <button onclick="carregarConsolidadoGeral()" class="bg-[#548235] text-white px-3 py-1.5 rounded text-xs font-bold shadow hover:bg-green-800 transition">
+                            <i class="fas fa-sync-alt"></i> Atualizar Dados
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto border rounded-xl">
+                        <table class="w-full text-left text-sm border-collapse">
+                            <thead>
+                                <tr class="bg-[#e2efda] text-gray-800 font-bold text-xs uppercase tracking-wider border-b border-gray-400">
+                                    <th class="p-3 border border-gray-300">Nome do Gerente</th>
+                                    <th class="p-3 text-center bg-green-100 text-green-900 font-bold border border-gray-300">☀️ Total Aberturas (Manhãs)</th>
+                                    <th class="p-3 text-center bg-blue-100 text-blue-900 font-bold border border-gray-300">🌙 Total Fechamentos (Noites)</th>
+                                    <th class="p-3 text-center bg-gray-200 text-gray-900 font-extrabold border border-gray-300">📊 TOTAL GERAL DE PLANTÕES</th>
+                                </tr>
+                            </thead>
+                            <tbody id="consolidadoTableBody" class="divide-y text-gray-700 font-medium"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -578,7 +616,6 @@
             } catch(e) { initCalendar(); }
         }
 
-        // RETORNA SE O GERENTE ESTÁ BLOQUEADO E QUAL A JUSTIFICATIVA
         function obterJustificativaBloqueio(gerenteId, dateFormatted) {
             let restr = appState.restricoes.find(r => 
                 r.gerente_id === gerenteId && 
@@ -692,7 +729,6 @@
             renderAll();
         }
 
-        // SALVAMENTO MANUAL COM TRAVA ANTI-ERRO SELECIONADA
         async function saveChanges() {
             const ab = document.getElementById('modalAbertura').value;
             const fech = document.getElementById('modalFechamento').value;
@@ -700,21 +736,19 @@
 
             let dataStr = `${appState.currentPeriod}-${String(currentSelectedDay).padStart(2, '0')}`;
 
-            // Checagem de Bloqueio da Abertura
             let gerenteAbObj = appState.gerentes.find(g => g.nome === ab);
             if (gerenteAbObj) {
                 let justificativa = obterJustificativaBloqueio(gerenteAbObj.id, dataStr);
                 if (justificativa) {
-                    return alert(`🛑 AÇÃO BLOQUEADA!\n\nO(A) gerente ${ab} informou estar indisponível no dia ${currentSelectedDay}/${appState.currentPeriod.split('-')[1]}.\nMotivo registrado: "${justificativa}".\n\nEscolha outro gestor disponível para a Abertura.`);
+                    return alert(`🛑 AÇÃO BLOQUEADA!\n\nO(A) gerente ${ab} está indisponível em ${currentSelectedDay}/${appState.currentPeriod.split('-')[1]}.\nMotivo: "${justificativa}".`);
                 }
             }
 
-            // Checagem de Bloqueio do Fechamento
             let gerenteFechObj = appState.gerentes.find(g => g.nome === fech);
             if (gerenteFechObj) {
                 let justificativa = obterJustificativaBloqueio(gerenteFechObj.id, dataStr);
                 if (justificativa) {
-                    return alert(`🛑 AÇÃO BLOQUEADA!\n\nO(A) gerente ${fech} informou estar indisponível no dia ${currentSelectedDay}/${appState.currentPeriod.split('-')[1]}.\nMotivo registrado: "${justificativa}".\n\nEscolha outro gestor disponível para o Fechamento.`);
+                    return alert(`🛑 AÇÃO BLOQUEADA!\n\nO(A) gerente ${fech} está indisponível em ${currentSelectedDay}/${appState.currentPeriod.split('-')[1]}.\nMotivo: "${justificativa}".`);
                 }
             }
 
@@ -908,7 +942,44 @@
             }).join('');
         }
 
-        // MONTA O MODAL SINALIZANDO QUEM ESTÁ BLOQUEADO NA DATA SELECIONADA
+        // CARREGA E SOMA OS PLANTÕES DE TODOS OS MESES NA HISTÓRIA
+        async function carregarConsolidadoGeral() {
+            const tbody = document.getElementById('consolidadoTableBody');
+            tbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-gray-500 font-bold"><i class="fas fa-spinner animate-spin text-xl text-[#548235] mb-2 block"></i> Calculando total acumulado de todos os meses...</td></tr>`;
+
+            try {
+                const { data, error } = await supabaseClient.from('escalas_mensais').select('abertura, fechamento');
+                if (error) throw error;
+
+                const totals = {};
+                appState.gerentes.forEach(g => {
+                    totals[g.nome] = { ab: 0, fech: 0 };
+                });
+
+                if (data) {
+                    data.forEach(row => {
+                        if (row.abertura && totals[row.abertura]) totals[row.abertura].ab++;
+                        if (row.fechamento && totals[row.fechamento]) totals[row.fechamento].fech++;
+                    });
+                }
+
+                tbody.innerHTML = appState.gerentes.map(g => {
+                    const t = totals[g.nome] || { ab: 0, fech: 0 };
+                    const sum = t.ab + t.fech;
+                    return `
+                        <tr class="hover:bg-gray-50 border-b border-gray-200 text-xs text-center">
+                            <td class="p-3 font-bold text-gray-900 text-left border border-gray-300">${g.nome}</td>
+                            <td class="p-3 bg-green-50 font-semibold text-green-900 border border-gray-300">${t.ab} manhãs</td>
+                            <td class="p-3 bg-blue-50 font-semibold text-blue-900 border border-gray-300">${t.fech} noites</td>
+                            <td class="p-3 bg-gray-100 font-extrabold text-gray-900 text-sm border border-gray-300">${sum} plantões</td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch(e) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-red-600 font-bold">Erro ao conectar com o banco de dados.</td></tr>`;
+            }
+        }
+
         function openModal(day) {
             if (appState.currentUser.role !== 'admin') return; 
             currentSelectedDay = day;
@@ -941,9 +1012,14 @@
         function switchTab(tabId) {
             document.getElementById('dashboardSection').classList.remove('active');
             document.getElementById('managerSection').classList.remove('active');
+            document.getElementById('consolidadoSection').classList.remove('active');
 
             if(tabId === 'dashboard') document.getElementById('dashboardSection').classList.add('active');
             if(tabId === 'manager') document.getElementById('managerSection').classList.add('active');
+            if(tabId === 'consolidado') {
+                document.getElementById('consolidadoSection').classList.add('active');
+                carregarConsolidadoGeral();
+            }
         }
 
         function openAdminManagerModal() { document.getElementById('adminManagerModal').classList.remove('hidden'); renderAdminManagerList(); }
