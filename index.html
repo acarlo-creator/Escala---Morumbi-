@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V45 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V46 - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Biblioteca Oficial do Supabase CDN -->
@@ -60,7 +60,7 @@
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-6">
             <div class="text-center space-y-2">
                 <div class="inline-block bg-[#548235] p-3 rounded-full text-white text-2xl shadow-md">LM</div>
-                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V45</h2>
+                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V46</h2>
                 <p class="text-xs text-gray-500">Acesse com seu e-mail corporativo</p>
             </div>
 
@@ -97,7 +97,7 @@
             <div class="flex items-center space-x-3">
                 <div class="bg-white text-[#548235] font-bold text-xl px-2.5 py-1 rounded shadow">LM</div>
                 <div>
-                    <h1 class="text-base font-bold">Escala Morumbi — V45</h1>
+                    <h1 class="text-base font-bold">Escala Morumbi — V46</h1>
                     <p class="text-[11px] text-green-100 flex items-center space-x-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-green-300 animate-pulse"></span>
                         <span id="userBadge">Carregando...</span>
@@ -438,10 +438,9 @@
 
         let currentSelectedDay = null;
 
-        // HELPER PARA GERAR ID NÚMERICO ÚNICO POR DIA/MÊS/ANO (EX: 20260801)
         function gerarIdUnicoDia(anoMesStr, dia) {
-            const limpo = anoMesStr.replace('-', ''); // "202608"
-            return parseInt(`${limpo}${String(dia).padStart(2, '0')}`); // 20260801
+            const limpo = anoMesStr.replace('-', ''); 
+            return parseInt(`${limpo}${String(dia).padStart(2, '0')}`);
         }
 
         async function verificarOuCadastrarGerente() {
@@ -653,7 +652,6 @@
             await puxarEscalaSalva();
         }
 
-        // CARREGA E PRESERVA FIELMENTE OS DADOS SALVOS NO SUPABASE SEMA REESCREVER AUTOMATICAMENTE
         async function puxarEscalaSalva() {
             let savedFds = localStorage.getItem('fds_presentes_' + appState.currentPeriod);
             if (savedFds) {
@@ -662,12 +660,13 @@
                 appState.fdsPresentesSelecoes = {};
             }
 
+            appState.mesEstaCongelado = localStorage.getItem('mes_congelado_' + appState.currentPeriod) === 'true';
+
             try {
                 const { data, error } = await supabaseClient.from('escalas_mensais').select('*').eq('ano_mes', appState.currentPeriod);
                 if (error) throw error;
 
                 appState.escala = {};
-                appState.mesEstaCongelado = data && data.length > 0 && data[0].congelado === true;
 
                 if(data && data.length > 0) {
                     data.forEach(item => {
@@ -679,7 +678,6 @@
                     });
                     renderAll();
                 } else {
-                    // SE O BANCO ESTIVER TOTALMENTE VAZIO PARA ESTE MÊS, APENAS INICIA UMA MATRIZ DE TELA SEM FORÇAR OVERWRITE
                     initCalendar(); 
                     if(appState.currentUser.role === 'admin') {
                         await gravarEscalaIntegralNoSupabase();
@@ -806,7 +804,7 @@
             renderAll();
         }
 
-        // SALVAMENTO COMPLETO NO SUPABASE COM FORMATO ID ÚNICO
+        // SALVAMENTO AJUSTADO À ESTRUTURA PADRÃO DO SUPABASE
         async function gravarEscalaIntegralNoSupabase() {
             let dadosParaUpsert = [];
             for(let d = 1; d <= 31; d++) {
@@ -817,8 +815,7 @@
                         dia_mes: d, 
                         abertura: appState.escala[d].abertura, 
                         fechamento: appState.escala[d].fechamento, 
-                        folgas_custom: appState.escala[d].folgas_custom || "",
-                        congelado: appState.mesEstaCongelado
+                        folgas_custom: appState.escala[d].folgas_custom || ""
                     });
                 }
             }
@@ -836,12 +833,11 @@
 
             if(!confirm(`Deseja realmente ${acaoTexto} a escala do mês de ${appState.currentPeriod}?`)) return;
 
-            try {
-                appState.mesEstaCongelado = novoStatus;
-                await gravarEscalaIntegralNoSupabase();
-                alert(`Escala ${novoStatus ? 'congelada e homologada' : 'descongelada'} com sucesso no banco!`);
-                await puxarEscalaSalva();
-            } catch(e) { alert("Erro ao alterar o status do mês."); }
+            appState.mesEstaCongelado = novoStatus;
+            localStorage.setItem('mes_congelado_' + appState.currentPeriod, novoStatus ? 'true' : 'false');
+            
+            renderAll();
+            alert(`Escala ${novoStatus ? 'congelada e homologada' : 'descongelada'} com sucesso!`);
         }
 
         async function saveChanges() {
@@ -876,8 +872,7 @@
                 dia_mes: currentSelectedDay, 
                 abertura: ab, 
                 fechamento: fech, 
-                folgas_custom: folgasCustom,
-                congelado: appState.mesEstaCongelado
+                folgas_custom: folgasCustom
             });
 
             if (error) {
