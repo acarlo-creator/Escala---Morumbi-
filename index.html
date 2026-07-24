@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V46 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V48 - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Biblioteca Oficial do Supabase CDN -->
@@ -30,20 +30,23 @@
         /* FORÇAR CORES NA IMPRESSÃO E PDF (MODO PAISAGEM) */
         @page {
             size: landscape;
-            margin: 4mm;
+            margin: 3mm;
         }
         @media print {
             * {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
-            body { background: white !important; color: black !important; font-size: 8.5px !important; }
+            body { background: white !important; color: black !important; font-size: 7.5px !important; margin: 0 !important; padding: 0 !important; }
             nav, .non-printable, button, input { display: none !important; }
             select { border: none !important; appearance: none !important; -webkit-appearance: none !important; background: transparent !important; }
             .view-section { display: block !important; }
-            .print-grid { display: flex !important; flex-direction: row !important; align-items: start !important; gap: 6px !important; }
-            table { border-collapse: collapse !important; width: 100% !important; }
-            th, td { border: 1px solid #385723 !important; padding: 2px 4px !important; text-align: center !important; font-size: 8.5px !important; }
+            .print-grid { display: flex !important; flex-direction: row !important; align-items: start !important; gap: 4px !important; width: 100% !important; }
+            div, .overflow-x-auto { overflow: visible !important; }
+            table { border-collapse: collapse !important; width: 100% !important; table-layout: auto !important; }
+            th, td { border: 1px solid #385723 !important; padding: 1px 2px !important; text-align: center !important; font-size: 7.5px !important; line-height: 1.1 !important; }
+            tr { page-break-inside: avoid !important; }
+            .col-data { min-width: 65px !important; white-space: nowrap !important; }
             .bg-[#70ad47] { background-color: #70ad47 !important; color: white !important; }
             .bg-[#548235] { background-color: #548235 !important; color: white !important; }
             .bg-[#8ea9db] { background-color: #8ea9db !important; color: white !important; }
@@ -60,7 +63,7 @@
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-6">
             <div class="text-center space-y-2">
                 <div class="inline-block bg-[#548235] p-3 rounded-full text-white text-2xl shadow-md">LM</div>
-                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V46</h2>
+                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V48</h2>
                 <p class="text-xs text-gray-500">Acesse com seu e-mail corporativo</p>
             </div>
 
@@ -97,7 +100,7 @@
             <div class="flex items-center space-x-3">
                 <div class="bg-white text-[#548235] font-bold text-xl px-2.5 py-1 rounded shadow">LM</div>
                 <div>
-                    <h1 class="text-base font-bold">Escala Morumbi — V46</h1>
+                    <h1 class="text-base font-bold">Escala Morumbi — V48</h1>
                     <p class="text-[11px] text-green-100 flex items-center space-x-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-green-300 animate-pulse"></span>
                         <span id="userBadge">Carregando...</span>
@@ -172,11 +175,11 @@
                         <table class="w-full text-xs border-collapse border border-gray-400">
                             <thead>
                                 <tr class="bg-[#e2efda] text-gray-800 font-bold border-b-2 border-gray-400">
-                                    <th class="p-2 border border-gray-400 w-24 text-center">Dia/Mês</th>
+                                    <th class="p-2 border border-gray-400 col-data text-center">Dia/Mês</th>
                                     <th class="p-2 border border-gray-400 w-28 text-center">Dia/Semana</th>
-                                    <th class="p-2 border border-gray-400 text-center min-w-[180px]">Abertura</th>
-                                    <th class="p-2 border border-gray-400 text-center min-w-[180px]">Fechamento</th>
-                                    <th class="p-2 border border-gray-400 text-center min-w-[220px]">Folga</th>
+                                    <th class="p-2 border border-gray-400 text-center min-w-[170px]">Abertura</th>
+                                    <th class="p-2 border border-gray-400 text-center min-w-[170px]">Fechamento</th>
+                                    <th class="p-2 border border-gray-400 text-center min-w-[200px]">Folga</th>
                                 </tr>
                             </thead>
                             <tbody id="sheetsTableBody" class="divide-y font-semibold text-gray-800"></tbody>
@@ -456,7 +459,9 @@
             try {
                 const { data } = await supabaseClient.from('gerentes').select('*').eq('email', email).maybeSingle();
                 if (data) {
-                    appState.currentUser = { id: data.id, nome: data.nome, email: data.email, role: data.role || "gerente" };
+                    let diretores = JSON.parse(localStorage.getItem('diretores_list') || '[]');
+                    let userRole = data.role || (diretores.includes(email) ? "diretor" : "gerente");
+                    appState.currentUser = { id: data.id, nome: data.nome, email: data.email, role: userRole };
                     loginSucesso();
                 } else {
                     document.getElementById('authForm').classList.add('hidden');
@@ -470,7 +475,7 @@
             const email = document.getElementById('loginEmail').value.trim().toLowerCase();
             if(!nome) return alert("Informe seu nome completo.");
             try {
-                const { data, error } = await supabaseClient.from('gerentes').insert([{ nome, email, role: "gerente" }]).select().single();
+                let { data, error } = await supabaseClient.from('gerentes').insert([{ nome, email }]).select().single();
                 if (error) throw error;
                 appState.currentUser = { id: data.id, nome: data.nome, email: data.email, role: "gerente" };
                 loginSucesso();
@@ -532,7 +537,16 @@
         async function carregarGerentesEBase() {
             try {
                 const { data: listGerentes } = await supabaseClient.from('gerentes').select('*');
-                appState.gerentes = listGerentes || [];
+                let diretores = JSON.parse(localStorage.getItem('diretores_list') || '[]');
+
+                appState.gerentes = (listGerentes || []).map(g => {
+                    if (diretores.includes(g.email.toLowerCase())) {
+                        g.role = 'diretor';
+                    } else if (!g.role) {
+                        g.role = 'gerente';
+                    }
+                    return g;
+                });
 
                 const { data: listRestricoes } = await supabaseClient.from('restricoes').select('*');
                 appState.restricoes = listRestricoes || [];
@@ -804,7 +818,6 @@
             renderAll();
         }
 
-        // SALVAMENTO AJUSTADO À ESTRUTURA PADRÃO DO SUPABASE
         async function gravarEscalaIntegralNoSupabase() {
             let dadosParaUpsert = [];
             for(let d = 1; d <= 31; d++) {
@@ -968,7 +981,7 @@
 
                 sheetsHtml += `
                     <tr class="${rowBg} hover:opacity-90 border-b border-gray-300 transition cursor-pointer text-center" onclick="openModal(${d})">
-                        <td class="p-2 border border-gray-400 font-bold">${String(d).padStart(2, '0')}/${appState.currentPeriod.split('-')[1]}/2026</td>
+                        <td class="p-2 border border-gray-400 font-bold col-data">${String(d).padStart(2, '0')}/${appState.currentPeriod.split('-')[1]}/2026</td>
                         <td class="p-2 border border-gray-400 font-semibold">${diaSemanaNome}</td>
                         <td class="p-2 border border-gray-400 font-bold ${textStyle}">${data.abertura}</td>
                         <td class="p-2 border border-gray-400 font-bold ${textStyle}">${data.fechamento}</td>
@@ -1184,6 +1197,7 @@
             `).join('');
         }
 
+        // INCLUSÃO BLINDADA CONTRA ERRO DE COLUNA 'ROLE' INEXISTENTE NO SUPABASE
         async function incluirGerenteManualmente() {
             const nameInput = document.getElementById('manualName');
             const emailInput = document.getElementById('manualEmail');
@@ -1191,13 +1205,29 @@
 
             if (!nameInput.value.trim() || !emailInput.value.trim()) return alert("Preencha todos os campos.");
             
+            const email = emailInput.value.trim().toLowerCase();
+            const nome = nameInput.value.trim();
+            const role = roleInput.value;
+
+            // Se for diretor, salva o e-mail na lista de controle de diretores
+            if (role === 'diretor') {
+                let diretores = JSON.parse(localStorage.getItem('diretores_list') || '[]');
+                if (!diretores.includes(email)) diretores.push(email);
+                localStorage.setItem('diretores_list', JSON.stringify(diretores));
+            }
+
             try {
-                const { error } = await supabaseClient.from('gerentes').insert([{ 
-                    nome: nameInput.value.trim(), 
-                    email: emailInput.value.trim().toLowerCase(),
-                    role: roleInput.value
-                }]);
+                // Tenta inserir com role primeiro
+                let { error } = await supabaseClient.from('gerentes').insert([{ nome, email, role }]);
+                
+                // Se o Supabase reclamar que a coluna 'role' não existe, grava sem a coluna
+                if (error && error.message && error.message.includes('role')) {
+                    const fallback = await supabaseClient.from('gerentes').insert([{ nome, email }]);
+                    error = fallback.error;
+                }
+
                 if (error) throw error;
+
                 nameInput.value = "";
                 emailInput.value = "";
                 alert("Usuário adicionado com sucesso!");
