@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V49 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V50 - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Biblioteca Oficial do Supabase CDN -->
@@ -63,7 +63,7 @@
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-6">
             <div class="text-center space-y-2">
                 <div class="inline-block bg-[#548235] p-3 rounded-full text-white text-2xl shadow-md">LM</div>
-                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V49</h2>
+                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V50</h2>
                 <p class="text-xs text-gray-500">Acesse com seu e-mail corporativo</p>
             </div>
 
@@ -100,7 +100,7 @@
             <div class="flex items-center space-x-3">
                 <div class="bg-white text-[#548235] font-bold text-xl px-2.5 py-1 rounded shadow">LM</div>
                 <div>
-                    <h1 class="text-base font-bold">Escala Morumbi — V49</h1>
+                    <h1 class="text-base font-bold">Escala Morumbi — V50</h1>
                     <p class="text-[11px] text-green-100 flex items-center space-x-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-green-300 animate-pulse"></span>
                         <span id="userBadge">Carregando...</span>
@@ -109,7 +109,7 @@
             </div>
 
             <div class="flex items-center space-x-3 bg-green-900/40 px-3 py-1 rounded-xl border border-green-400/30">
-                <label class="text-xs font-bold uppercase">Mês:</label>
+                <label class="text-xs font-bold uppercase">Mês Ativo:</label>
                 <select id="periodSelector" onchange="alterarPeriodo()" class="bg-transparent text-xs font-bold text-white outline-none cursor-pointer">
                     <option value="2026-08" selected class="text-gray-800">Agosto / 2026 (5 FDS)</option>
                     <option value="2026-09" class="text-gray-800">Setembro / 2026</option>
@@ -154,7 +154,7 @@
                             <i class="fas fa-lock"></i> Congelar Escala do Mês
                         </button>
                         <button id="adminGenerateBtn" onclick="gerarEscalaAutomatica()" class="hidden bg-[#548235] text-white px-4 py-2 rounded-lg text-xs font-bold shadow hover:bg-green-800 transition">
-                            <i class="fas fa-magic"></i> Recalcular e Salvar na Nuvem
+                            <i class="fas fa-magic"></i> Balancear e Salvar na Nuvem
                         </button>
                     </div>
                 </div>
@@ -163,7 +163,7 @@
                 <div class="bg-[#70ad47] text-white font-extrabold p-2 text-center text-base rounded-t-lg tracking-wider uppercase shadow-xs">
                     ESCALA DE PLANTÃO
                 </div>
-                <div class="bg-[#8ea9db] text-white font-bold p-1 text-center text-xs tracking-wider uppercase mb-2">
+                <div class="bg-[#8ea9db] text-white font-bold p-1 text-center text-xs tracking-wider uppercase mb-2" id="titlePeriodLabel">
                     ago.-26
                 </div>
 
@@ -341,13 +341,17 @@
                 <button onclick="closeAdminManagerModal()" class="text-gray-400 hover:text-gray-600 text-lg">&times;</button>
             </div>
 
+            <!-- QUADRO DE RESTRIÇÕES FILTRADO EXCLUSIVAMENTE PELO MÊS SELECIONADO -->
             <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-xl space-y-2">
-                <h4 class="font-bold text-xs uppercase tracking-wider text-red-800 flex items-center space-x-1">
-                    <i class="fas fa-calendar-times"></i>
-                    <span>Quadro Geral de Restrições e Demandas Solicitadas</span>
+                <h4 class="font-bold text-xs uppercase tracking-wider text-red-800 flex justify-between items-center">
+                    <span class="flex items-center space-x-1">
+                        <i class="fas fa-calendar-times"></i>
+                        <span>Quadro de Restrições e Demandas</span>
+                    </span>
+                    <span class="bg-red-200 text-red-900 px-2 py-0.5 rounded font-extrabold text-[10px]" id="restrictionsMonthBadge">Filtro Mês Ativo</span>
                 </h4>
                 <div class="text-xs text-red-950 font-semibold space-y-1" id="adminRestrictionsList">
-                    Carregando demandas cadastradas...
+                    Carregando demandas do mês selecionado...
                 </div>
             </div>
 
@@ -556,23 +560,39 @@
             } catch(e) { appState.gerentes = []; }
         }
 
+        // RENDERIZA APENAS AS RESTRIÇÕES DO MÊS ATIVAMENTE SELECIONADO NO TOPO
         function renderRestrictionsOnModal() {
             const container = document.getElementById('adminRestrictionsList');
+            const badge = document.getElementById('restrictionsMonthBadge');
             if(!container) return;
-            if(appState.restricoes.length === 0) {
-                container.innerHTML = "<p class='text-gray-500 italic'>Nenhuma restrição registrada.</p>";
+
+            const [anoSel, mesSel] = appState.currentPeriod.split('-');
+            const mesFormatadoLabel = `${mesSel}/${anoSel}`;
+
+            if (badge) badge.textContent = `Demandas: ${mesFormatadoLabel}`;
+
+            // Filtra as restrições que caem estritamente dentro do ano_mes selecionado
+            const restricoesDoMes = appState.restricoes.filter(res => {
+                if(!res.data_bloqueio) return false;
+                const partes = res.data_bloqueio.split('-'); // YYYY-MM-DD
+                return partes[0] === anoSel && partes[1] === mesSel;
+            });
+
+            if(restricoesDoMes.length === 0) {
+                container.innerHTML = `<p class='text-gray-500 italic py-1'>Nenhuma restrição registrada para o mês de ${mesFormatadoLabel}.</p>`;
                 return;
             }
+
             const agrupamento = {};
-            appState.restricoes.forEach(res => {
+            restricoesDoMes.forEach(res => {
                 const gerente = appState.gerentes.find(g => g.id === res.gerente_id);
                 if(gerente) {
                     const dia = res.data_bloqueio.split('-')[2];
-                    const mesAno = res.data_bloqueio.split('-')[1] + "/" + res.data_bloqueio.split('-')[0];
                     if(!agrupamento[gerente.nome]) agrupamento[gerente.nome] = [];
-                    agrupamento[gerente.nome].push(`${dia}/${mesAno} (${res.justificativa})`);
+                    agrupamento[gerente.nome].push(`${dia}/${mesSel} (${res.justificativa})`);
                 }
             });
+
             container.innerHTML = Object.entries(agrupamento).map(([nome, dias]) => `
                 <div class="py-1 border-b border-red-100 text-xs">
                     <span class="font-bold text-red-950">${nome}:</span> <span class="text-red-900 font-semibold">${dias.join(', ')}</span>
@@ -663,10 +683,10 @@
 
         async function alterarPeriodo() {
             appState.currentPeriod = document.getElementById('periodSelector').value;
+            renderRestrictionsOnModal(); // Atualiza a caixa do modal com as restrições do novo mês
             await puxarEscalaSalva();
         }
 
-        // CARREGA A ESCALA GRAVADA NO BANCO DE DADOS SEM APAGAR OU RESETAR DADOS EXISTENTES
         async function puxarEscalaSalva() {
             let savedFds = localStorage.getItem('fds_presentes_' + appState.currentPeriod);
             if (savedFds) {
@@ -693,7 +713,6 @@
                     });
                     renderAll();
                 } else {
-                    // SÓ GERA AUTOMÁTICO SE O BANCO ESTIVER ABSOLUTAMENTE VAZIO
                     initCalendar(); 
                     if(appState.currentUser.role === 'admin') {
                         await gravarEscalaIntegralNoSupabase();
@@ -734,7 +753,6 @@
             const totalDays = 31;
             appState.escala = {};
             
-            // ISOLA RIGOROSAMENTE APENAS OS GERENTES (DIRETOR FICA FORA DO SORTEIO)
             let gerentesEfetivos = appState.gerentes.filter(g => g.role !== 'diretor');
             if (gerentesEfetivos.length === 0) return;
 
@@ -927,6 +945,11 @@
             const textSpan = document.getElementById('statusLockText');
             const lockBtn = document.getElementById('adminLockBtn');
             const subtextP = document.getElementById('statusBannerSubtext');
+            const titleLabel = document.getElementById('titlePeriodLabel');
+
+            const [anoStr, mesStr] = appState.currentPeriod.split('-');
+            const mesesAbreviados = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+            if(titleLabel) titleLabel.textContent = `${mesesAbreviados[parseInt(mesStr)-1]}.-${anoStr.substring(2)}`;
 
             if(appState.mesEstaCongelado) {
                 iconSpan.innerHTML = `<i class="fas fa-lock text-red-600 text-base"></i>`;
@@ -1231,7 +1254,7 @@
                 emailInput.value = "";
                 alert("Usuário adicionado com sucesso sem alterar a escala existente!");
                 await carregarGerentesEBase(); 
-                await puxarEscalaSalva(); // RECARREGA A ESCALA SALVA DA NUVEM INTEIRA
+                await puxarEscalaSalva(); 
             } catch (e) { alert("Erro ao inserir: " + (e.message || e)); }
         }
 
@@ -1241,7 +1264,7 @@
                 const { error } = await supabaseClient.from('gerentes').delete().eq('id', id);
                 if (error) throw error;
                 await carregarGerentesEBase(); 
-                await puxarEscalaSalva(); // RECARREGA A ESCALA SALVA DA NUVEM INTEIRA
+                await puxarEscalaSalva(); 
             } catch(e) { alert("Erro ao excluir: " + (e.message || e)); }
         }
     </script>
