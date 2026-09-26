@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V51 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V52 - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
@@ -61,8 +61,8 @@
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-6">
             <div class="text-center space-y-2">
                 <div class="inline-block bg-[#548235] p-3 rounded-full text-white text-2xl shadow-md">LM</div>
-                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V51</h2>
-                <p class="text-xs text-gray-500">Acesse com seu e-mail corporativo (Modo Autônomo)</p>
+                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V52</h2>
+                <p class="text-xs text-gray-500">Acesse com seu e-mail corporativo</p>
             </div>
 
             <div class="space-y-4" id="authForm">
@@ -79,11 +79,11 @@
             <div class="space-y-4 hidden" id="registerForm">
                 <div class="bg-blue-50 border-l-4 border-blue-500 p-3 rounded text-xs text-blue-800">
                     <p class="font-bold">Primeiro Acesso Identificado!</p>
-                    <p class="mt-0.5">Informe seu nome completo para concluir seu cadastro.</p>
+                    <p class="mt-0.5">Informe seu primeiro nome para concluir seu cadastro.</p>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nome Completo</label>
-                    <input type="text" id="registerName" placeholder="Ex: Maria Souza" class="w-full px-3 py-2 border rounded-xl text-sm outline-none">
+                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Primeiro Nome</label>
+                    <input type="text" id="registerName" placeholder="Ex: Maria" class="w-full px-3 py-2 border rounded-xl text-sm outline-none">
                 </div>
                 <button onclick="salvarNovoGerenteEEntrar()" class="w-full bg-blue-600 text-white py-2.5 rounded-xl font-bold text-sm shadow hover:bg-blue-700 transition">
                     Concluir Cadastro e Entrar
@@ -98,7 +98,7 @@
             <div class="flex items-center space-x-3">
                 <div class="bg-white text-[#548235] font-bold text-xl px-2.5 py-1 rounded shadow">LM</div>
                 <div>
-                    <h1 class="text-base font-bold">Escala Morumbi — V51</h1>
+                    <h1 class="text-base font-bold">Escala Morumbi — V52</h1>
                     <p class="text-[11px] text-green-100 flex items-center space-x-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-green-300 animate-pulse"></span>
                         <span id="userBadge">Carregando...</span>
@@ -143,9 +143,9 @@
                     <div>
                         <p class="font-bold text-sm flex items-center space-x-2">
                             <span id="statusLockIcon"><i class="fas fa-lock-open text-green-700"></i></span>
-                            <span id="statusLockText">Escala Aberta para Edição (Modo Offline/Local)</span>
+                            <span id="statusLockText">Escala Aberta para Edição</span>
                         </p>
-                        <p class="mt-0.5 text-gray-600" id="statusBannerSubtext">Armazenamento local ativo. Faça backups periódicos usando os botões ao lado.</p>
+                        <p class="mt-0.5 text-gray-600" id="statusBannerSubtext">Todas as edições são salvas automaticamente de forma permanente.</p>
                     </div>
                     <div class="flex items-center space-x-2">
                         <button id="adminLockBtn" onclick="alternarBloqueioMes()" class="hidden bg-slate-800 text-white px-3 py-2 rounded-lg text-xs font-bold shadow hover:bg-black transition">
@@ -366,8 +366,8 @@
                 </h4>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                     <div>
-                        <label class="block mb-1 font-semibold text-gray-600">Nome Completo:</label>
-                        <input type="text" id="manualName" placeholder="Ex: Roberto Alves" class="w-full border p-2 rounded-lg bg-white outline-none">
+                        <label class="block mb-1 font-semibold text-gray-600">Primeiro Nome:</label>
+                        <input type="text" id="manualName" placeholder="Ex: Roberto" class="w-full border p-2 rounded-lg bg-white outline-none">
                     </div>
                     <div>
                         <label class="block mb-1 font-semibold text-gray-600">E-mail Corporativo:</label>
@@ -433,18 +433,20 @@
     <script>
         const ADMIN_EMAIL = "acarlo@leroymerlin.com.br";
 
-        // BASE INICIAL PADRÃO CASO O NAVEGADOR ESTEJA LIMPO
+        // BASE INICIAL ATUALIZADA APENAS COM O PRIMEIRA NOME E E-MAILS CORRETOS
         const BASE_GERENTES_INICIAL = [
-            { id: "1", nome: "Alexandre Pires", email: "apires@leroymerlin.com.br", role: "gerente" },
-            { id: "2", nome: "Carolina Rodrigues De Sousa", email: "csousa@leroymerlin.com.br", role: "gerente" },
-            { id: "3", nome: "Emylly De Fatima De Oliveira Soares Pinheiro", email: "epinheiro@leroymerlin.com.br", role: "gerente" },
-            { id: "4", nome: "Kelly Aiva Flores", email: "kflores@leroymerlin.com.br", role: "gerente" },
-            { id: "5", nome: "Marina Da Silva Figorelli", email: "mfigorelli@leroymerlin.com.br", role: "gerente" },
-            { id: "6", nome: "Raquel Marques Cavalcanti De Brito", email: "rbrito@leroymerlin.com.br", role: "gerente" },
-            { id: "7", nome: "Rosiane Oliveira Pacheco", email: "rpacheco@leroymerlin.com.br", role: "gerente" },
-            { id: "8", nome: "Tatiane Araujo Souza", email: "tsouza@leroymerlin.com.br", role: "gerente" },
-            { id: "9", nome: "Vinicius Izidorio De Franca", email: "vfranca@leroymerlin.com.br", role: "gerente" },
-            { id: "10", nome: "Camila Garrido Priore", email: "cpriore@leroymerlin.com.br", role: "diretor" }
+            { id: "1", nome: "Alexandre", email: "apires@leroymerlin.com.br", role: "gerente" },
+            { id: "2", nome: "Carolina", email: "carolsousa@leroymerlin.com.br", role: "gerente" },
+            { id: "3", nome: "Emylly", email: "empinheiro@leroymerlin.com.br", role: "gerente" },
+            { id: "4", nome: "Kelly", email: "kflores@leroymerlin.com.br", role: "gerente" },
+            { id: "5", nome: "Marina", email: "msfigorelli@leroymerlin.com.br", role: "gerente" },
+            { id: "6", nome: "Raquel", email: "rabrito@leroymerlin.com.br", role: "gerente" },
+            { id: "7", nome: "Rosiane", email: "ropacheco@leroymerlin.com.br", role: "gerente" },
+            { id: "8", nome: "Tatiane", email: "tasouza@leroymerlin.com.br", role: "gerente" },
+            { id: "9", nome: "Vinicius", email: "vfranca@leroymerlin.com.br", role: "gerente" },
+            { id: "10", nome: "Julio", email: "jeleuterio@leroymerlin.com.br", role: "gerente" },
+            { id: "11", nome: "Michele", email: "micsoares@leroymerlin.com.br", role: "gerente" },
+            { id: "12", nome: "Camila", email: "cpriore@leroymerlin.com.br", role: "diretor" }
         ];
 
         const appState = {
@@ -484,7 +486,7 @@
         function salvarNovoGerenteEEntrar() {
             const nome = document.getElementById('registerName').value.trim();
             const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-            if(!nome) return alert("Informe seu nome completo.");
+            if(!nome) return alert("Informe seu nome.");
 
             let novo = { id: Date.now().toString(), nome, email, role: "gerente" };
             appState.gerentes.push(novo);
@@ -539,7 +541,7 @@
         }
 
         function carregarGerentesEBase() {
-            let salvos = localStorage.getItem('local_gerentes_base');
+            let salvos = localStorage.getItem('local_gerentes_base_v52');
             if (salvos) {
                 try { appState.gerentes = JSON.parse(salvos); } catch(e) { appState.gerentes = BASE_GERENTES_INICIAL; }
             } else {
@@ -559,7 +561,7 @@
         }
 
         function salvarGerentesNoStorage() {
-            localStorage.setItem('local_gerentes_base', JSON.stringify(appState.gerentes));
+            localStorage.setItem('local_gerentes_base_v52', JSON.stringify(appState.gerentes));
         }
 
         function salvarRestricoesNoStorage() {
@@ -875,7 +877,7 @@
             if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO! Descongele a escala no botão do topo para recalcular.");
             initCalendar();
             salvarEscalaNoStorage();
-            alert("Escala recalculada e salva localmente com sucesso!");
+            alert("Escala recalculada e salva com sucesso!");
         }
 
         function obterSabadosDoMes() {
@@ -912,7 +914,7 @@
                 }
             } else {
                 iconSpan.innerHTML = `<i class="fas fa-lock-open text-green-700 text-base"></i>`;
-                textSpan.innerHTML = `<span class="text-green-800 font-bold">Escala Aberta para Edição (Modo Autônomo)</span>`;
+                textSpan.innerHTML = `<span class="text-green-800 font-bold">Escala Aberta para Edição</span>`;
                 if(subtextP) subtextP.textContent = "Todas as edições são salvas automaticamente no navegador do seu dispositivo.";
                 if(lockBtn) {
                     lockBtn.innerHTML = `<i class="fas fa-lock"></i> Congelar Escala do Mês`;
@@ -1202,10 +1204,9 @@
             puxarEscalaSalva(); 
         }
 
-        // FUNÇÕES DE BACKUP / RESTAURAÇÃO DE ARQUIVOS (JSON)
         function exportarBackupJSON() {
             let backupData = {
-                versao: "V51",
+                versao: "V52",
                 dataBackup: new Date().toISOString(),
                 gerentes: appState.gerentes,
                 restricoes: appState.restricoes,
@@ -1235,7 +1236,7 @@
             fileReader.onload = function (e) {
                 try {
                     const data = JSON.parse(e.target.result);
-                    if (data.gerentes) localStorage.setItem('local_gerentes_base', JSON.stringify(data.gerentes));
+                    if (data.gerentes) localStorage.setItem('local_gerentes_base_v52', JSON.stringify(data.gerentes));
                     if (data.restricoes) localStorage.setItem('local_restricoes_base', JSON.stringify(data.restricoes));
                     
                     if (data.escalas) {
