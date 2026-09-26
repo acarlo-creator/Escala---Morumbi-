@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V52 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V53 - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
@@ -61,7 +61,7 @@
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-6">
             <div class="text-center space-y-2">
                 <div class="inline-block bg-[#548235] p-3 rounded-full text-white text-2xl shadow-md">LM</div>
-                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V52</h2>
+                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V53</h2>
                 <p class="text-xs text-gray-500">Acesse com seu e-mail corporativo</p>
             </div>
 
@@ -98,7 +98,7 @@
             <div class="flex items-center space-x-3">
                 <div class="bg-white text-[#548235] font-bold text-xl px-2.5 py-1 rounded shadow">LM</div>
                 <div>
-                    <h1 class="text-base font-bold">Escala Morumbi — V52</h1>
+                    <h1 class="text-base font-bold">Escala Morumbi — V53</h1>
                     <p class="text-[11px] text-green-100 flex items-center space-x-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-green-300 animate-pulse"></span>
                         <span id="userBadge">Carregando...</span>
@@ -109,9 +109,9 @@
             <div class="flex items-center space-x-3 bg-green-900/40 px-3 py-1 rounded-xl border border-green-400/30">
                 <label class="text-xs font-bold uppercase">Mês Ativo:</label>
                 <select id="periodSelector" onchange="alterarPeriodo()" class="bg-transparent text-xs font-bold text-white outline-none cursor-pointer">
-                    <option value="2026-08" selected class="text-gray-800">Agosto / 2026 (5 FDS)</option>
+                    <option value="2026-08" class="text-gray-800">Agosto / 2026 (5 FDS)</option>
                     <option value="2026-09" class="text-gray-800">Setembro / 2026</option>
-                    <option value="2026-10" class="text-gray-800">Outubro / 2026</option>
+                    <option value="2026-10" selected class="text-gray-800">Outubro / 2026</option>
                     <option value="2026-11" class="text-gray-800">Novembro / 2026</option>
                     <option value="2026-12" class="text-gray-800">Dezembro / 2026</option>
                 </select>
@@ -169,7 +169,7 @@
                     ESCALA DE PLANTÃO
                 </div>
                 <div class="bg-[#8ea9db] text-white font-bold p-1 text-center text-xs tracking-wider uppercase mb-2" id="titlePeriodLabel">
-                    ago.-26
+                    out.-26
                 </div>
 
                 <!-- ESTRUTURA LADO A LADO EXATA -->
@@ -433,7 +433,6 @@
     <script>
         const ADMIN_EMAIL = "acarlo@leroymerlin.com.br";
 
-        // BASE INICIAL ATUALIZADA APENAS COM O PRIMEIRA NOME E E-MAILS CORRETOS
         const BASE_GERENTES_INICIAL = [
             { id: "1", nome: "Alexandre", email: "apires@leroymerlin.com.br", role: "gerente" },
             { id: "2", nome: "Carolina", email: "carolsousa@leroymerlin.com.br", role: "gerente" },
@@ -441,13 +440,56 @@
             { id: "4", nome: "Kelly", email: "kflores@leroymerlin.com.br", role: "gerente" },
             { id: "5", nome: "Marina", email: "msfigorelli@leroymerlin.com.br", role: "gerente" },
             { id: "6", nome: "Raquel", email: "rabrito@leroymerlin.com.br", role: "gerente" },
-            { id: "7", nome: "Rosiane", email: "ropacheco@leroymerlin.com.br", role: "gerente" },
+            { id: "7", nome: "Rose", email: "ropacheco@leroymerlin.com.br", role: "gerente" },
             { id: "8", nome: "Tatiane", email: "tasouza@leroymerlin.com.br", role: "gerente" },
-            { id: "9", nome: "Vinicius", email: "vfranca@leroymerlin.com.br", role: "gerente" },
+            { id: "9", nome: "Vini", email: "vfranca@leroymerlin.com.br", role: "gerente" },
             { id: "10", nome: "Julio", email: "jeleuterio@leroymerlin.com.br", role: "gerente" },
             { id: "11", nome: "Michele", email: "micsoares@leroymerlin.com.br", role: "gerente" },
             { id: "12", nome: "Camila", email: "cpriore@leroymerlin.com.br", role: "diretor" }
         ];
+
+        // ESCALA DE OUTUBRO/2026 MAPEADA EXATAMENTE CONFORME A FOTO
+        const ESCALA_OUTUBRO_2026 = {
+            1: { abertura: "Carolina", fechamento: "Emylly", folgas_custom: "Vini / Marina" },
+            2: { abertura: "Alexandre", fechamento: "", folgas_custom: "" },
+            3: { abertura: "Vini", fechamento: "Marina", folgas_custom: "" },
+            4: { abertura: "Vini", fechamento: "Marina", folgas_custom: "" },
+            5: { abertura: "Rose", fechamento: "Carolina", folgas_custom: "Vini / Marina" },
+            6: { abertura: "Kelly", fechamento: "Michele", folgas_custom: "" },
+            7: { abertura: "Julio", fechamento: "Marina", folgas_custom: "" },
+            8: { abertura: "Kelly", fechamento: "Raquel", folgas_custom: "Rose / Emylly" },
+            9: { abertura: "Raquel", fechamento: "Vini", folgas_custom: "" },
+            10: { abertura: "Rose", fechamento: "Emylly", folgas_custom: "Carol / Marina / Kelly / Raquel / Alexandre" },
+            11: { abertura: "Rose", fechamento: "Emylly", folgas_custom: "Carol / Marina / Kelly / Raquel / Alexandre" },
+            12: { abertura: "Michele", fechamento: "Tatiane", folgas_custom: "Carol / Marina / Kelly / Raquel / Alexandre" },
+            13: { abertura: "Carolina", fechamento: "Alexandre", folgas_custom: "" },
+            14: { abertura: "Julio", fechamento: "Raquel", folgas_custom: "" },
+            15: { abertura: "Marina", fechamento: "Rose", folgas_custom: "Raquel / Carolina" },
+            16: { abertura: "Emylly", fechamento: "Tatiane", folgas_custom: "" },
+            17: { abertura: "Raquel", fechamento: "Carolina", folgas_custom: "" },
+            18: { abertura: "Raquel", fechamento: "Carolina", folgas_custom: "" },
+            19: { abertura: "Marina", fechamento: "Vini", folgas_custom: "Raquel / Carolina" },
+            20: { abertura: "Alexandre", fechamento: "Kelly", folgas_custom: "" },
+            21: { abertura: "Emylly", fechamento: "Tatiane", folgas_custom: "" },
+            22: { abertura: "Julio", fechamento: "Rose", folgas_custom: "Tatiane / Michele" },
+            23: { abertura: "Kelly", fechamento: "Alexandre", folgas_custom: "" },
+            24: { abertura: "Tatiane", fechamento: "Michele", folgas_custom: "" },
+            25: { abertura: "Tatiane", fechamento: "Michele", folgas_custom: "" },
+            26: { abertura: "Emylly", fechamento: "Raquel", folgas_custom: "Tatiane / Michele" },
+            27: { abertura: "Vini", fechamento: "Kelly", folgas_custom: "" },
+            28: { abertura: "Julio", fechamento: "Alexandre", folgas_custom: "" },
+            29: { abertura: "Marina", fechamento: "Vini", folgas_custom: "Alexandre / Kelly" },
+            30: { abertura: "Tatiane", fechamento: "Rose", folgas_custom: "" },
+            31: { abertura: "Alexandre", fechamento: "Kelly", folgas_custom: "" }
+        };
+
+        const FDS_OUTUBRO_2026 = {
+            "fds_2026-10_3_row_0": "Vini", "fds_2026-10_3_row_1": "Marina", "fds_2026-10_3_row_2": "Kelly", "fds_2026-10_3_row_3": "Julio",
+            "fds_2026-10_10_row_0": "Emylly", "fds_2026-10_10_row_1": "Rose", "fds_2026-10_10_row_2": "Tatiane", "fds_2026-10_10_row_3": "Michele",
+            "fds_2026-10_17_row_0": "Raquel", "fds_2026-10_17_row_1": "Carolina", "fds_2026-10_17_row_2": "Vini", "fds_2026-10_17_row_3": "Alexandre", "fds_2026-10_17_row_4": "Julio",
+            "fds_2026-10_24_row_0": "Tatiane", "fds_2026-10_24_row_1": "Michele", "fds_2026-10_24_row_2": "Rose", "fds_2026-10_24_row_3": "Marina", "fds_2026-10_24_row_4": "Raquel",
+            "fds_2026-10_31_row_0": "Alexandre", "fds_2026-10_31_row_1": "Kelly", "fds_2026-10_31_row_2": "Carolina", "fds_2026-10_31_row_3": "Emylly", "fds_2026-10_31_row_4": "Julio"
+        };
 
         const appState = {
             currentUser: null, 
@@ -455,7 +497,7 @@
             escala: {},        
             restricoes: [],
             fdsPresentesSelecoes: {}, 
-            currentPeriod: "2026-08",
+            currentPeriod: "2026-10",
             mesEstaCongelado: false 
         };
 
@@ -541,7 +583,7 @@
         }
 
         function carregarGerentesEBase() {
-            let salvos = localStorage.getItem('local_gerentes_base_v52');
+            let salvos = localStorage.getItem('local_gerentes_base_v53');
             if (salvos) {
                 try { appState.gerentes = JSON.parse(salvos); } catch(e) { appState.gerentes = BASE_GERENTES_INICIAL; }
             } else {
@@ -561,7 +603,7 @@
         }
 
         function salvarGerentesNoStorage() {
-            localStorage.setItem('local_gerentes_base_v52', JSON.stringify(appState.gerentes));
+            localStorage.setItem('local_gerentes_base_v53', JSON.stringify(appState.gerentes));
         }
 
         function salvarRestricoesNoStorage() {
@@ -688,7 +730,12 @@
             if (savedFds) {
                 try { appState.fdsPresentesSelecoes = JSON.parse(savedFds); } catch(e) { appState.fdsPresentesSelecoes = {}; }
             } else {
-                appState.fdsPresentesSelecoes = {};
+                if (appState.currentPeriod === '2026-10') {
+                    appState.fdsPresentesSelecoes = FDS_OUTUBRO_2026;
+                    localStorage.setItem('fds_presentes_2026-10', JSON.stringify(FDS_OUTUBRO_2026));
+                } else {
+                    appState.fdsPresentesSelecoes = {};
+                }
             }
 
             appState.mesEstaCongelado = localStorage.getItem('mes_congelado_' + appState.currentPeriod) === 'true';
@@ -702,8 +749,14 @@
                     initCalendar();
                 }
             } else {
-                initCalendar();
-                salvarEscalaNoStorage();
+                if (appState.currentPeriod === '2026-10') {
+                    appState.escala = ESCALA_OUTUBRO_2026;
+                    salvarEscalaNoStorage();
+                    renderAll();
+                } else {
+                    initCalendar();
+                    salvarEscalaNoStorage();
+                }
             }
         }
 
@@ -1206,7 +1259,7 @@
 
         function exportarBackupJSON() {
             let backupData = {
-                versao: "V52",
+                versao: "V53",
                 dataBackup: new Date().toISOString(),
                 gerentes: appState.gerentes,
                 restricoes: appState.restricoes,
@@ -1236,7 +1289,7 @@
             fileReader.onload = function (e) {
                 try {
                     const data = JSON.parse(e.target.result);
-                    if (data.gerentes) localStorage.setItem('local_gerentes_base_v52', JSON.stringify(data.gerentes));
+                    if (data.gerentes) localStorage.setItem('local_gerentes_base_v53', JSON.stringify(data.gerentes));
                     if (data.restricoes) localStorage.setItem('local_restricoes_base', JSON.stringify(data.restricoes));
                     
                     if (data.escalas) {
