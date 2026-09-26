@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V50 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V51 - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Biblioteca Oficial do Supabase CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -63,8 +61,8 @@
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-6">
             <div class="text-center space-y-2">
                 <div class="inline-block bg-[#548235] p-3 rounded-full text-white text-2xl shadow-md">LM</div>
-                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V50</h2>
-                <p class="text-xs text-gray-500">Acesse com seu e-mail corporativo</p>
+                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V51</h2>
+                <p class="text-xs text-gray-500">Acesse com seu e-mail corporativo (Modo Autônomo)</p>
             </div>
 
             <div class="space-y-4" id="authForm">
@@ -81,7 +79,7 @@
             <div class="space-y-4 hidden" id="registerForm">
                 <div class="bg-blue-50 border-l-4 border-blue-500 p-3 rounded text-xs text-blue-800">
                     <p class="font-bold">Primeiro Acesso Identificado!</p>
-                    <p class="mt-0.5">Informe seu nome completo para concluir seu cadastro autônomo.</p>
+                    <p class="mt-0.5">Informe seu nome completo para concluir seu cadastro.</p>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nome Completo</label>
@@ -100,7 +98,7 @@
             <div class="flex items-center space-x-3">
                 <div class="bg-white text-[#548235] font-bold text-xl px-2.5 py-1 rounded shadow">LM</div>
                 <div>
-                    <h1 class="text-base font-bold">Escala Morumbi — V50</h1>
+                    <h1 class="text-base font-bold">Escala Morumbi — V51</h1>
                     <p class="text-[11px] text-green-100 flex items-center space-x-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-green-300 animate-pulse"></span>
                         <span id="userBadge">Carregando...</span>
@@ -145,17 +143,24 @@
                     <div>
                         <p class="font-bold text-sm flex items-center space-x-2">
                             <span id="statusLockIcon"><i class="fas fa-lock-open text-green-700"></i></span>
-                            <span id="statusLockText">Escala Aberta para Edição</span>
+                            <span id="statusLockText">Escala Aberta para Edição (Modo Offline/Local)</span>
                         </p>
-                        <p class="mt-0.5 text-gray-600" id="statusBannerSubtext">Todas as edições são salvas automaticamente na nuvem de forma permanente.</p>
+                        <p class="mt-0.5 text-gray-600" id="statusBannerSubtext">Armazenamento local ativo. Faça backups periódicos usando os botões ao lado.</p>
                     </div>
                     <div class="flex items-center space-x-2">
                         <button id="adminLockBtn" onclick="alternarBloqueioMes()" class="hidden bg-slate-800 text-white px-3 py-2 rounded-lg text-xs font-bold shadow hover:bg-black transition">
-                            <i class="fas fa-lock"></i> Congelar Escala do Mês
+                            <i class="fas fa-lock"></i> Congelar Escala
                         </button>
-                        <button id="adminGenerateBtn" onclick="gerarEscalaAutomatica()" class="hidden bg-[#548235] text-white px-4 py-2 rounded-lg text-xs font-bold shadow hover:bg-green-800 transition">
-                            <i class="fas fa-magic"></i> Balancear e Salvar na Nuvem
+                        <button id="adminGenerateBtn" onclick="gerarEscalaAutomatica()" class="hidden bg-[#548235] text-white px-3 py-2 rounded-lg text-xs font-bold shadow hover:bg-green-800 transition">
+                            <i class="fas fa-magic"></i> Recalcular Escala
                         </button>
+                        <button id="exportBackupBtn" onclick="exportarBackupJSON()" class="hidden bg-blue-600 text-white px-3 py-2 rounded-lg text-xs font-bold shadow hover:bg-blue-700 transition">
+                            <i class="fas fa-download"></i> Baixar Backup (JSON)
+                        </button>
+                        <label id="importBackupBtn" class="hidden bg-purple-600 text-white px-3 py-2 rounded-lg text-xs font-bold shadow hover:bg-purple-700 transition cursor-pointer">
+                            <i class="fas fa-upload"></i> Carregar Backup
+                            <input type="file" id="backupFileInput" onchange="importarBackupJSON(event)" class="hidden" accept=".json">
+                        </label>
                     </div>
                 </div>
 
@@ -225,12 +230,12 @@
                         <div>
                             <h3 class="text-lg font-bold text-gray-800 flex items-center space-x-2">
                                 <i class="fas fa-calculator text-[#548235]"></i>
-                                <span>Relatório Acumulado Geral (Apenas Meses Homologados)</span>
+                                <span>Relatório Acumulado Geral (Soma de Todos os Meses)</span>
                             </h3>
-                            <p class="text-xs text-gray-500 mt-0.5">Soma histórica de plantões reais gravados no banco de dados.</p>
+                            <p class="text-xs text-gray-500 mt-0.5">Soma histórica de plantões gravados no armazenamento local do dispositivo.</p>
                         </div>
                         <button onclick="carregarConsolidadoGeral()" class="bg-[#548235] text-white px-3 py-1.5 rounded text-xs font-bold shadow hover:bg-green-800 transition">
-                            <i class="fas fa-sync-alt"></i> Atualizar Dados
+                            <i class="fas fa-sync-alt"></i> Recalcular Totais
                         </button>
                     </div>
 
@@ -341,7 +346,6 @@
                 <button onclick="closeAdminManagerModal()" class="text-gray-400 hover:text-gray-600 text-lg">&times;</button>
             </div>
 
-            <!-- QUADRO DE RESTRIÇÕES FILTRADO EXCLUSIVAMENTE PELO MÊS SELECIONADO -->
             <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-xl space-y-2">
                 <h4 class="font-bold text-xs uppercase tracking-wider text-red-800 flex justify-between items-center">
                     <span class="flex items-center space-x-1">
@@ -421,17 +425,27 @@
             </div>
             <div class="flex justify-end space-x-2 pt-1 text-xs">
                 <button onclick="closeModal()" class="px-3 py-1.5 bg-gray-200 rounded-lg font-bold">Fechar</button>
-                <button id="modalSaveBtn" onclick="saveChanges()" class="px-3 py-1.5 bg-[#548235] text-white font-bold rounded-lg shadow hover:bg-green-800 transition">Salvar na Nuvem</button>
+                <button id="modalSaveBtn" onclick="saveChanges()" class="px-3 py-1.5 bg-[#548235] text-white font-bold rounded-lg shadow hover:bg-green-800 transition">Salvar Alterações</button>
             </div>
         </div>
     </div>
 
     <script>
-        const SUPABASE_URL = "https://orhqodtksltremhwybfo.supabase.co"; 
-        const SUPABASE_KEY = "sb_publishable_3Ljf70ECqyz_46Au3BJ_yg_8aE3H7p6"; 
         const ADMIN_EMAIL = "acarlo@leroymerlin.com.br";
 
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // BASE INICIAL PADRÃO CASO O NAVEGADOR ESTEJA LIMPO
+        const BASE_GERENTES_INICIAL = [
+            { id: "1", nome: "Alexandre Pires", email: "apires@leroymerlin.com.br", role: "gerente" },
+            { id: "2", nome: "Carolina Rodrigues De Sousa", email: "csousa@leroymerlin.com.br", role: "gerente" },
+            { id: "3", nome: "Emylly De Fatima De Oliveira Soares Pinheiro", email: "epinheiro@leroymerlin.com.br", role: "gerente" },
+            { id: "4", nome: "Kelly Aiva Flores", email: "kflores@leroymerlin.com.br", role: "gerente" },
+            { id: "5", nome: "Marina Da Silva Figorelli", email: "mfigorelli@leroymerlin.com.br", role: "gerente" },
+            { id: "6", nome: "Raquel Marques Cavalcanti De Brito", email: "rbrito@leroymerlin.com.br", role: "gerente" },
+            { id: "7", nome: "Rosiane Oliveira Pacheco", email: "rpacheco@leroymerlin.com.br", role: "gerente" },
+            { id: "8", nome: "Tatiane Araujo Souza", email: "tsouza@leroymerlin.com.br", role: "gerente" },
+            { id: "9", nome: "Vinicius Izidorio De Franca", email: "vfranca@leroymerlin.com.br", role: "gerente" },
+            { id: "10", nome: "Camila Garrido Priore", email: "cpriore@leroymerlin.com.br", role: "diretor" }
+        ];
 
         const appState = {
             currentUser: null, 
@@ -445,48 +459,42 @@
 
         let currentSelectedDay = null;
 
-        function gerarIdUnicoDia(anoMesStr, dia) {
-            const limpo = anoMesStr.replace('-', ''); 
-            return parseInt(`${limpo}${String(dia).padStart(2, '0')}`);
-        }
-
-        async function verificarOuCadastrarGerente() {
+        function verificarOuCadastrarGerente() {
             const email = document.getElementById('loginEmail').value.trim().toLowerCase();
             if(!email) return alert("Por favor, digite seu e-mail.");
             if(!email.endsWith("@leroymerlin.com.br") && email !== ADMIN_EMAIL) return alert("Acesso restrito.");
 
             if(email === ADMIN_EMAIL) {
-                appState.currentUser = { id: "00000000-0000-0000-0000-000000000000", nome: "Administrador Geral", email: email, role: "admin" };
+                appState.currentUser = { id: "admin-0", nome: "Administrador Geral", email: email, role: "admin" };
                 return loginSucesso();
             }
 
-            try {
-                const { data } = await supabaseClient.from('gerentes').select('*').eq('email', email).maybeSingle();
-                if (data) {
-                    let diretores = JSON.parse(localStorage.getItem('diretores_list') || '[]');
-                    let userRole = data.role || (diretores.includes(email) ? "diretor" : "gerente");
-                    appState.currentUser = { id: data.id, nome: data.nome, email: data.email, role: userRole };
-                    loginSucesso();
-                } else {
-                    document.getElementById('authForm').classList.add('hidden');
-                    document.getElementById('registerForm').classList.remove('hidden');
-                }
-            } catch(e) { alert("Falha de conexão com o banco."); }
+            carregarGerentesEBase();
+            let encontrado = appState.gerentes.find(g => g.email.toLowerCase() === email);
+
+            if (encontrado) {
+                appState.currentUser = { id: encontrado.id, nome: encontrado.nome, email: encontrado.email, role: encontrado.role || "gerente" };
+                loginSucesso();
+            } else {
+                document.getElementById('authForm').classList.add('hidden');
+                document.getElementById('registerForm').classList.remove('hidden');
+            }
         }
 
-        async function salvarNovoGerenteEEntrar() {
+        function salvarNovoGerenteEEntrar() {
             const nome = document.getElementById('registerName').value.trim();
             const email = document.getElementById('loginEmail').value.trim().toLowerCase();
             if(!nome) return alert("Informe seu nome completo.");
-            try {
-                let { data, error } = await supabaseClient.from('gerentes').insert([{ nome, email }]).select().single();
-                if (error) throw error;
-                appState.currentUser = { id: data.id, nome: data.nome, email: data.email, role: "gerente" };
-                loginSucesso();
-            } catch(e) { alert("Erro ao cadastrar: " + (e.message || e)); }
+
+            let novo = { id: Date.now().toString(), nome, email, role: "gerente" };
+            appState.gerentes.push(novo);
+            salvarGerentesNoStorage();
+
+            appState.currentUser = novo;
+            loginSucesso();
         }
 
-        async function loginSucesso() {
+        function loginSucesso() {
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('mainDashboard').classList.remove('hidden');
 
@@ -500,34 +508,26 @@
                 document.getElementById('adminGenerateBtn').classList.remove('hidden');
                 document.getElementById('adminManageBtn').classList.remove('hidden');
                 document.getElementById('adminLockBtn').classList.remove('hidden');
+                document.getElementById('exportBackupBtn').classList.remove('hidden');
+                document.getElementById('importBackupBtn').classList.remove('hidden');
                 document.getElementById('modalSaveBtn').classList.remove('hidden');
-                document.getElementById('managerBtn').classList.add('hidden');
-            } else if (appState.currentUser.role === 'diretor') {
-                document.getElementById('adminGenerateBtn').classList.add('hidden');
-                document.getElementById('adminManageBtn').classList.add('hidden');
-                document.getElementById('adminLockBtn').classList.add('hidden');
-                document.getElementById('modalSaveBtn').classList.add('hidden');
                 document.getElementById('managerBtn').classList.add('hidden');
             } else {
                 document.getElementById('adminGenerateBtn').classList.add('hidden');
                 document.getElementById('adminManageBtn').classList.add('hidden');
                 document.getElementById('adminLockBtn').classList.add('hidden');
+                document.getElementById('exportBackupBtn').classList.add('hidden');
+                document.getElementById('importBackupBtn').classList.add('hidden');
                 document.getElementById('modalSaveBtn').classList.add('hidden');
-                document.getElementById('managerBtn').classList.remove('hidden');
+                if(appState.currentUser.role === 'diretor') {
+                    document.getElementById('managerBtn').classList.add('hidden');
+                } else {
+                    document.getElementById('managerBtn').classList.remove('hidden');
+                }
             }
 
-            await carregarGerentesEBase();
-            await puxarEscalaSalva();
-            iniciarSincronizacaoRealtime();
-        }
-
-        function iniciarSincronizacaoRealtime() {
-            supabaseClient
-                .channel('realtime_escalas')
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'escalas_mensais' }, payload => {
-                    puxarEscalaSalva();
-                })
-                .subscribe();
+            carregarGerentesEBase();
+            puxarEscalaSalva();
         }
 
         function logout() {
@@ -538,29 +538,34 @@
             document.getElementById('registerForm').classList.add('hidden');
         }
 
-        async function carregarGerentesEBase() {
-            try {
-                const { data: listGerentes } = await supabaseClient.from('gerentes').select('*');
-                let diretores = JSON.parse(localStorage.getItem('diretores_list') || '[]');
+        function carregarGerentesEBase() {
+            let salvos = localStorage.getItem('local_gerentes_base');
+            if (salvos) {
+                try { appState.gerentes = JSON.parse(salvos); } catch(e) { appState.gerentes = BASE_GERENTES_INICIAL; }
+            } else {
+                appState.gerentes = BASE_GERENTES_INICIAL;
+                salvarGerentesNoStorage();
+            }
 
-                appState.gerentes = (listGerentes || []).map(g => {
-                    if (diretores.includes(g.email.toLowerCase())) {
-                        g.role = 'diretor';
-                    } else if (!g.role) {
-                        g.role = 'gerente';
-                    }
-                    return g;
-                });
+            let restrSalvas = localStorage.getItem('local_restricoes_base');
+            if (restrSalvas) {
+                try { appState.restricoes = JSON.parse(restrSalvas); } catch(e) { appState.restricoes = []; }
+            } else {
+                appState.restricoes = [];
+            }
 
-                const { data: listRestricoes } = await supabaseClient.from('restricoes').select('*');
-                appState.restricoes = listRestricoes || [];
-
-                renderAdminManagerList();
-                renderRestrictionsOnModal();
-            } catch(e) { appState.gerentes = []; }
+            renderAdminManagerList();
+            renderRestrictionsOnModal();
         }
 
-        // RENDERIZA APENAS AS RESTRIÇÕES DO MÊS ATIVAMENTE SELECIONADO NO TOPO
+        function salvarGerentesNoStorage() {
+            localStorage.setItem('local_gerentes_base', JSON.stringify(appState.gerentes));
+        }
+
+        function salvarRestricoesNoStorage() {
+            localStorage.setItem('local_restricoes_base', JSON.stringify(appState.restricoes));
+        }
+
         function renderRestrictionsOnModal() {
             const container = document.getElementById('adminRestrictionsList');
             const badge = document.getElementById('restrictionsMonthBadge');
@@ -571,10 +576,9 @@
 
             if (badge) badge.textContent = `Demandas: ${mesFormatadoLabel}`;
 
-            // Filtra as restrições que caem estritamente dentro do ano_mes selecionado
             const restricoesDoMes = appState.restricoes.filter(res => {
                 if(!res.data_bloqueio) return false;
-                const partes = res.data_bloqueio.split('-'); // YYYY-MM-DD
+                const partes = res.data_bloqueio.split('-');
                 return partes[0] === anoSel && partes[1] === mesSel;
             });
 
@@ -600,36 +604,34 @@
             `).join('');
         }
 
-        async function salvarPreferenciaFdsIntervalo() {
+        function salvarPreferenciaFdsIntervalo() {
             if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO! Não é possível enviar novas solicitações.");
             const start = document.getElementById('prefFdsStart').value;
             const end = document.getElementById('prefFdsEnd').value;
             if(!start || !end) return alert("Selecione o sábado e o domingo.");
-            try {
-                const { error } = await supabaseClient.from('restricoes').insert([
-                    { data_bloqueio: start, gerente_id: appState.currentUser.id, justificativa: "Pref. FDS" },
-                    { data_bloqueio: end, gerente_id: appState.currentUser.id, justificativa: "Pref. FDS" }
-                ]);
-                if (error) throw error;
-                alert("Preferência Registrada com sucesso no banco!");
-                await carregarGerentesEBase();
-            } catch(e) { alert("Erro ao salvar no banco: " + (e.message || e)); }
+
+            appState.restricoes.push(
+                { id: Date.now().toString(), data_bloqueio: start, gerente_id: appState.currentUser.id, justificativa: "Pref. FDS" },
+                { id: (Date.now()+1).toString(), data_bloqueio: end, gerente_id: appState.currentUser.id, justificativa: "Pref. FDS" }
+            );
+            salvarRestricoesNoStorage();
+            alert("Preferência Registrada com sucesso!");
+            carregarGerentesEBase();
         }
 
-        async function registrarBloqueioComMotivo() {
+        function registrarBloqueioComMotivo() {
             if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO! Não é possível enviar novas solicitações.");
             const dt = document.getElementById('blockDate').value;
             const motivo = document.getElementById('blockReason').value.trim();
             if(!dt || !motivo) return alert("Preencha todos os campos.");
-            try {
-                const { error } = await supabaseClient.from('restricoes').insert([{ data_bloqueio: dt, gerente_id: appState.currentUser.id, justificativa: motivo }]);
-                if (error) throw error;
-                alert("Dia bloqueado gravado com sucesso no banco!");
-                await carregarGerentesEBase();
-            } catch(e) { alert("Erro ao salvar no banco: " + (e.message || e)); }
+
+            appState.restricoes.push({ id: Date.now().toString(), data_bloqueio: dt, gerente_id: appState.currentUser.id, justificativa: motivo });
+            salvarRestricoesNoStorage();
+            alert("Dia bloqueado gravado com sucesso!");
+            carregarGerentesEBase();
         }
 
-        async function adicionarFerias() {
+        function adicionarFerias() {
             if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO! Não é possível enviar férias.");
             const startStr = document.getElementById('vacStart').value;
             const endStr = document.getElementById('vacEnd').value;
@@ -637,25 +639,21 @@
 
             let cur = new Date(startStr + "T12:00:00");
             let dtEnd = new Date(endStr + "T12:00:00");
-            let registros = [];
 
             while (cur <= dtEnd) {
                 let y = cur.getFullYear();
                 let m = String(cur.getMonth() + 1).padStart(2, '0');
                 let d = String(cur.getDate()).padStart(2, '0');
-                registros.push({ data_bloqueio: `${y}-${m}-${d}`, gerente_id: appState.currentUser.id, justificativa: "Férias" });
+                appState.restricoes.push({ id: Math.random().toString(), data_bloqueio: `${y}-${m}-${d}`, gerente_id: appState.currentUser.id, justificativa: "Férias" });
                 cur.setDate(cur.getDate() + 1);
             }
 
-            try {
-                const { error } = await supabaseClient.from('restricoes').insert(registros);
-                if (error) throw error;
-                alert("Período de Férias gravado no banco!");
-                await carregarGerentesEBase();
-            } catch(e) { alert("Erro ao lançar férias: " + (e.message || e)); }
+            salvarRestricoesNoStorage();
+            alert("Período de Férias gravado!");
+            carregarGerentesEBase();
         }
 
-        async function adicionarAusencia() {
+        function adicionarAusencia() {
             if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO! Não é possível enviar ausência.");
             const startStr = document.getElementById('ausStart').value;
             const endStr = document.getElementById('ausEnd').value;
@@ -663,31 +661,27 @@
 
             let cur = new Date(startStr + "T12:00:00");
             let dtEnd = new Date(endStr + "T12:00:00");
-            let registros = [];
 
             while (cur <= dtEnd) {
                 let y = cur.getFullYear();
                 let m = String(cur.getMonth() + 1).padStart(2, '0');
                 let d = String(cur.getDate()).padStart(2, '0');
-                registros.push({ data_bloqueio: `${y}-${m}-${d}`, gerente_id: appState.currentUser.id, justificativa: "Ausência" });
+                appState.restricoes.push({ id: Math.random().toString(), data_bloqueio: `${y}-${m}-${d}`, gerente_id: appState.currentUser.id, justificativa: "Ausência" });
                 cur.setDate(cur.getDate() + 1);
             }
 
-            try {
-                const { error } = await supabaseClient.from('restricoes').insert(registros);
-                if (error) throw error;
-                alert("Ausência registrada no banco!");
-                await carregarGerentesEBase();
-            } catch(e) { alert("Erro ao lançar ausência: " + (e.message || e)); }
+            salvarRestricoesNoStorage();
+            alert("Ausência registrada!");
+            carregarGerentesEBase();
         }
 
-        async function alterarPeriodo() {
+        function alterarPeriodo() {
             appState.currentPeriod = document.getElementById('periodSelector').value;
-            renderRestrictionsOnModal(); // Atualiza a caixa do modal com as restrições do novo mês
-            await puxarEscalaSalva();
+            renderRestrictionsOnModal();
+            puxarEscalaSalva();
         }
 
-        async function puxarEscalaSalva() {
+        function puxarEscalaSalva() {
             let savedFds = localStorage.getItem('fds_presentes_' + appState.currentPeriod);
             if (savedFds) {
                 try { appState.fdsPresentesSelecoes = JSON.parse(savedFds); } catch(e) { appState.fdsPresentesSelecoes = {}; }
@@ -697,31 +691,22 @@
 
             appState.mesEstaCongelado = localStorage.getItem('mes_congelado_' + appState.currentPeriod) === 'true';
 
-            try {
-                const { data, error } = await supabaseClient.from('escalas_mensais').select('*').eq('ano_mes', appState.currentPeriod);
-                if (error) throw error;
-
-                appState.escala = {};
-
-                if(data && data.length > 0) {
-                    data.forEach(item => {
-                        appState.escala[item.dia_mes] = { 
-                            abertura: item.abertura, 
-                            fechamento: item.fechamento, 
-                            folgas_custom: item.folgas_custom || ""
-                        };
-                    });
+            let escalaLocal = localStorage.getItem('escala_mensal_' + appState.currentPeriod);
+            if (escalaLocal) {
+                try {
+                    appState.escala = JSON.parse(escalaLocal);
                     renderAll();
-                } else {
-                    initCalendar(); 
-                    if(appState.currentUser.role === 'admin') {
-                        await gravarEscalaIntegralNoSupabase();
-                    }
+                } catch(e) {
+                    initCalendar();
                 }
-            } catch(e) { 
-                console.error("Erro ao puxar dados da nuvem:", e);
-                initCalendar(); 
+            } else {
+                initCalendar();
+                salvarEscalaNoStorage();
             }
+        }
+
+        function salvarEscalaNoStorage() {
+            localStorage.setItem('escala_mensal_' + appState.currentPeriod, JSON.stringify(appState.escala));
         }
 
         function obterJustificativaBloqueio(gerenteId, dateFormatted) {
@@ -839,28 +824,7 @@
             renderAll();
         }
 
-        async function gravarEscalaIntegralNoSupabase() {
-            let dadosParaUpsert = [];
-            for(let d = 1; d <= 31; d++) {
-                if(appState.escala[d]) {
-                    dadosParaUpsert.push({
-                        id: gerarIdUnicoDia(appState.currentPeriod, d),
-                        ano_mes: appState.currentPeriod, 
-                        dia_mes: d, 
-                        abertura: appState.escala[d].abertura, 
-                        fechamento: appState.escala[d].fechamento, 
-                        folgas_custom: appState.escala[d].folgas_custom || ""
-                    });
-                }
-            }
-
-            const { error } = await supabaseClient.from('escalas_mensais').upsert(dadosParaUpsert);
-            if (error) {
-                alert("🛑 ATENÇÃO: Falha ao gravar dados no Supabase!\nErro: " + error.message);
-            }
-        }
-
-        async function alternarBloqueioMes() {
+        function alternarBloqueioMes() {
             if(appState.currentUser.role !== 'admin') return;
             let novoStatus = !appState.mesEstaCongelado;
             let acaoTexto = novoStatus ? "CONGELAR E HOMOLOGAR" : "DESCONGELAR";
@@ -874,7 +838,7 @@
             alert(`Escala ${novoStatus ? 'congelada e homologada' : 'descongelada'} com sucesso!`);
         }
 
-        async function saveChanges() {
+        function saveChanges() {
             if(appState.currentUser.role !== 'admin') return;
             if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO! Descongele a escala no botão do topo para fazer alterações.");
 
@@ -900,31 +864,18 @@
                 }
             }
 
-            const { error } = await supabaseClient.from('escalas_mensais').upsert({
-                id: gerarIdUnicoDia(appState.currentPeriod, currentSelectedDay),
-                ano_mes: appState.currentPeriod, 
-                dia_mes: currentSelectedDay, 
-                abertura: ab, 
-                fechamento: fech, 
-                folgas_custom: folgasCustom
-            });
-
-            if (error) {
-                return alert("🛑 Erro ao salvar alteração no Supabase: " + error.message);
-            }
-
             appState.escala[currentSelectedDay] = { abertura: ab, fechamento: fech, folgas_custom: folgasCustom };
+            salvarEscalaNoStorage();
             renderAll();
             closeModal();
         }
 
-        async function gerarEscalaAutomatica() {
+        function gerarEscalaAutomatica() {
             if(appState.currentUser.role !== 'admin') return;
             if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO! Descongele a escala no botão do topo para recalcular.");
             initCalendar();
-            await gravarEscalaIntegralNoSupabase();
-            alert("Escala recalculada e salva permanentemente na nuvem!");
-            await puxarEscalaSalva();
+            salvarEscalaNoStorage();
+            alert("Escala recalculada e salva localmente com sucesso!");
         }
 
         function obterSabadosDoMes() {
@@ -961,8 +912,8 @@
                 }
             } else {
                 iconSpan.innerHTML = `<i class="fas fa-lock-open text-green-700 text-base"></i>`;
-                textSpan.innerHTML = `<span class="text-green-800 font-bold">Escala Aberta para Edição</span>`;
-                if(subtextP) subtextP.textContent = "Todas as edições são salvas automaticamente na nuvem de forma permanente.";
+                textSpan.innerHTML = `<span class="text-green-800 font-bold">Escala Aberta para Edição (Modo Autônomo)</span>`;
+                if(subtextP) subtextP.textContent = "Todas as edições são salvas automaticamente no navegador do seu dispositivo.";
                 if(lockBtn) {
                     lockBtn.innerHTML = `<i class="fas fa-lock"></i> Congelar Escala do Mês`;
                     lockBtn.className = "bg-slate-800 text-white px-3 py-2 rounded-lg text-xs font-bold shadow hover:bg-black transition";
@@ -1070,8 +1021,7 @@
                             ${sab2 ? `
                                 <td class="p-1 border border-gray-300 text-center">
                                     <select onchange="salvarSelecaoFds('${key2}', this.value)" ${desabilitar ? 'disabled' : ''} class="fds-select w-full text-center outline-none bg-transparent font-semibold text-xs text-gray-800 cursor-pointer">
-                                        <option value="" ${val2 === '' ? 'selected' : ''}>- Selecionar -</option>
-                                        ${gerentesParaFds.map(g => `<option value="${g.nome}" ${g.nome === val2 ? 'selected' : ''}>${g.nome}</option>`).join('')}
+                                        <option value="" ${val2 === '' ? 'selected' : ''}>- Selecionar -</option>${gerentesParaFds.map(g => `<option value="${g.nome}" ${g.nome === val2 ? 'selected' : ''}>${g.nome}</option>`).join('')}
                                     </select>
                                 </td>
                             ` : ''}
@@ -1122,41 +1072,41 @@
             }).join('');
         }
 
-        async function carregarConsolidadoGeral() {
+        function carregarConsolidadoGeral() {
             const tbody = document.getElementById('consolidadoTableBody');
-            tbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-gray-500 font-bold"><i class="fas fa-spinner animate-spin text-xl text-[#548235] mb-2 block"></i> Calculando total acumulado dos meses homologados...</td></tr>`;
+            
+            const totals = {};
+            appState.gerentes.forEach(g => { totals[g.nome] = { ab: 0, fech: 0 }; });
 
-            try {
-                const { data, error } = await supabaseClient.from('escalas_mensais').select('abertura, fechamento');
-                if (error) throw error;
+            const mesesList = ["2026-08", "2026-09", "2026-10", "2026-11", "2026-12"];
 
-                const totals = {};
-                appState.gerentes.forEach(g => { totals[g.nome] = { ab: 0, fech: 0 }; });
-
-                if (data) {
-                    data.forEach(row => {
-                        if (row.abertura && totals[row.abertura]) totals[row.abertura].ab++;
-                        if (row.fechamento && totals[row.fechamento]) totals[row.fechamento].fech++;
-                    });
+            mesesList.forEach(m => {
+                let escalaSalvaMes = localStorage.getItem('escala_mensal_' + m);
+                if (escalaSalvaMes) {
+                    try {
+                        let parsed = JSON.parse(escalaSalvaMes);
+                        Object.values(parsed).forEach(row => {
+                            if (row.abertura && totals[row.abertura]) totals[row.abertura].ab++;
+                            if (row.fechamento && totals[row.fechamento]) totals[row.fechamento].fech++;
+                        });
+                    } catch(e){}
                 }
+            });
 
-                let gerentesEfetivos = appState.gerentes.filter(g => g.role !== 'diretor');
+            let gerentesEfetivos = appState.gerentes.filter(g => g.role !== 'diretor');
 
-                tbody.innerHTML = gerentesEfetivos.map(g => {
-                    const t = totals[g.nome] || { ab: 0, fech: 0 };
-                    const sum = t.ab + t.fech;
-                    return `
-                        <tr class="hover:bg-gray-50 border-b border-gray-200 text-xs text-center">
-                            <td class="p-3 font-bold text-gray-900 text-left border border-gray-300">${g.nome}</td>
-                            <td class="p-3 bg-green-50 font-semibold text-green-900 border border-gray-300">${t.ab} manhãs</td>
-                            <td class="p-3 bg-blue-50 font-semibold text-blue-900 border border-gray-300">${t.fech} noites</td>
-                            <td class="p-3 bg-gray-100 font-extrabold text-gray-900 text-sm border border-gray-300">${sum} plantões</td>
-                        </tr>
-                    `;
-                }).join('');
-            } catch(e) {
-                tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-red-600 font-bold">Erro ao conectar com a base.</td></tr>`;
-            }
+            tbody.innerHTML = gerentesEfetivos.map(g => {
+                const t = totals[g.nome] || { ab: 0, fech: 0 };
+                const sum = t.ab + t.fech;
+                return `
+                    <tr class="hover:bg-gray-50 border-b border-gray-200 text-xs text-center">
+                        <td class="p-3 font-bold text-gray-900 text-left border border-gray-300">${g.nome}</td>
+                        <td class="p-3 bg-green-50 font-semibold text-green-900 border border-gray-300">${t.ab} manhãs</td>
+                        <td class="p-3 bg-blue-50 font-semibold text-blue-900 border border-gray-300">${t.fech} noites</td>
+                        <td class="p-3 bg-gray-100 font-extrabold text-gray-900 text-sm border border-gray-300">${sum} plantões</td>
+                    </tr>
+                `;
+            }).join('');
         }
 
         function openModal(day) {
@@ -1223,7 +1173,7 @@
             `).join('');
         }
 
-        async function incluirGerenteManualmente() {
+        function incluirGerenteManualmente() {
             const nameInput = document.getElementById('manualName');
             const emailInput = document.getElementById('manualEmail');
             const roleInput = document.getElementById('manualRole');
@@ -1234,38 +1184,75 @@
             const nome = nameInput.value.trim();
             const role = roleInput.value;
 
-            if (role === 'diretor') {
-                let diretores = JSON.parse(localStorage.getItem('diretores_list') || '[]');
-                if (!diretores.includes(email)) diretores.push(email);
-                localStorage.setItem('diretores_list', JSON.stringify(diretores));
-            }
+            appState.gerentes.push({ id: Date.now().toString(), nome, email, role });
+            salvarGerentesNoStorage();
 
-            try {
-                let { error } = await supabaseClient.from('gerentes').insert([{ nome, email, role }]);
-                
-                if (error && error.message && error.message.includes('role')) {
-                    const fallback = await supabaseClient.from('gerentes').insert([{ nome, email }]);
-                    error = fallback.error;
-                }
-
-                if (error) throw error;
-
-                nameInput.value = "";
-                emailInput.value = "";
-                alert("Usuário adicionado com sucesso sem alterar a escala existente!");
-                await carregarGerentesEBase(); 
-                await puxarEscalaSalva(); 
-            } catch (e) { alert("Erro ao inserir: " + (e.message || e)); }
+            nameInput.value = "";
+            emailInput.value = "";
+            alert("Usuário adicionado com sucesso!");
+            carregarGerentesEBase(); 
+            puxarEscalaSalva(); 
         }
 
-        async function excluirGerente(id) {
+        function excluirGerente(id) {
             if(!confirm("Deseja realmente excluir este usuário?")) return;
-            try {
-                const { error } = await supabaseClient.from('gerentes').delete().eq('id', id);
-                if (error) throw error;
-                await carregarGerentesEBase(); 
-                await puxarEscalaSalva(); 
-            } catch(e) { alert("Erro ao excluir: " + (e.message || e)); }
+            appState.gerentes = appState.gerentes.filter(g => g.id !== id);
+            salvarGerentesNoStorage();
+            carregarGerentesEBase(); 
+            puxarEscalaSalva(); 
+        }
+
+        // FUNÇÕES DE BACKUP / RESTAURAÇÃO DE ARQUIVOS (JSON)
+        function exportarBackupJSON() {
+            let backupData = {
+                versao: "V51",
+                dataBackup: new Date().toISOString(),
+                gerentes: appState.gerentes,
+                restricoes: appState.restricoes,
+                escalas: {}
+            };
+
+            const mesesList = ["2026-08", "2026-09", "2026-10", "2026-11", "2026-12"];
+            mesesList.forEach(m => {
+                backupData.escalas[m] = {
+                    escala: localStorage.getItem('escala_mensal_' + m),
+                    fds: localStorage.getItem('fds_presentes_' + m),
+                    congelado: localStorage.getItem('mes_congelado_' + m)
+                };
+            });
+
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `backup_escala_morumbi_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function importarBackupJSON(event) {
+            const fileReader = new FileReader();
+            fileReader.onload = function (e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.gerentes) localStorage.setItem('local_gerentes_base', JSON.stringify(data.gerentes));
+                    if (data.restricoes) localStorage.setItem('local_restricoes_base', JSON.stringify(data.restricoes));
+                    
+                    if (data.escalas) {
+                        Object.keys(data.escalas).forEach(m => {
+                            if (data.escalas[m].escala) localStorage.setItem('escala_mensal_' + m, data.escalas[m].escala);
+                            if (data.escalas[m].fds) localStorage.setItem('fds_presentes_' + m, data.escalas[m].fds);
+                            if (data.escalas[m].congelado) localStorage.setItem('mes_congelado_' + m, data.escalas[m].congelado);
+                        });
+                    }
+
+                    alert("✅ Backup restaurado com sucesso!");
+                    location.reload();
+                } catch (err) {
+                    alert("🛑 Ficheiro de backup inválido.");
+                }
+            };
+            fileReader.readAsText(event.target.files[0]);
         }
     </script>
 </body>
