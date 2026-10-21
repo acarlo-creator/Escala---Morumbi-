@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V58 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V60 - Leroy Merlin Morumbi (Firebase)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Supabase CDN Oficial -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- SDKs OFICIAIS DO FIREBASE DO GOOGLE -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -50,8 +53,8 @@
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-6">
             <div class="text-center space-y-2">
                 <div class="inline-block bg-[#548235] p-3 rounded-full text-white text-2xl shadow-md">LM</div>
-                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V58</h2>
-                <p class="text-xs text-gray-500">Acesse com seu e-mail corporativo</p>
+                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V60</h2>
+                <p class="text-xs text-gray-500">Conectado ao Firebase Google (Sem Pausas 24/7)</p>
             </div>
 
             <div class="space-y-4" id="authForm">
@@ -68,7 +71,7 @@
             <div class="space-y-4 hidden" id="registerForm">
                 <div class="bg-blue-50 border-l-4 border-blue-500 p-3 rounded text-xs text-blue-800">
                     <p class="font-bold">Primeiro Acesso Identificado!</p>
-                    <p class="mt-0.5">Informe seu primeiro nome para concluir seu cadastro.</p>
+                    <p class="mt-0.5">Informe seu primeiro nome para concluir o cadastro.</p>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Primeiro Nome</label>
@@ -87,9 +90,9 @@
             <div class="flex items-center space-x-3">
                 <div class="bg-white text-[#548235] font-bold text-xl px-2.5 py-1 rounded shadow">LM</div>
                 <div>
-                    <h1 class="text-base font-bold">Escala Morumbi — V58</h1>
+                    <h1 class="text-base font-bold">Escala Morumbi — V60</h1>
                     <p class="text-[11px] text-green-100 flex items-center space-x-1">
-                        <span class="inline-block w-2 h-2 rounded-full bg-green-300 animate-pulse"></span>
+                        <span class="inline-block w-2 h-2 rounded-full bg-green-400 animate-ping"></span>
                         <span id="userBadge">Carregando...</span>
                     </p>
                 </div>
@@ -129,10 +132,10 @@
                 <div class="bg-green-50 border-l-4 border-[#548235] p-3 rounded-r-xl text-xs text-green-900 flex justify-between items-center non-printable shadow-sm">
                     <div>
                         <p class="font-bold text-sm flex items-center space-x-2">
-                            <span id="statusLockIcon"><i class="fas fa-lock-open text-green-700"></i></span>
-                            <span id="statusLockText">Sincronização em Nuvem Ativa</span>
+                            <span id="statusLockIcon"><i class="fas fa-cloud text-green-700"></i></span>
+                            <span id="statusLockText">Sincronização Google Firebase Ativa (24/7)</span>
                         </p>
-                        <p class="mt-0.5 text-gray-600">Acessível por todos os gerentes em tempo real.</p>
+                        <p class="mt-0.5 text-gray-600">Alterações sincronizadas em tempo real para todos os gerentes.</p>
                     </div>
                     <div class="flex items-center space-x-2">
                         <button id="adminClearBtn" onclick="limparEscalaAtual()" class="hidden bg-red-600 text-white px-3 py-2 rounded-lg text-xs font-bold shadow hover:bg-red-700 transition">
@@ -205,7 +208,7 @@
                                 <i class="fas fa-calculator text-[#548235]"></i>
                                 <span>Relatório Acumulado Geral</span>
                             </h3>
-                            <p class="text-xs text-gray-500 mt-0.5">Soma histórica de plantões reais gravados no banco de dados.</p>
+                            <p class="text-xs text-gray-500 mt-0.5">Soma histórica de plantões gravados no Firebase.</p>
                         </div>
                         <button onclick="carregarConsolidadoGeral()" class="bg-[#548235] text-white px-3 py-1.5 rounded text-xs font-bold shadow hover:bg-green-800 transition">
                             <i class="fas fa-sync-alt"></i> Recalcular Totais
@@ -308,7 +311,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE GERENCIAMENTO DE EQUIPE -->
+    <!-- MODAL DE GERENCIAMENTO DA EQUIPE -->
     <div id="adminManagerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full p-6 space-y-6 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
@@ -328,7 +331,7 @@
                     <span class="bg-red-200 text-red-900 px-2 py-0.5 rounded font-extrabold text-[10px]" id="restrictionsMonthBadge">Filtro Mês Ativo</span>
                 </h4>
                 <div class="text-xs text-red-950 font-semibold space-y-1" id="adminRestrictionsList">
-                    Carregando demandas...
+                    Carregando demandas do Firebase...
                 </div>
             </div>
 
@@ -378,7 +381,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE EDIÇÃO -->
+    <!-- MODAL POPUP DE EDIÇÃO DIÁRIA -->
     <div id="dayModal" class="fixed inset-0 bg-black bg-opacity-40 hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-xl shadow-xl max-w-sm w-full p-5 space-y-4">
             <h3 class="font-bold text-gray-800 text-sm border-b pb-2" id="modalTitle">Edição de Plantão</h3>
@@ -404,9 +407,23 @@
     </div>
 
     <script>
+        // CONFIGURAÇÃO REAL INTEGRADA DO FIREBASE MORUMBI
+        const firebaseConfig = {
+            apiKey: "AIzaSyAE6XWx2cuIpWAtmJlMrtyLlps7osLDoNI",
+            authDomain: "escala-gerentes-morumbi.firebaseapp.com",
+            databaseURL: "https://escala-gerentes-morumbi-default-rtdb.firebaseio.com",
+            projectId: "escala-gerentes-morumbi",
+            storageBucket: "escala-gerentes-morumbi.firebasestorage.app",
+            messagingSenderId: "935766861214",
+            appId: "1:935766861214:web:e897717fcd57151358628f"
+        };
+
+        // Inicializa o Firebase Google
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
         const ADMIN_EMAIL = "acarlo@leroymerlin.com.br";
 
-        // LISTA PADRÃO AUTOMÁTICA
         const BASE_GERENTES_INICIAL = [
             { id: "1", nome: "Alexandre", email: "apires@leroymerlin.com.br", role: "gerente" },
             { id: "2", nome: "Carolina", email: "carolsousa@leroymerlin.com.br", role: "gerente" },
@@ -434,6 +451,35 @@
 
         let currentSelectedDay = null;
 
+        // OUVINTE EM TEMPO REAL DO FIREBASE
+        function escutarMudancasNuvem() {
+            db.ref("escala_app").on("value", (snapshot) => {
+                const data = snapshot.val();
+                if(data) {
+                    if(data.gerentes) appState.gerentes = data.gerentes;
+                    if(data.restricoes) appState.restricoes = data.restricoes;
+                    if(data.escalas && data.escalas[appState.currentPeriod]) {
+                        appState.escala = data.escalas[appState.currentPeriod].escala || {};
+                        appState.fdsPresentesSelecoes = data.escalas[appState.currentPeriod].fds || {};
+                        appState.mesEstaCongelado = data.escalas[appState.currentPeriod].congelado || false;
+                    }
+                    renderAll();
+                    renderAdminManagerList();
+                    renderRestrictionsOnModal();
+                }
+            });
+        }
+
+        function salvarNaNuvemFirebase() {
+            db.ref("escala_app/gerentes").set(appState.gerentes);
+            db.ref("escala_app/restricoes").set(appState.restricoes);
+            db.ref(`escala_app/escalas/${appState.currentPeriod}`).set({
+                escala: appState.escala,
+                fds: appState.fdsPresentesSelecoes,
+                congelado: appState.mesEstaCongelado
+            });
+        }
+
         function verificarOuCadastrarGerente() {
             const emailInput = document.getElementById('loginEmail');
             if(!emailInput || !emailInput.value.trim()) return alert("Por favor, digite seu e-mail.");
@@ -446,7 +492,6 @@
                 return loginSucesso();
             }
 
-            carregarGerentesEBase();
             let encontrado = appState.gerentes.find(g => g.email.toLowerCase() === email);
 
             if (encontrado) {
@@ -468,7 +513,7 @@
 
             let novo = { id: Date.now().toString(), nome, email, role: "gerente" };
             appState.gerentes.push(novo);
-            salvarGerentesNoStorage();
+            salvarNaNuvemFirebase();
 
             appState.currentUser = novo;
             loginSucesso();
@@ -480,7 +525,7 @@
 
             let roleLabel = 'Gerente';
             if (appState.currentUser.role === 'admin') roleLabel = 'Admin';
-            if (appState.currentUser.role === 'diretor') roleLabel = '👑 Diretor da Unidade (Visualizador Auditor)';
+            if (appState.currentUser.role === 'diretor') roleLabel = '👑 Diretor (Auditor)';
 
             document.getElementById('userBadge').textContent = `${appState.currentUser.nome} (${roleLabel})`;
 
@@ -504,8 +549,7 @@
                 }
             }
 
-            carregarGerentesEBase();
-            puxarEscalaSalva();
+            escutarMudancasNuvem();
         }
 
         function logout() {
@@ -514,34 +558,6 @@
             document.getElementById('loginScreen').classList.remove('hidden');
             document.getElementById('authForm').classList.remove('hidden');
             document.getElementById('registerForm').classList.add('hidden');
-        }
-
-        function carregarGerentesEBase() {
-            let salvos = localStorage.getItem('local_gerentes_base_v58');
-            if (salvos) {
-                try { appState.gerentes = JSON.parse(salvos); } catch(e) { appState.gerentes = BASE_GERENTES_INICIAL; }
-            } else {
-                appState.gerentes = BASE_GERENTES_INICIAL;
-                salvarGerentesNoStorage();
-            }
-
-            let restrSalvas = localStorage.getItem('local_restricoes_base');
-            if (restrSalvas) {
-                try { appState.restricoes = JSON.parse(restrSalvas); } catch(e) { appState.restricoes = []; }
-            } else {
-                appState.restricoes = [];
-            }
-
-            renderAdminManagerList();
-            renderRestrictionsOnModal();
-        }
-
-        function salvarGerentesNoStorage() {
-            localStorage.setItem('local_gerentes_base_v58', JSON.stringify(appState.gerentes));
-        }
-
-        function salvarRestricoesNoStorage() {
-            localStorage.setItem('local_restricoes_base', JSON.stringify(appState.restricoes));
         }
 
         function renderRestrictionsOnModal() {
@@ -590,10 +606,8 @@
         function removerRestricao(id) {
             if(!confirm("Deseja realmente remover esta solicitação/bloqueio?")) return;
             appState.restricoes = appState.restricoes.filter(r => r.id !== id);
-            salvarRestricoesNoStorage();
-            renderRestrictionsOnModal();
-            puxarEscalaSalva();
-            alert("Solicitação removida com sucesso!");
+            salvarNaNuvemFirebase();
+            alert("Solicitação removida da nuvem!");
         }
 
         function salvarPreferenciaFdsIntervalo() {
@@ -606,9 +620,8 @@
                 { id: Date.now().toString(), data_bloqueio: start, gerente_id: appState.currentUser.id, justificativa: "Pref. FDS" },
                 { id: (Date.now()+1).toString(), data_bloqueio: end, gerente_id: appState.currentUser.id, justificativa: "Pref. FDS" }
             );
-            salvarRestricoesNoStorage();
-            alert("Preferência Registrada com sucesso!");
-            carregarGerentesEBase();
+            salvarNaNuvemFirebase();
+            alert("Preferência Registrada no Firebase!");
         }
 
         function registrarBloqueioComMotivo() {
@@ -618,9 +631,8 @@
             if(!dt || !motivo) return alert("Preencha todos os campos.");
 
             appState.restricoes.push({ id: Date.now().toString(), data_bloqueio: dt, gerente_id: appState.currentUser.id, justificativa: motivo });
-            salvarRestricoesNoStorage();
-            alert("Dia bloqueado gravado com sucesso!");
-            carregarGerentesEBase();
+            salvarNaNuvemFirebase();
+            alert("Dia bloqueado salvo na nuvem!");
         }
 
         function adicionarFerias() {
@@ -640,9 +652,8 @@
                 cur.setDate(cur.getDate() + 1);
             }
 
-            salvarRestricoesNoStorage();
-            alert("Período de Férias gravado!");
-            carregarGerentesEBase();
+            salvarNaNuvemFirebase();
+            alert("Férias registradas no Firebase!");
         }
 
         function adicionarAusencia() {
@@ -662,65 +673,31 @@
                 cur.setDate(cur.getDate() + 1);
             }
 
-            salvarRestricoesNoStorage();
+            salvarNaNuvemFirebase();
             alert("Ausência registrada!");
-            carregarGerentesEBase();
         }
 
         function alterarPeriodo() {
             appState.currentPeriod = document.getElementById('periodSelector').value;
-            renderRestrictionsOnModal();
-            puxarEscalaSalva();
-        }
-
-        function puxarEscalaSalva() {
-            let savedFds = localStorage.getItem('fds_presentes_' + appState.currentPeriod);
-            if (savedFds) {
-                try { appState.fdsPresentesSelecoes = JSON.parse(savedFds); } catch(e) { appState.fdsPresentesSelecoes = {}; }
-            } else {
-                appState.fdsPresentesSelecoes = {};
-            }
-
-            appState.mesEstaCongelado = localStorage.getItem('mes_congelado_' + appState.currentPeriod) === 'true';
-
-            let escalaLocal = localStorage.getItem('escala_mensal_' + appState.currentPeriod);
-            if (escalaLocal) {
-                try {
-                    appState.escala = JSON.parse(escalaLocal);
-                    renderAll();
-                } catch(e) {
-                    iniciarEscalaVazia();
-                }
-            } else {
-                iniciarEscalaVazia();
-            }
+            escutarMudancasNuvem();
         }
 
         function iniciarEscalaVazia() {
             appState.escala = {};
-            const totalDays = 31;
-            for(let d=1; d<=totalDays; d++) {
-                appState.escala[d] = { abertura: "", fechamento: "", folgas_custom: "" };
-            }
-            salvarEscalaNoStorage();
-            renderAll();
+            for(let d=1; d<=31; d++) appState.escala[d] = { abertura: "", fechamento: "", folgas_custom: "" };
+            salvarNaNuvemFirebase();
         }
 
         function limparEscalaAtual() {
             if(appState.currentUser.role !== 'admin') return;
             if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO!");
 
-            if(!confirm(`Tem certeza que deseja LIMPAR todos os plantões do mês de ${appState.currentPeriod}?`)) return;
+            if(!confirm(`Tem certeza que deseja LIMPAR todos os plantões de ${appState.currentPeriod}?`)) return;
 
             iniciarEscalaVazia();
             appState.fdsPresentesSelecoes = {};
-            localStorage.removeItem('fds_presentes_' + appState.currentPeriod);
-            renderAll();
-            alert("🧹 Escala do mês limpa com sucesso!");
-        }
-
-        function salvarEscalaNoStorage() {
-            localStorage.setItem('escala_mensal_' + appState.currentPeriod, JSON.stringify(appState.escala));
+            salvarNaNuvemFirebase();
+            alert("🧹 Escala do mês limpa no Firebase!");
         }
 
         function obterJustificativaBloqueio(gerenteId, dateFormatted) {
@@ -835,7 +812,7 @@
                 });
             }
 
-            renderAll();
+            salvarNaNuvemFirebase();
         }
 
         function alternarBloqueioMes() {
@@ -846,10 +823,8 @@
             if(!confirm(`Deseja realmente ${acaoTexto} a escala do mês de ${appState.currentPeriod}?`)) return;
 
             appState.mesEstaCongelado = novoStatus;
-            localStorage.setItem('mes_congelado_' + appState.currentPeriod, novoStatus ? 'true' : 'false');
-            
-            renderAll();
-            alert(`Escala ${novoStatus ? 'congelada e homologada' : 'descongelada'} com sucesso!`);
+            salvarNaNuvemFirebase();
+            alert(`Escala ${novoStatus ? 'congelada' : 'descongelada'} com sucesso!`);
         }
 
         function saveChanges() {
@@ -879,8 +854,7 @@
             }
 
             appState.escala[currentSelectedDay] = { abertura: ab, fechamento: fech, folgas_custom: folgasCustom };
-            salvarEscalaNoStorage();
-            renderAll();
+            salvarNaNuvemFirebase();
             closeModal();
         }
 
@@ -888,8 +862,7 @@
             if(appState.currentUser.role !== 'admin') return;
             if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO!");
             initCalendar();
-            salvarEscalaNoStorage();
-            alert("Escala recalculada e salva com sucesso!");
+            alert("Escala recalculada e salva no Firebase!");
         }
 
         function obterSabadosDoMes() {
@@ -923,8 +896,8 @@
                     lockBtn.className = "bg-amber-600 text-white px-3 py-2 rounded-lg text-xs font-bold shadow hover:bg-amber-700 transition";
                 }
             } else {
-                iconSpan.innerHTML = `<i class="fas fa-lock-open text-green-700 text-base"></i>`;
-                textSpan.innerHTML = `<span class="text-green-800 font-bold">Escala Aberta para Edição</span>`;
+                iconSpan.innerHTML = `<i class="fas fa-cloud text-green-700 text-base"></i>`;
+                textSpan.innerHTML = `<span class="text-green-800 font-bold">Sincronização Firebase Ativa (24/7)</span>`;
                 if(lockBtn) {
                     lockBtn.innerHTML = `<i class="fas fa-lock"></i> Congelar Escala`;
                     lockBtn.className = "bg-slate-800 text-white px-3 py-2 rounded-lg text-xs font-bold shadow hover:bg-black transition";
@@ -1052,8 +1025,7 @@
             if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO!");
             
             appState.fdsPresentesSelecoes[key] = valor;
-            localStorage.setItem('fds_presentes_' + appState.currentPeriod, JSON.stringify(appState.fdsPresentesSelecoes));
-            renderAll(); 
+            salvarNaNuvemFirebase();
         }
 
         function renderMetricsTable(metricasAb, metricasFech) {
@@ -1089,21 +1061,6 @@
             
             const totals = {};
             appState.gerentes.forEach(g => { totals[g.nome] = { ab: 0, fech: 0 }; });
-
-            const mesesList = ["2026-10", "2026-11", "2026-12"];
-
-            mesesList.forEach(m => {
-                let escalaSalvaMes = localStorage.getItem('escala_mensal_' + m);
-                if (escalaSalvaMes) {
-                    try {
-                        let parsed = JSON.parse(escalaSalvaMes);
-                        Object.values(parsed).forEach(row => {
-                            if (row.abertura && totals[row.abertura]) totals[row.abertura].ab++;
-                            if (row.fechamento && totals[row.fechamento]) totals[row.fechamento].fech++;
-                        });
-                    } catch(e){}
-                }
-            });
 
             let gerentesEfetivos = appState.gerentes.filter(g => g.role !== 'diretor');
 
@@ -1197,21 +1154,17 @@
             const role = roleInput.value;
 
             appState.gerentes.push({ id: Date.now().toString(), nome, email, role });
-            salvarGerentesNoStorage();
+            salvarNaNuvemFirebase();
 
             nameInput.value = "";
             emailInput.value = "";
-            alert("Usuário adicionado com sucesso!");
-            carregarGerentesEBase(); 
-            puxarEscalaSalva(); 
+            alert("Usuário adicionado no Firebase!");
         }
 
         function excluirGerente(id) {
             if(!confirm("Deseja realmente excluir este usuário?")) return;
             appState.gerentes = appState.gerentes.filter(g => g.id !== id);
-            salvarGerentesNoStorage();
-            carregarGerentesEBase(); 
-            puxarEscalaSalva(); 
+            salvarNaNuvemFirebase();
         }
     </script>
 </body>
