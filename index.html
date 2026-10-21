@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V56 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V58 - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase CDN Oficial -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -25,16 +27,9 @@
         .view-section { display: none; }
         .view-section.active { display: block; }
         
-        /* IMPRESSÃO PERFEITA SEM CORTES - MODO PAISAGEM */
-        @page {
-            size: landscape;
-            margin: 3mm;
-        }
+        @page { size: landscape; margin: 3mm; }
         @media print {
-            * {
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             body { background: white !important; color: black !important; font-size: 7.5px !important; margin: 0 !important; padding: 0 !important; }
             nav, .non-printable, button, input { display: none !important; }
             select { border: none !important; appearance: none !important; -webkit-appearance: none !important; background: transparent !important; }
@@ -45,24 +40,18 @@
             th, td { border: 1px solid #385723 !important; padding: 1px 2px !important; text-align: center !important; font-size: 7.5px !important; line-height: 1.1 !important; }
             tr { page-break-inside: avoid !important; }
             .col-data { min-width: 65px !important; white-space: nowrap !important; }
-            .bg-[#70ad47] { background-color: #70ad47 !important; color: white !important; }
-            .bg-[#548235] { background-color: #548235 !important; color: white !important; }
-            .bg-[#8ea9db] { background-color: #8ea9db !important; color: white !important; }
-            .bg-green-50 { background-color: #f0fdf4 !important; }
-            .bg-blue-50 { background-color: #eff6ff !important; }
-            .bg-gray-100 { background-color: #f3f4f6 !important; }
         }
     </style>
 </head>
 <body class="text-gray-800">
 
-    <!-- TELA DE LOGIN / AUTO-CADASTRO -->
+    <!-- TELA DE LOGIN -->
     <div id="loginScreen" class="fixed inset-0 bg-gray-900 flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-6">
             <div class="text-center space-y-2">
                 <div class="inline-block bg-[#548235] p-3 rounded-full text-white text-2xl shadow-md">LM</div>
-                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V56</h2>
-                <p class="text-xs text-gray-500">Acesse com o seu e-mail corporativo</p>
+                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V58</h2>
+                <p class="text-xs text-gray-500">Acesse com seu e-mail corporativo</p>
             </div>
 
             <div class="space-y-4" id="authForm">
@@ -79,7 +68,7 @@
             <div class="space-y-4 hidden" id="registerForm">
                 <div class="bg-blue-50 border-l-4 border-blue-500 p-3 rounded text-xs text-blue-800">
                     <p class="font-bold">Primeiro Acesso Identificado!</p>
-                    <p class="mt-0.5">Informe o seu primeiro nome para concluir o cadastro.</p>
+                    <p class="mt-0.5">Informe seu primeiro nome para concluir seu cadastro.</p>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Primeiro Nome</label>
@@ -98,10 +87,10 @@
             <div class="flex items-center space-x-3">
                 <div class="bg-white text-[#548235] font-bold text-xl px-2.5 py-1 rounded shadow">LM</div>
                 <div>
-                    <h1 class="text-base font-bold">Escala Morumbi — V56</h1>
+                    <h1 class="text-base font-bold">Escala Morumbi — V58</h1>
                     <p class="text-[11px] text-green-100 flex items-center space-x-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-green-300 animate-pulse"></span>
-                        <span id="userBadge">A carregar...</span>
+                        <span id="userBadge">Carregando...</span>
                     </p>
                 </div>
             </div>
@@ -135,15 +124,15 @@
 
         <div class="max-w-[1600px] mx-auto p-3 sm:p-5 space-y-4">
 
-            <!-- TAB 1: QUADRO DE PLANTÃO + PAINEL LATERAL EM GRID -->
+            <!-- TAB 1: QUADRO DE PLANTÃO -->
             <div id="dashboardSection" class="view-section active space-y-4">
-                <div class="bg-green-50 border-l-4 border-[#548235] p-3 rounded-r-xl text-xs text-green-900 flex justify-between items-center non-printable shadow-sm" id="adminControlBanner">
+                <div class="bg-green-50 border-l-4 border-[#548235] p-3 rounded-r-xl text-xs text-green-900 flex justify-between items-center non-printable shadow-sm">
                     <div>
                         <p class="font-bold text-sm flex items-center space-x-2">
                             <span id="statusLockIcon"><i class="fas fa-lock-open text-green-700"></i></span>
-                            <span id="statusLockText">Escala Aberta para Edição</span>
+                            <span id="statusLockText">Sincronização em Nuvem Ativa</span>
                         </p>
-                        <p class="mt-0.5 text-gray-600" id="statusBannerSubtext">Todas as edições são guardadas automaticamente no seu navegador.</p>
+                        <p class="mt-0.5 text-gray-600">Acessível por todos os gerentes em tempo real.</p>
                     </div>
                     <div class="flex items-center space-x-2">
                         <button id="adminClearBtn" onclick="limparEscalaAtual()" class="hidden bg-red-600 text-white px-3 py-2 rounded-lg text-xs font-bold shadow hover:bg-red-700 transition">
@@ -155,17 +144,9 @@
                         <button id="adminGenerateBtn" onclick="gerarEscalaAutomatica()" class="hidden bg-[#548235] text-white px-3 py-2 rounded-lg text-xs font-bold shadow hover:bg-green-800 transition">
                             <i class="fas fa-magic"></i> Balancear com IA
                         </button>
-                        <button id="exportBackupBtn" onclick="exportarBackupJSON()" class="hidden bg-blue-600 text-white px-3 py-2 rounded-lg text-xs font-bold shadow hover:bg-blue-700 transition">
-                            <i class="fas fa-download"></i> Baixar Backup (JSON)
-                        </button>
-                        <label id="importBackupBtn" class="hidden bg-purple-600 text-white px-3 py-2 rounded-lg text-xs font-bold shadow hover:bg-purple-700 transition cursor-pointer">
-                            <i class="fas fa-upload"></i> Carregar Backup
-                            <input type="file" id="backupFileInput" onchange="importarBackupJSON(event)" class="hidden" accept=".json">
-                        </label>
                     </div>
                 </div>
 
-                <!-- TÍTULO CORPORATIVO DO EXCEL -->
                 <div class="bg-[#70ad47] text-white font-extrabold p-2 text-center text-base rounded-t-lg tracking-wider uppercase shadow-xs">
                     ESCALA DE PLANTÃO
                 </div>
@@ -173,10 +154,7 @@
                     nov.-26
                 </div>
 
-                <!-- ESTRUTURA LADO A LADO -->
                 <div class="print-grid grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
-                    
-                    <!-- TABELA PRINCIPAL DE PLANTÕES -->
                     <div class="lg:col-span-7 overflow-x-auto bg-white p-2 rounded-b-lg shadow-sm">
                         <table class="w-full text-xs border-collapse border border-gray-400">
                             <thead>
@@ -192,10 +170,7 @@
                         </table>
                     </div>
 
-                    <!-- BLOCOS LATERAIS (GERENTES PRESENTES + MÉTRICAS) -->
                     <div class="lg:col-span-5 space-y-4">
-                        
-                        <!-- TABELA FIM DE SEMANA -->
                         <div class="bg-white p-2 rounded-lg shadow-sm border border-gray-300">
                             <div class="bg-gray-200 font-extrabold p-1.5 text-center text-xs text-gray-700 uppercase border border-gray-400">
                                 FIM DE SEMANA — GERENTES PRESENTES
@@ -203,7 +178,6 @@
                             <div id="fdsTablesContainer" class="space-y-3 mt-2"></div>
                         </div>
 
-                        <!-- TABELA DE MÉTRICAS DO MÊS ATUAL -->
                         <div class="bg-white p-2 rounded-lg shadow-sm border border-gray-300">
                             <table class="w-full text-xs border-collapse border border-gray-400">
                                 <thead>
@@ -218,22 +192,20 @@
                                 <tbody id="metricsExcelTableBody" class="divide-y font-medium text-gray-800"></tbody>
                             </table>
                         </div>
-
                     </div>
-
                 </div>
             </div>
 
-            <!-- TAB 2: CONSOLIDADO ACUMULADO -->
+            <!-- TAB 2: CONSOLIDADO -->
             <div id="consolidadoSection" class="view-section space-y-6">
                 <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-[#548235] space-y-4">
                     <div class="border-b pb-3 flex justify-between items-center">
                         <div>
                             <h3 class="text-lg font-bold text-gray-800 flex items-center space-x-2">
                                 <i class="fas fa-calculator text-[#548235]"></i>
-                                <span>Relatório Acumulado Geral (Outubro, Novembro e Dezembro)</span>
+                                <span>Relatório Acumulado Geral</span>
                             </h3>
-                            <p class="text-xs text-gray-500 mt-0.5">Soma histórica de plantões reais guardados nos 3 últimos meses do ano.</p>
+                            <p class="text-xs text-gray-500 mt-0.5">Soma histórica de plantões reais gravados no banco de dados.</p>
                         </div>
                         <button onclick="carregarConsolidadoGeral()" class="bg-[#548235] text-white px-3 py-1.5 rounded text-xs font-bold shadow hover:bg-green-800 transition">
                             <i class="fas fa-sync-alt"></i> Recalcular Totais
@@ -245,9 +217,9 @@
                             <thead>
                                 <tr class="bg-[#e2efda] text-gray-800 font-bold text-xs uppercase tracking-wider border-b border-gray-400">
                                     <th class="p-3 border border-gray-300">Nome do Gerente</th>
-                                    <th class="p-3 text-center bg-green-100 text-green-900 font-bold border border-gray-300">☀️ Total Aberturas (Manhãs)</th>
-                                    <th class="p-3 text-center bg-blue-100 text-blue-900 font-bold border border-gray-300">🌙 Total Fechamentos (Noites)</th>
-                                    <th class="p-3 text-center bg-gray-200 text-gray-900 font-extrabold border border-gray-300">📊 TOTAL GERAL DE PLANTÕES</th>
+                                    <th class="p-3 text-center bg-green-100 text-green-900 font-bold border border-gray-300">☀️ Total Aberturas</th>
+                                    <th class="p-3 text-center bg-blue-100 text-blue-900 font-bold border border-gray-300">🌙 Total Fechamentos</th>
+                                    <th class="p-3 text-center bg-gray-200 text-gray-900 font-extrabold border border-gray-300">📊 TOTAL GERAL</th>
                                 </tr>
                             </thead>
                             <tbody id="consolidadoTableBody" class="divide-y text-gray-700 font-medium"></tbody>
@@ -261,13 +233,13 @@
                 <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-amber-500 space-y-6">
                     <div>
                         <h3 class="text-lg font-bold text-gray-800">Minha Área de Solicitações</h3>
-                        <p class="text-xs text-gray-500 mt-0.5">Sinalize as suas ausências e preferências para o fecho da escala</p>
+                        <p class="text-xs text-gray-500 mt-0.5">Sinalize suas ausências e preferências para o fechamento da escala</p>
                     </div>
 
                     <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-r-xl space-y-3">
                         <h4 class="font-bold text-sm text-emerald-800 flex items-center space-x-1.5">
                             <i class="fas fa-star"></i>
-                            <span>Sinalizar Preferência de Final de Semana Completo (Trabalhar Sábado e Domingo)</span>
+                            <span>Sinalizar Preferência de Final de Semana Completo</span>
                         </h4>
                         <div class="text-xs grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
                             <div>
@@ -342,7 +314,7 @@
             <div class="flex justify-between items-center border-b pb-3">
                 <h3 class="text-lg font-bold text-gray-800 flex items-center space-x-2">
                     <i class="fas fa-users text-amber-500"></i>
-                    <span>Painel de Gestão da Equipa e Níveis de Acesso</span>
+                    <span>Painel de Gerenciamento da Equipe</span>
                 </h3>
                 <button onclick="closeAdminManagerModal()" class="text-gray-400 hover:text-gray-600 text-lg">&times;</button>
             </div>
@@ -351,19 +323,19 @@
                 <h4 class="font-bold text-xs uppercase tracking-wider text-red-800 flex justify-between items-center">
                     <span class="flex items-center space-x-1">
                         <i class="fas fa-calendar-times"></i>
-                        <span>Quadro de Restrições e Demandas</span>
+                        <span>Quadro de Restrições e Demandas Solicitadas</span>
                     </span>
                     <span class="bg-red-200 text-red-900 px-2 py-0.5 rounded font-extrabold text-[10px]" id="restrictionsMonthBadge">Filtro Mês Ativo</span>
                 </h4>
                 <div class="text-xs text-red-950 font-semibold space-y-1" id="adminRestrictionsList">
-                    A carregar demandas do mês selecionado...
+                    Carregando demandas...
                 </div>
             </div>
 
             <div class="bg-gray-50 border p-4 rounded-xl space-y-3">
                 <h4 class="font-bold text-xs uppercase tracking-wider text-gray-600 flex items-center space-x-1">
                     <i class="fas fa-user-plus text-[#548235]"></i>
-                    <span>Incluir Novo Utilizador na Base</span>
+                    <span>Incluir Novo Usuário na Base</span>
                 </h4>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                     <div>
@@ -383,12 +355,12 @@
                     </div>
                 </div>
                 <button onclick="incluirGerenteManualmente()" class="bg-[#548235] text-white px-4 py-2 rounded-lg text-xs font-bold shadow hover:bg-green-800 transition">
-                    Adicionar Utilizador na Base
+                    Adicionar Usuário na Base
                 </button>
             </div>
 
             <div class="space-y-2">
-                <h4 class="font-bold text-xs uppercase tracking-wider text-gray-600">Lista Geral de Gerentes e Diretores Cadastrados</h4>
+                <h4 class="font-bold text-xs uppercase tracking-wider text-gray-600">Lista Geral de Cadastrados</h4>
                 <div class="overflow-x-auto border rounded-xl">
                     <table class="w-full text-left text-xs border-collapse">
                         <thead>
@@ -406,7 +378,7 @@
         </div>
     </div>
 
-    <!-- MODAL POPUP DE EDIÇÃO -->
+    <!-- MODAL DE EDIÇÃO -->
     <div id="dayModal" class="fixed inset-0 bg-black bg-opacity-40 hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-xl shadow-xl max-w-sm w-full p-5 space-y-4">
             <h3 class="font-bold text-gray-800 text-sm border-b pb-2" id="modalTitle">Edição de Plantão</h3>
@@ -434,6 +406,7 @@
     <script>
         const ADMIN_EMAIL = "acarlo@leroymerlin.com.br";
 
+        // LISTA PADRÃO AUTOMÁTICA
         const BASE_GERENTES_INICIAL = [
             { id: "1", nome: "Alexandre", email: "apires@leroymerlin.com.br", role: "gerente" },
             { id: "2", nome: "Carolina", email: "carolsousa@leroymerlin.com.br", role: "gerente" },
@@ -451,7 +424,7 @@
 
         const appState = {
             currentUser: null, 
-            gerentes: [],      
+            gerentes: BASE_GERENTES_INICIAL,      
             escala: {},        
             restricoes: [],
             fdsPresentesSelecoes: {}, 
@@ -462,8 +435,10 @@
         let currentSelectedDay = null;
 
         function verificarOuCadastrarGerente() {
-            const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-            if(!email) return alert("Por favor, digite o seu e-mail.");
+            const emailInput = document.getElementById('loginEmail');
+            if(!emailInput || !emailInput.value.trim()) return alert("Por favor, digite seu e-mail.");
+            
+            const email = emailInput.value.trim().toLowerCase();
             if(!email.endsWith("@leroymerlin.com.br") && email !== ADMIN_EMAIL) return alert("Acesso restrito.");
 
             if(email === ADMIN_EMAIL) {
@@ -484,9 +459,12 @@
         }
 
         function salvarNovoGerenteEEntrar() {
-            const nome = document.getElementById('registerName').value.trim();
-            const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-            if(!nome) return alert("Informe o seu nome.");
+            const nomeInput = document.getElementById('registerName');
+            const emailInput = document.getElementById('loginEmail');
+            if(!nomeInput || !nomeInput.value.trim()) return alert("Informe seu nome.");
+
+            const nome = nomeInput.value.trim();
+            const email = emailInput.value.trim().toLowerCase();
 
             let novo = { id: Date.now().toString(), nome, email, role: "gerente" };
             appState.gerentes.push(novo);
@@ -511,8 +489,6 @@
                 document.getElementById('adminClearBtn').classList.remove('hidden');
                 document.getElementById('adminManageBtn').classList.remove('hidden');
                 document.getElementById('adminLockBtn').classList.remove('hidden');
-                document.getElementById('exportBackupBtn').classList.remove('hidden');
-                document.getElementById('importBackupBtn').classList.remove('hidden');
                 document.getElementById('modalSaveBtn').classList.remove('hidden');
                 document.getElementById('managerBtn').classList.add('hidden');
             } else {
@@ -520,8 +496,6 @@
                 document.getElementById('adminClearBtn').classList.add('hidden');
                 document.getElementById('adminManageBtn').classList.add('hidden');
                 document.getElementById('adminLockBtn').classList.add('hidden');
-                document.getElementById('exportBackupBtn').classList.add('hidden');
-                document.getElementById('importBackupBtn').classList.add('hidden');
                 document.getElementById('modalSaveBtn').classList.add('hidden');
                 if(appState.currentUser.role === 'diretor') {
                     document.getElementById('managerBtn').classList.add('hidden');
@@ -543,7 +517,7 @@
         }
 
         function carregarGerentesEBase() {
-            let salvos = localStorage.getItem('local_gerentes_base_v55');
+            let salvos = localStorage.getItem('local_gerentes_base_v58');
             if (salvos) {
                 try { appState.gerentes = JSON.parse(salvos); } catch(e) { appState.gerentes = BASE_GERENTES_INICIAL; }
             } else {
@@ -563,14 +537,13 @@
         }
 
         function salvarGerentesNoStorage() {
-            localStorage.setItem('local_gerentes_base_v55', JSON.stringify(appState.gerentes));
+            localStorage.setItem('local_gerentes_base_v58', JSON.stringify(appState.gerentes));
         }
 
         function salvarRestricoesNoStorage() {
             localStorage.setItem('local_restricoes_base', JSON.stringify(appState.restricoes));
         }
 
-        // RENDERIZA E PERMITE REMOVER RESTRIÇÕES DO MÊS SELECIONADO
         function renderRestrictionsOnModal() {
             const container = document.getElementById('adminRestrictionsList');
             const badge = document.getElementById('restrictionsMonthBadge');
@@ -614,7 +587,6 @@
             container.innerHTML = htmlContent;
         }
 
-        // REMOVER SOLICITAÇÃO ESPECÍFICA
         function removerRestricao(id) {
             if(!confirm("Deseja realmente remover esta solicitação/bloqueio?")) return;
             appState.restricoes = appState.restricoes.filter(r => r.id !== id);
@@ -625,7 +597,7 @@
         }
 
         function salvarPreferenciaFdsIntervalo() {
-            if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO! Não é possível enviar novas solicitações.");
+            if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO!");
             const start = document.getElementById('prefFdsStart').value;
             const end = document.getElementById('prefFdsEnd').value;
             if(!start || !end) return alert("Selecione o sábado e o domingo.");
@@ -640,7 +612,7 @@
         }
 
         function registrarBloqueioComMotivo() {
-            if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO! Não é possível enviar novas solicitações.");
+            if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO!");
             const dt = document.getElementById('blockDate').value;
             const motivo = document.getElementById('blockReason').value.trim();
             if(!dt || !motivo) return alert("Preencha todos os campos.");
@@ -652,7 +624,7 @@
         }
 
         function adicionarFerias() {
-            if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO! Não é possível enviar férias.");
+            if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO!");
             const startStr = document.getElementById('vacStart').value;
             const endStr = document.getElementById('vacEnd').value;
             if(!startStr || !endStr) return alert("Informe o período completo de férias.");
@@ -674,7 +646,7 @@
         }
 
         function adicionarAusencia() {
-            if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO! Não é possível enviar ausência.");
+            if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO!");
             const startStr = document.getElementById('ausStart').value;
             const endStr = document.getElementById('ausEnd').value;
             if(!startStr || !endStr) return alert("Informe o período de ausência.");
@@ -736,7 +708,7 @@
 
         function limparEscalaAtual() {
             if(appState.currentUser.role !== 'admin') return;
-            if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO! Descongele a escala no botão do topo para poder limpar.");
+            if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO!");
 
             if(!confirm(`Tem certeza que deseja LIMPAR todos os plantões do mês de ${appState.currentPeriod}?`)) return;
 
@@ -882,7 +854,7 @@
 
         function saveChanges() {
             if(appState.currentUser.role !== 'admin') return;
-            if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO! Descongele a escala no botão do topo para fazer alterações.");
+            if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO!");
 
             const ab = document.getElementById('modalAbertura').value;
             const fech = document.getElementById('modalFechamento').value;
@@ -914,7 +886,7 @@
 
         function gerarEscalaAutomatica() {
             if(appState.currentUser.role !== 'admin') return;
-            if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO! Descongele a escala no botão do topo para recalcular.");
+            if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO!");
             initCalendar();
             salvarEscalaNoStorage();
             alert("Escala recalculada e salva com sucesso!");
@@ -937,7 +909,6 @@
             const iconSpan = document.getElementById('statusLockIcon');
             const textSpan = document.getElementById('statusLockText');
             const lockBtn = document.getElementById('adminLockBtn');
-            const subtextP = document.getElementById('statusBannerSubtext');
             const titleLabel = document.getElementById('titlePeriodLabel');
 
             const [anoStr, mesStr] = appState.currentPeriod.split('-');
@@ -946,8 +917,7 @@
 
             if(appState.mesEstaCongelado) {
                 iconSpan.innerHTML = `<i class="fas fa-lock text-red-600 text-base"></i>`;
-                textSpan.innerHTML = `<span class="text-red-700 font-extrabold uppercase tracking-wide">Escala Homologada e Congelada (Bloqueada)</span>`;
-                if(subtextP) subtextP.textContent = "A escala deste mês foi oficializada. Nenhuma edição manual está permitida.";
+                textSpan.innerHTML = `<span class="text-red-700 font-extrabold uppercase tracking-wide">Escala Homologada e Congelada</span>`;
                 if(lockBtn) {
                     lockBtn.innerHTML = `<i class="fas fa-unlock"></i> Descongelar Escala`;
                     lockBtn.className = "bg-amber-600 text-white px-3 py-2 rounded-lg text-xs font-bold shadow hover:bg-amber-700 transition";
@@ -955,9 +925,8 @@
             } else {
                 iconSpan.innerHTML = `<i class="fas fa-lock-open text-green-700 text-base"></i>`;
                 textSpan.innerHTML = `<span class="text-green-800 font-bold">Escala Aberta para Edição</span>`;
-                if(subtextP) subtextP.textContent = "Todas as edições são salvas automaticamente no seu navegador.";
                 if(lockBtn) {
-                    lockBtn.innerHTML = `<i class="fas fa-lock"></i> Congelar Escala do Mês`;
+                    lockBtn.innerHTML = `<i class="fas fa-lock"></i> Congelar Escala`;
                     lockBtn.className = "bg-slate-800 text-white px-3 py-2 rounded-lg text-xs font-bold shadow hover:bg-black transition";
                 }
             }
@@ -1004,7 +973,7 @@
                         <td class="p-2 border border-gray-400 font-semibold">${diaSemanaNome}</td>
                         <td class="p-2 border border-gray-400 font-bold ${textStyle}">${data.abertura}</td>
                         <td class="p-2 border border-gray-400 font-bold ${textStyle}">${data.fechamento}</td>
-                        <td class="p-2 border border-gray-400 font-bold ${dayOfWeek === 6 \vert{}\vert{} dayOfWeek === 0 ? 'text-white' : 'text-amber-800'}">${folgaTextoFinal}</td>
+                        <td class="p-2 border border-gray-400 font-bold ${dayOfWeek === 6 || dayOfWeek === 0 ? 'text-white' : 'text-amber-800'}">${folgaTextoFinal}</td>
                     </tr>
                 `;
             }
@@ -1038,7 +1007,8 @@
                                 ${sab2 ? `<th class="p-1 border border-gray-400 text-center w-1/2">Gerentes Presentes</th>` : ''}
                             </tr>
                             <tr class="bg-emerald-50 text-emerald-900 font-bold">
-                                <th class="p-1 border border-gray-400 text-center">${data1Formatted}</th>${sab2 ? `<th class="p-1 border border-gray-400 text-center">${data2Formatted}</th>` : ''}
+                                <th class="p-1 border border-gray-400 text-center">${data1Formatted}</th>
+                                ${sab2 ? `<th class="p-1 border border-gray-400 text-center">${data2Formatted}</th>` : ''}
                             </tr>
                         </thead>
                         <tbody>
@@ -1055,7 +1025,8 @@
                         <tr>
                             <td class="p-1 border border-gray-300 text-center">
                                 <select onchange="salvarSelecaoFds('${key1}', this.value)" ${desabilitar ? 'disabled' : ''} class="fds-select w-full text-center outline-none bg-transparent font-semibold text-xs text-gray-800 cursor-pointer">
-                                    <option value="" ${val1 === '' ? 'selected' : ''}>- Selecionar -</option>${gerentesParaFds.map(g => `<option value="${g.nome}" ${g.nome === val1 ? 'selected' : ''}>${g.nome}</option>`).join('')}
+                                    <option value="" ${val1 === '' ? 'selected' : ''}>- Selecionar -</option>
+                                    ${gerentesParaFds.map(g => `<option value="${g.nome}" ${g.nome === val1 ? 'selected' : ''}>${g.nome}</option>`).join('')}
                                 </select>
                             </td>
                             ${sab2 ? `
@@ -1078,7 +1049,7 @@
 
         function salvarSelecaoFds(key, valor) {
             if(appState.currentUser.role !== 'admin') return;
-            if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO! Descongele a escala no botão do topo para alterar.");
+            if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO!");
             
             appState.fdsPresentesSelecoes[key] = valor;
             localStorage.setItem('fds_presentes_' + appState.currentPeriod, JSON.stringify(appState.fdsPresentesSelecoes));
@@ -1143,4 +1114,105 @@
                     <tr class="hover:bg-gray-50 border-b border-gray-200 text-xs text-center">
                         <td class="p-3 font-bold text-gray-900 text-left border border-gray-300">${g.nome}</td>
                         <td class="p-3 bg-green-50 font-semibold text-green-900 border border-gray-300">${t.ab} manhãs</td>
-                        <td class="p-3 bg-blue
+                        <td class="p-3 bg-blue-50 font-semibold text-blue-900 border border-gray-300">${t.fech} noites</td>
+                        <td class="p-3 bg-gray-100 font-extrabold text-gray-900 text-sm border border-gray-300">${sum} plantões</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function openModal(day) {
+            if (appState.currentUser.role !== 'admin') return; 
+            if (appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO!");
+
+            currentSelectedDay = day;
+            let dateFormatted = `${appState.currentPeriod}-${String(day).padStart(2, '0')}`;
+
+            document.getElementById('modalTitle').textContent = `Edição de Plantão — Dia ${String(day).padStart(2, '0')}/${appState.currentPeriod.split('-')[1]}/2026`;
+
+            const abSel = document.getElementById('modalAbertura');
+            const fechSel = document.getElementById('modalFechamento');
+            
+            let gerentesEfetivos = appState.gerentes.filter(g => g.role !== 'diretor');
+
+            let optionsHtml = `<option value="">- Nenhum -</option>` + gerentesEfetivos.map(g => {
+                let justificativa = obterJustificativaBloqueio(g.id, dateFormatted);
+                if (justificativa) {
+                    return `<option value="${g.nome}">⚠️ ${g.nome} (Indisponível: ${justificativa})</option>`;
+                }
+                return `<option value="${g.nome}">${g.nome}</option>`;
+            }).join('');
+
+            abSel.innerHTML = optionsHtml;
+            fechSel.innerHTML = optionsHtml;
+            
+            abSel.value = appState.escala[day]?.abertura || "";
+            fechSel.value = appState.escala[day]?.fechamento || "";
+            document.getElementById('modalFolgasManuais').value = appState.escala[day]?.folgas_custom || "";
+            document.getElementById('dayModal').classList.remove('hidden');
+        }
+
+        function closeModal() { document.getElementById('dayModal').classList.add('hidden'); }
+
+        function switchTab(tabId) {
+            document.getElementById('dashboardSection').classList.remove('active');
+            document.getElementById('managerSection').classList.remove('active');
+            document.getElementById('consolidadoSection').classList.remove('active');
+
+            if(tabId === 'dashboard') document.getElementById('dashboardSection').classList.add('active');
+            if(tabId === 'manager') document.getElementById('managerSection').classList.add('active');
+            if(tabId === 'consolidado') {
+                document.getElementById('consolidadoSection').classList.add('active');
+                carregarConsolidadoGeral();
+            }
+        }
+
+        function openAdminManagerModal() { document.getElementById('adminManagerModal').classList.remove('hidden'); renderAdminManagerList(); }
+        function closeAdminManagerModal() { document.getElementById('adminManagerModal').classList.add('hidden'); }
+        
+        function renderAdminManagerList() {
+            document.getElementById('adminManagerTableBody').innerHTML = appState.gerentes.map(g => `
+                <tr class="text-xs border-b hover:bg-gray-50">
+                    <td class="p-2.5 font-semibold text-gray-800">${g.nome}</td>
+                    <td class="p-2.5 text-gray-500">${g.email}</td>
+                    <td class="p-2.5 text-center font-bold ${g.role === 'diretor' ? 'text-amber-600' : 'text-green-700'}">
+                        ${g.role === 'diretor' ? '👑 Diretor' : 'Gerente'}
+                    </td>
+                    <td class="p-2.5 text-center">
+                        <button onclick="excluirGerente('${g.id}')" class="bg-red-500 hover:bg-red-600 text-white font-bold px-3 py-1 rounded shadow transition">Excluir</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function incluirGerenteManualmente() {
+            const nameInput = document.getElementById('manualName');
+            const emailInput = document.getElementById('manualEmail');
+            const roleInput = document.getElementById('manualRole');
+
+            if (!nameInput.value.trim() || !emailInput.value.trim()) return alert("Preencha todos os campos.");
+            
+            const email = emailInput.value.trim().toLowerCase();
+            const nome = nameInput.value.trim();
+            const role = roleInput.value;
+
+            appState.gerentes.push({ id: Date.now().toString(), nome, email, role });
+            salvarGerentesNoStorage();
+
+            nameInput.value = "";
+            emailInput.value = "";
+            alert("Usuário adicionado com sucesso!");
+            carregarGerentesEBase(); 
+            puxarEscalaSalva(); 
+        }
+
+        function excluirGerente(id) {
+            if(!confirm("Deseja realmente excluir este usuário?")) return;
+            appState.gerentes = appState.gerentes.filter(g => g.id !== id);
+            salvarGerentesNoStorage();
+            carregarGerentesEBase(); 
+            puxarEscalaSalva(); 
+        }
+    </script>
+</body>
+</html>
