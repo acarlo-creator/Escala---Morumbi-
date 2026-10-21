@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escala Inteligente V55 - Leroy Merlin Morumbi</title>
+    <title>Escala Inteligente V56 - Leroy Merlin Morumbi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
@@ -61,7 +61,7 @@
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-6">
             <div class="text-center space-y-2">
                 <div class="inline-block bg-[#548235] p-3 rounded-full text-white text-2xl shadow-md">LM</div>
-                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V55</h2>
+                <h2 class="text-xl font-bold tracking-tight text-gray-800">Escala Morumbi V56</h2>
                 <p class="text-xs text-gray-500">Acesse com o seu e-mail corporativo</p>
             </div>
 
@@ -98,7 +98,7 @@
             <div class="flex items-center space-x-3">
                 <div class="bg-white text-[#548235] font-bold text-xl px-2.5 py-1 rounded shadow">LM</div>
                 <div>
-                    <h1 class="text-base font-bold">Escala Morumbi — V55</h1>
+                    <h1 class="text-base font-bold">Escala Morumbi — V56</h1>
                     <p class="text-[11px] text-green-100 flex items-center space-x-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-green-300 animate-pulse"></span>
                         <span id="userBadge">A carregar...</span>
@@ -126,7 +126,7 @@
                     <i class="fas fa-calculator"></i> Acumulado Geral
                 </button>
                 <button id="adminManageBtn" onclick="openAdminManagerModal()" class="hidden text-xs bg-amber-500 text-white px-3 py-1.5 rounded font-bold hover:bg-amber-600 shadow">
-                    <i class="fas fa-users-cog"></i> Gerir Equipa
+                    <i class="fas fa-users-cog"></i> Gerenciar Equipe
                 </button>
                 <button id="managerBtn" onclick="switchTab('manager')" class="hidden text-xs bg-amber-500 text-white px-3 py-1.5 rounded font-bold hover:bg-amber-600 shadow">Área do Gerente</button>
                 <button onclick="logout()" class="text-xs bg-red-600 text-white px-2 py-1.5 rounded font-bold shadow"><i class="fas fa-sign-out-alt"></i></button>
@@ -146,7 +146,6 @@
                         <p class="mt-0.5 text-gray-600" id="statusBannerSubtext">Todas as edições são guardadas automaticamente no seu navegador.</p>
                     </div>
                     <div class="flex items-center space-x-2">
-                        <!-- BOTÃO DE LIMPAR ESCALA -->
                         <button id="adminClearBtn" onclick="limparEscalaAtual()" class="hidden bg-red-600 text-white px-3 py-2 rounded-lg text-xs font-bold shadow hover:bg-red-700 transition">
                             <i class="fas fa-eraser"></i> Limpar Escala
                         </button>
@@ -571,6 +570,7 @@
             localStorage.setItem('local_restricoes_base', JSON.stringify(appState.restricoes));
         }
 
+        // RENDERIZA E PERMITE REMOVER RESTRIÇÕES DO MÊS SELECIONADO
         function renderRestrictionsOnModal() {
             const container = document.getElementById('adminRestrictionsList');
             const badge = document.getElementById('restrictionsMonthBadge');
@@ -592,21 +592,36 @@
                 return;
             }
 
-            const agrupamento = {};
+            let htmlContent = '';
             restricoesDoMes.forEach(res => {
                 const gerente = appState.gerentes.find(g => g.id === res.gerente_id);
                 if(gerente) {
                     const dia = res.data_bloqueio.split('-')[2];
-                    if(!agrupamento[gerente.nome]) agrupamento[gerente.nome] = [];
-                    agrupamento[gerente.nome].push(`${dia}/${mesSel} (${res.justificativa})`);
+                    htmlContent += `
+                        <div class="py-1 border-b border-red-100 text-xs flex justify-between items-center">
+                            <div>
+                                <span class="font-bold text-red-950">${gerente.nome}:</span> 
+                                <span class="text-red-900 font-semibold">${dia}/${mesSel} (${res.justificativa})</span>
+                            </div>
+                            <button onclick="removerRestricao('${res.id}')" class="bg-red-600 hover:bg-red-700 text-white font-bold px-2 py-0.5 rounded text-[10px] shadow transition">
+                                <i class="fas fa-trash-alt"></i> Remover
+                            </button>
+                        </div>
+                    `;
                 }
             });
 
-            container.innerHTML = Object.entries(agrupamento).map(([nome, dias]) => `
-                <div class="py-1 border-b border-red-100 text-xs">
-                    <span class="font-bold text-red-950">${nome}:</span> <span class="text-red-900 font-semibold">${dias.join(', ')}</span>
-                </div>
-            `).join('');
+            container.innerHTML = htmlContent;
+        }
+
+        // REMOVER SOLICITAÇÃO ESPECÍFICA
+        function removerRestricao(id) {
+            if(!confirm("Deseja realmente remover esta solicitação/bloqueio?")) return;
+            appState.restricoes = appState.restricoes.filter(r => r.id !== id);
+            salvarRestricoesNoStorage();
+            renderRestrictionsOnModal();
+            puxarEscalaSalva();
+            alert("Solicitação removida com sucesso!");
         }
 
         function salvarPreferenciaFdsIntervalo() {
@@ -719,7 +734,6 @@
             renderAll();
         }
 
-        // LIMPAR ESCALA MENSAL
         function limparEscalaAtual() {
             if(appState.currentUser.role !== 'admin') return;
             if(appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO! Descongele a escala no botão do topo para poder limpar.");
@@ -990,7 +1004,7 @@
                         <td class="p-2 border border-gray-400 font-semibold">${diaSemanaNome}</td>
                         <td class="p-2 border border-gray-400 font-bold ${textStyle}">${data.abertura}</td>
                         <td class="p-2 border border-gray-400 font-bold ${textStyle}">${data.fechamento}</td>
-                        <td class="p-2 border border-gray-400 font-bold ${dayOfWeek === 6 || dayOfWeek === 0 ? 'text-white' : 'text-amber-800'}">${folgaTextoFinal}</td>
+                        <td class="p-2 border border-gray-400 font-bold ${dayOfWeek === 6 \vert{}\vert{} dayOfWeek === 0 ? 'text-white' : 'text-amber-800'}">${folgaTextoFinal}</td>
                     </tr>
                 `;
             }
@@ -1024,8 +1038,7 @@
                                 ${sab2 ? `<th class="p-1 border border-gray-400 text-center w-1/2">Gerentes Presentes</th>` : ''}
                             </tr>
                             <tr class="bg-emerald-50 text-emerald-900 font-bold">
-                                <th class="p-1 border border-gray-400 text-center">${data1Formatted}</th>
-                                ${sab2 ? `<th class="p-1 border border-gray-400 text-center">${data2Formatted}</th>` : ''}
+                                <th class="p-1 border border-gray-400 text-center">${data1Formatted}</th>${sab2 ? `<th class="p-1 border border-gray-400 text-center">${data2Formatted}</th>` : ''}
                             </tr>
                         </thead>
                         <tbody>
@@ -1042,8 +1055,7 @@
                         <tr>
                             <td class="p-1 border border-gray-300 text-center">
                                 <select onchange="salvarSelecaoFds('${key1}', this.value)" ${desabilitar ? 'disabled' : ''} class="fds-select w-full text-center outline-none bg-transparent font-semibold text-xs text-gray-800 cursor-pointer">
-                                    <option value="" ${val1 === '' ? 'selected' : ''}>- Selecionar -</option>
-                                    ${gerentesParaFds.map(g => `<option value="${g.nome}" ${g.nome === val1 ? 'selected' : ''}>${g.nome}</option>`).join('')}
+                                    <option value="" ${val1 === '' ? 'selected' : ''}>- Selecionar -</option>${gerentesParaFds.map(g => `<option value="${g.nome}" ${g.nome === val1 ? 'selected' : ''}>${g.nome}</option>`).join('')}
                                 </select>
                             </td>
                             ${sab2 ? `
@@ -1131,157 +1143,4 @@
                     <tr class="hover:bg-gray-50 border-b border-gray-200 text-xs text-center">
                         <td class="p-3 font-bold text-gray-900 text-left border border-gray-300">${g.nome}</td>
                         <td class="p-3 bg-green-50 font-semibold text-green-900 border border-gray-300">${t.ab} manhãs</td>
-                        <td class="p-3 bg-blue-50 font-semibold text-blue-900 border border-gray-300">${t.fech} noites</td>
-                        <td class="p-3 bg-gray-100 font-extrabold text-gray-900 text-sm border border-gray-300">${sum} plantões</td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        function openModal(day) {
-            if (appState.currentUser.role !== 'admin') return; 
-            if (appState.mesEstaCongelado) return alert("🛑 ESTE MÊS ESTÁ CONGELADO! Descongele a escala no botão do topo para editar.");
-
-            currentSelectedDay = day;
-            let dateFormatted = `${appState.currentPeriod}-${String(day).padStart(2, '0')}`;
-
-            document.getElementById('modalTitle').textContent = `Edição de Plantão — Dia ${String(day).padStart(2, '0')}/${appState.currentPeriod.split('-')[1]}/2026`;
-
-            const abSel = document.getElementById('modalAbertura');
-            const fechSel = document.getElementById('modalFechamento');
-            
-            let gerentesEfetivos = appState.gerentes.filter(g => g.role !== 'diretor');
-
-            let optionsHtml = `<option value="">- Nenhum -</option>` + gerentesEfetivos.map(g => {
-                let justificativa = obterJustificativaBloqueio(g.id, dateFormatted);
-                if (justificativa) {
-                    return `<option value="${g.nome}">⚠️ ${g.nome} (Indisponível: ${justificativa})</option>`;
-                }
-                return `<option value="${g.nome}">${g.nome}</option>`;
-            }).join('');
-
-            abSel.innerHTML = optionsHtml;
-            fechSel.innerHTML = optionsHtml;
-            
-            abSel.value = appState.escala[day]?.abertura || "";
-            fechSel.value = appState.escala[day]?.fechamento || "";
-            document.getElementById('modalFolgasManuais').value = appState.escala[day]?.folgas_custom || "";
-            document.getElementById('dayModal').classList.remove('hidden');
-        }
-
-        function closeModal() { document.getElementById('dayModal').classList.add('hidden'); }
-
-        function switchTab(tabId) {
-            document.getElementById('dashboardSection').classList.remove('active');
-            document.getElementById('managerSection').classList.remove('active');
-            document.getElementById('consolidadoSection').classList.remove('active');
-
-            if(tabId === 'dashboard') document.getElementById('dashboardSection').classList.add('active');
-            if(tabId === 'manager') document.getElementById('managerSection').classList.add('active');
-            if(tabId === 'consolidado') {
-                document.getElementById('consolidadoSection').classList.add('active');
-                carregarConsolidadoGeral();
-            }
-        }
-
-        function openAdminManagerModal() { document.getElementById('adminManagerModal').classList.remove('hidden'); renderAdminManagerList(); }
-        function closeAdminManagerModal() { document.getElementById('adminManagerModal').classList.add('hidden'); }
-        
-        function renderAdminManagerList() {
-            document.getElementById('adminManagerTableBody').innerHTML = appState.gerentes.map(g => `
-                <tr class="text-xs border-b hover:bg-gray-50">
-                    <td class="p-2.5 font-semibold text-gray-800">${g.nome}</td>
-                    <td class="p-2.5 text-gray-500">${g.email}</td>
-                    <td class="p-2.5 text-center font-bold ${g.role === 'diretor' ? 'text-amber-600' : 'text-green-700'}">
-                        ${g.role === 'diretor' ? '👑 Diretor' : 'Gerente'}
-                    </td>
-                    <td class="p-2.5 text-center">
-                        <button onclick="excluirGerente('${g.id}')" class="bg-red-500 hover:bg-red-600 text-white font-bold px-3 py-1 rounded shadow transition">Excluir</button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function incluirGerenteManualmente() {
-            const nameInput = document.getElementById('manualName');
-            const emailInput = document.getElementById('manualEmail');
-            const roleInput = document.getElementById('manualRole');
-
-            if (!nameInput.value.trim() || !emailInput.value.trim()) return alert("Preencha todos os campos.");
-            
-            const email = emailInput.value.trim().toLowerCase();
-            const nome = nameInput.value.trim();
-            const role = roleInput.value;
-
-            appState.gerentes.push({ id: Date.now().toString(), nome, email, role });
-            salvarGerentesNoStorage();
-
-            nameInput.value = "";
-            emailInput.value = "";
-            alert("Utilizador adicionado com sucesso!");
-            carregarGerentesEBase(); 
-            puxarEscalaSalva(); 
-        }
-
-        function excluirGerente(id) {
-            if(!confirm("Deseja realmente excluir este utilizador?")) return;
-            appState.gerentes = appState.gerentes.filter(g => g.id !== id);
-            salvarGerentesNoStorage();
-            carregarGerentesEBase(); 
-            puxarEscalaSalva(); 
-        }
-
-        function exportarBackupJSON() {
-            let backupData = {
-                versao: "V55",
-                dataBackup: new Date().toISOString(),
-                gerentes: appState.gerentes,
-                restricoes: appState.restricoes,
-                escalas: {}
-            };
-
-            const mesesList = ["2026-10", "2026-11", "2026-12"];
-            mesesList.forEach(m => {
-                backupData.escalas[m] = {
-                    escala: localStorage.getItem('escala_mensal_' + m),
-                    fds: localStorage.getItem('fds_presentes_' + m),
-                    congelado: localStorage.getItem('mes_congelado_' + m)
-                };
-            });
-
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `backup_escala_morumbi_${new Date().toISOString().slice(0,10)}.json`);
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-        }
-
-        function importarBackupJSON(event) {
-            const fileReader = new FileReader();
-            fileReader.onload = function (e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    if (data.gerentes) localStorage.setItem('local_gerentes_base_v55', JSON.stringify(data.gerentes));
-                    if (data.restricoes) localStorage.setItem('local_restricoes_base', JSON.stringify(data.restricoes));
-                    
-                    if (data.escalas) {
-                        Object.keys(data.escalas).forEach(m => {
-                            if (data.escalas[m].escala) localStorage.setItem('escala_mensal_' + m, data.escalas[m].escala);
-                            if (data.escalas[m].fds) localStorage.setItem('fds_presentes_' + m, data.escalas[m].fds);
-                            if (data.escalas[m].congelado) localStorage.setItem('mes_congelado_' + m, data.escalas[m].congelado);
-                        });
-                    }
-
-                    alert("✅ Backup restaurado com sucesso!");
-                    location.reload();
-                } catch (err) {
-                    alert("🛑 Ficheiro de backup inválido.");
-                }
-            };
-            fileReader.readAsText(event.target.files[0]);
-        }
-    </script>
-</body>
-</html>
+                        <td class="p-3 bg-blue
